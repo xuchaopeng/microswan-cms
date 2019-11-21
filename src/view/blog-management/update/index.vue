@@ -36,13 +36,14 @@
       </div>
 
       <div class="com_save">
-        <Button type="success" size="large">更新</Button>
+        <Button type="success" size="large" @click="updateArticle">更新</Button>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
+import { getArticleDetail, updateArticleDetail } from '@/api/article'
 export default {
   name: 'editor',
   data() {
@@ -79,6 +80,16 @@ export default {
       ]
     }
   },
+  mounted() {
+    const self = this
+    if (this.$route.params.id) {
+      getArticleDetail({ id: this.$route.params.id })
+        .then(res => {
+          if (res.status == 200) self.initArticle(res.data)
+        })
+        .catch(err => {})
+    }
+  },
   methods: {
     getDate() {
       let mydate, y, m, d, hh, mm, ss
@@ -96,9 +107,43 @@ export default {
       if (ss < 10) ss = '0' + ss
       this.date = y + '-' + m + '-' + d + ' ' + hh + ':' + mm + ':' + ss
     },
-    saveArticle() {},
+    updateArticle() {
+      const self = this
+      let param = {
+        _id: this.$route.params.id,
+        title: this.title,
+        date: this.date,
+        category: this.category,
+        gist: this.gist,
+        content: this.content
+      }
+      if (param._id) {
+        updateArticleDetail(param)
+          .then(res => {
+            self.$Message.success({
+              top: 500,
+              content: '文章更新成功',
+              duration: 2
+            })
+          })
+          .catch(err => {
+            self.$Message.error({
+              top: 500,
+              content: '文章更新失败',
+              duration: 2
+            })
+          })
+      }
+    },
     goBack() {
       this.$router.go(-1)
+    },
+    initArticle(article) {
+      this.title = article.title
+      this.date = article.date
+      this.content = article.content
+      this.gist = article.gist
+      this.category = article.category
     }
   }
 }

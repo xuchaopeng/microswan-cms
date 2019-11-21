@@ -74,9 +74,9 @@ export default [
         meta: {
           icon: "ios-book",
           title: "文章更新",
-          hideInBread:true,
-          hideInMenu:true,
-          notCache:true
+          hideInBread: true,
+          hideInMenu: true,
+          notCache: true
         },
         component: () => import("@/view/blog-management/update/index.vue")
       },
@@ -99,5 +99,46 @@ export default [
         component: () => import("@/view/blog-management/list/list.vue")
       }
     ]
+  },
+  {
+    path: "/comment",
+    name: "commentManagement",
+    meta: {
+      icon: "md-albums",
+      title: "评论管理"
+    },
+    component: Main,
+    children: [
+      {
+        path: "/hotcomment",
+        name: "hotComment",
+        meta: {
+          icon: "ios-create-outline",
+          title: "热门评论"
+        },
+        component: () => import("@/view/comment/comment.vue")
+      }
+    ]
+  },
+  {
+    path: "/user-management",
+    name: "userManagement",
+    meta: {
+      icon: "md-albums",
+      title: "用户管理"
+    },
+    component: Main,
+    children: [
+      {
+        path: "/list",
+        name: "userList",
+        meta: {
+          icon: "ios-people-outline",
+          title: "用户列表"
+        },
+        component: () => import("@/view/user-management/user.vue")
+      }
+    ]
   }
+
 ];

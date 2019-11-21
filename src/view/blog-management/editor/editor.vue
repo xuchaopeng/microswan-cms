@@ -31,13 +31,14 @@
       </div>
 
       <div class="com_save">
-        <Button type="success" size="large">保存</Button>
+        <Button type="success" size="large" @click="saveDate">保存</Button>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
+import { saveArticle } from '@/api/article'
 export default {
   name: 'editor',
   data() {
@@ -74,6 +75,7 @@ export default {
       ]
     }
   },
+  mounted() {},
   methods: {
     getDate() {
       let mydate, y, m, d, hh, mm, ss
@@ -91,7 +93,40 @@ export default {
       if (ss < 10) ss = '0' + ss
       this.date = y + '-' + m + '-' + d + ' ' + hh + ':' + mm + ':' + ss
     },
-    saveArticle() {},
+    saveDate() {
+      let self = this
+      this.getDate()
+      let param = {
+        title: this.title,
+        date: this.date,
+        category: this.category,
+        gist: this.gist,
+        content: this.content
+      }
+      saveArticle(param)
+        .then(res => {
+          if (res.data.status == 1) {
+            self.$Message.success({
+              top: 500,
+              content: '发表文章成功',
+              duration: 1,
+              onClose: () => {
+                self.refreshArticleList()
+              }
+            })
+          }
+        })
+        .catch(res => {
+          self.$Message.success({
+            top: 500,
+            content: '发表失败',
+            duration: 1
+          })
+        })
+    },
+    refreshArticleList: function() {
+      this.$router.push('/article')
+    },
     goBack() {}
   }
 }

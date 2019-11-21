@@ -1,84 +1,87 @@
-import axios from '@/libs/api.request'
+import axios from "@/libs/api.request";
 
 export const login = ({ userName, password }) => {
   const data = {
-    userName,
+    name: userName,
     password
-  }
+  };
   return axios.request({
-    url: 'login',
+    url: "/api/admin/signIn",
     data,
-    method: 'post'
-  })
-}
+    method: "post"
+  });
+};
 
-export const getUserInfo = (token) => {
+export const getUserInfo = (token, user_name) => {
+  const data = {
+    token,
+    user_name
+  };
   return axios.request({
-    url: 'get_info',
-    params: {
-      token
-    },
-    method: 'get'
-  })
-}
+    url: "/api/admin/checkUser",
+    data,
+    method: "post"
+  });
+};
 
-export const logout = (token) => {
+export const logout = token => {
   return axios.request({
-    url: 'logout',
-    method: 'post'
-  })
-}
+    url: "/api/admin/signOut",
+    data: { token },
+    method: "post"
+  });
+};
 
 export const getUnreadCount = () => {
   return axios.request({
-    url: 'message/count',
-    method: 'get'
-  })
-}
+    url: "message/count",
+    method: "get"
+  });
+};
 
 export const getMessage = () => {
   return axios.request({
-    url: 'message/init',
-    method: 'get'
-  })
-}
+    url: "message/init",
+    method: "get"
+  });
+};
 
 export const getContentByMsgId = msg_id => {
   return axios.request({
-    url: 'message/content',
-    method: 'get',
+    url: "message/content",
+    method: "get",
     params: {
       msg_id
     }
-  })
-}
+  });
+};
 
 export const hasRead = msg_id => {
   return axios.request({
-    url: 'message/has_read',
-    method: 'post',
+    url: "message/has_read",
+    method: "post",
     data: {
       msg_id
     }
-  })
-}
+  });
+};
 
 export const removeReaded = msg_id => {
   return axios.request({
-    url: 'message/remove_readed',
-    method: 'post',
+    url: "message/remove_readed",
+    method: "post",
     data: {
       msg_id
     }
-  })
-}
+  });
+};
 
 export const restoreTrash = msg_id => {
   return axios.request({
-    url: 'message/restore',
-    method: 'post',
+    url: "message/restore",
+    method: "post",
     data: {
       msg_id
     }
-  })
-}
+  });
+};

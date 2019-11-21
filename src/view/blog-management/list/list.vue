@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { getArticleList, deleteArticle } from '@/api/article'
 export default {
   data() {
     return {
@@ -42,7 +43,7 @@ export default {
         },
         {
           title: '摘要',
-          key: 'sum'
+          key: 'gist'
         },
         {
           title: '分类',
@@ -59,53 +60,43 @@ export default {
           align: 'center'
         }
       ],
-      data: [
-        {
-          title: 'John Brown',
-          date: '2019-11-19',
-          sum: '明世隐二技能的冷却',
-          classify: 'Youxi',
-          readtimes: '10',
-          _id: 'abcsf23'
-        },
-        {
-          title: 'Hi Gilrl',
-          date: '2019-11-19',
-          sum: '刘禅的萎缩',
-          classify: 'Youxi',
-          readtimes: '10',
-          _id: 'abcsf24'
-        },
-        {
-          title: 'WZJ',
-          date: '2018-08-19',
-          sum: '团控技能的重要性',
-          classify: 'Youxi',
-          readtimes: '10',
-          _id: 'abcsf25'
-        },
-        {
-          title: 'HUli',
-          date: '2018-06-01',
-          sum: '阿狸的爆发，吓死你',
-          classify: 'Youxi',
-          readtimes: '10',
-          _id: 'abcsf26'
-        }
-      ],
+      data: [],
       isAlert: false,
       currentItem: null
     }
   },
+  mounted() {
+    //获取文章列表
+    getArticleList().then(res => {
+      if (res) {
+        const list = this.detalData(res.data)
+        this.data = list.reverse()
+      }
+    })
+  },
   methods: {
-    addArticle() {},
+    detalData(data) {
+      return data.map(item => {
+        return {
+          title: item.title,
+          date: item.date,
+          gist: item.gist,
+          classify: item.category.join('、 '),
+          readtimes: item.readtimes || 10,
+          _id: item._id
+        }
+      })
+    },
+    addArticle() {
+      this.$router.push('/editor')
+    },
     showArticle(id) {
       //线上地址
     },
     editorArticle(id) {
       this.$router.push('/editor/' + id)
     },
-    removeArticle(index, row) {
+    removeArticle(row, index) {
       if (this.isAlert) return
       this.isAlert = true
       this.currentItem = Object.assign({}, row, { index })
@@ -116,18 +107,30 @@ export default {
     },
     continueDelete() {
       const self = this
-      setTimeout(function() {
-        self.isAlert = false
-        self.$Message.success({
-          top: 250,
-          content: '成功删除',
-          duration: 2,
-          onClose: () => {
-            self.data.splice(self.currentItem.index, 1)
-            self.currentItem = null
-          }
+      deleteArticle({ _id: this.currentItem._id })
+        .then(res => {
+          self.isAlert = false
+          self.$Message.success({
+            top: 250,
+            content: '成功删除',
+            duration: 2,
+            onClose: () => {
+              self.data.splice(self.currentItem.index, 1)
+              self.currentItem = null
+            }
+          })
         })
-      })
+        .catch(err => {
+          self.isAlert = false
+          self.$Message.error({
+            top: 250,
+            content: '删除失败',
+            duration: 2,
+            onClose: () => {
+              self.currentItem = null
+            }
+          })
+        })
     }
   }
 }
