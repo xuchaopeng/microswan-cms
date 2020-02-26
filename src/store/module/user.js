@@ -14,8 +14,8 @@ import { setToken, getToken } from "@/libs/util";
 export default {
   state: {
     userName: "",
-    userId: "",
-    avatorImgPath: "",
+    policeNum: "",
+    departmentId: "",
     token: getToken(),
     access: "",
     hasGetInfo: false,
@@ -26,14 +26,14 @@ export default {
     messageContentStore: {}
   },
   mutations: {
-    setAvator(state, avatorPath) {
-      state.avatorImgPath = avatorPath;
-    },
-    setUserId(state, id) {
-      state.userId = id;
+    setPoliceNum(state, id) {
+      state.policeNum = id;
     },
     setUserName(state, name) {
       state.userName = name;
+    },
+    setDepartmentId(state, id) {
+      state.departmentId = id;
     },
     setAccess(state, access) {
       state.access = access;
@@ -70,7 +70,8 @@ export default {
   getters: {
     messageUnreadCount: state => state.messageUnreadList.length,
     messageReadedCount: state => state.messageReadedList.length,
-    messageTrashCount: state => state.messageTrashList.length
+    messageTrashCount: state => state.messageTrashList.length,
+    departmentId: state => state.departmentId
   },
   actions: {
     // 登录
@@ -82,11 +83,17 @@ export default {
           password
         })
           .then(res => {
-            const data = res.data;
-            if (data.type == "1") {
-              commit("setToken", data.token);
-              commit("setUserName", data.user_name);
-              resolve(data);
+            const s = res.data;
+            if (s && s.code == 200) {
+              const data = s.data ? s.data : {};
+              console.log(data, "bbbbbbbbb");
+              commit("setToken", data.username);
+              commit("setUserName", data.username);
+              commit("setPoliceNum", data.policeNum);
+              commit("setDepartmentId", data.departmentId);
+              commit("setAccess", data.permissions ? data.permissions : []);
+              commit("setHasGetInfo", true);
+              resolve(s);
             } else {
               reject();
             }
@@ -120,16 +127,17 @@ export default {
         try {
           getUserInfo(state.token, state.userName)
             .then(res => {
-              const data = res.data;
-              if (data.status == 0) {
-                reject(data);
+              const s = res.data;
+              console.log(data, "abc");
+              if (s.code !== 200) {
+                reject(s);
                 return;
               }
-              console.log(data, "用户信息");
-              commit("setAvator", data.avator);
-              commit("setUserName", data.name);
-              commit("setUserId", data._id);
-              commit("setAccess", []);
+              const data = s.data;
+              commit("setUserName", data.username);
+              commit("setPoliceNum", data.policeNum);
+              commit("setDepartmentId", data.departmentId);
+              commit("setAccess", data.permissions ? data.permissions : []);
               commit("setHasGetInfo", true);
               resolve(data);
             })

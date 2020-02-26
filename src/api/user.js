@@ -2,11 +2,11 @@ import axios from "@/libs/api.request";
 
 export const login = ({ userName, password }) => {
   const data = {
-    name: userName,
-    password
+    username: userName, //name
+    pwd: password
   };
   return axios.request({
-    url: "/api/admin/signIn",
+    url: "/api/user/login",
     data,
     method: "post"
   });
@@ -14,11 +14,11 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token, user_name) => {
   const data = {
-    token,
-    user_name
+    username: user_name,
+    pwd: token
   };
   return axios.request({
-    url: "/api/admin/checkUser",
+    url: "/api/user/login",
     data,
     method: "post"
   });
@@ -26,62 +26,24 @@ export const getUserInfo = (token, user_name) => {
 
 export const logout = token => {
   return axios.request({
-    url: "/api/admin/signOut",
+    url: "/api/user/logout",
     data: { token },
-    method: "post"
-  });
-};
-
-export const getUnreadCount = () => {
-  return axios.request({
-    url: "message/count",
     method: "get"
   });
 };
 
-export const getMessage = () => {
+export const userList = ({ departmentId, pageNo, pageSize }) => {
+  if (!pageSize) pageSize = 10;
+  if (!pageNo) pageNo = 1;
+  const data = {
+    departmentId,
+    pageNo,
+    pageSize
+  };
+  console.log(data, "list");
   return axios.request({
-    url: "message/init",
+    url: "/api/user/list",
+    data,
     method: "get"
-  });
-};
-
-export const getContentByMsgId = msg_id => {
-  return axios.request({
-    url: "message/content",
-    method: "get",
-    params: {
-      msg_id
-    }
-  });
-};
-
-export const hasRead = msg_id => {
-  return axios.request({
-    url: "message/has_read",
-    method: "post",
-    data: {
-      msg_id
-    }
-  });
-};
-
-export const removeReaded = msg_id => {
-  return axios.request({
-    url: "message/remove_readed",
-    method: "post",
-    data: {
-      msg_id
-    }
-  });
-};
-
-export const restoreTrash = msg_id => {
-  return axios.request({
-    url: "message/restore",
-    method: "post",
-    data: {
-      msg_id
-    }
   });
 };

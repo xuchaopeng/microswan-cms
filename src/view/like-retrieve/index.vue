@@ -1,5 +1,5 @@
 <template>
-  <div class="user">评论管理 待开发中....</div>
+  <div class="user">人像库检索 待开发中....</div>
 </template>
 
 <script>

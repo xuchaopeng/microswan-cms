@@ -51,94 +51,128 @@ export default [
     ]
   },
   {
-    path: "/blog-management",
-    name: "blogManagement",
+    path: "/alarm-push",
+    name: "alarmPush",
     meta: {
-      icon: "md-albums",
-      title: "博客管理"
+      icon: "_tuisong1",
+      title: "报警推送"
     },
     component: Main,
     children: [
       {
-        path: "/editor",
-        name: "editorCms",
+        path: "/realtimepush",
+        name: "realTimePush",
         meta: {
-          icon: "ios-book",
-          title: "文章编辑"
+          icon: "_tuisong",
+          title: "实时推送"
         },
-        component: () => import("@/view/blog-management/editor/editor.vue")
+        component: () => import("@/view/alarm-push/realtime-push/index.vue")
       },
       {
-        path: "/editor/:id",
-        name: "editorUpdate",
-        meta: {
-          icon: "ios-book",
-          title: "文章更新",
-          hideInBread: true,
-          hideInMenu: true,
-          notCache: true
-        },
-        component: () => import("@/view/blog-management/update/index.vue")
-      },
-      {
-        path: "/classification",
-        name: "classificationCms",
+        path: "/allalarm",
+        name: "allAlarm",
         meta: {
           icon: "ios-paper",
-          title: "分类管理"
+          title: "所有报警"
         },
-        component: () => import("@/view/blog-management/class/index.vue")
+        component: () => import("@/view/alarm-push/all-alarm/index.vue")
       },
       {
-        path: "/article",
-        name: "articleCms",
+        path: "/allsnap",
+        name: "allSnap",
         meta: {
-          icon: "ios-albums",
-          title: "文章管理"
+          icon: "_ai14",
+          title: "所有抓拍"
         },
-        component: () => import("@/view/blog-management/list/list.vue")
+        component: () => import("@/view/alarm-push/all-snap/index.vue")
       }
     ]
   },
   {
-    path: "/comment",
-    name: "commentManagement",
+    path: "/like-retrieve",
+    name: "likeRetrieve",
     meta: {
-      icon: "md-albums",
-      title: "评论管理"
+      icon: "_renlianjiansuo",
+      title: "人像检索"
     },
     component: Main,
     children: [
       {
-        path: "/hotcomment",
-        name: "hotComment",
+        path: "/retrieve",
+        name: "retrieve",
         meta: {
-          icon: "ios-create-outline",
-          title: "热门评论"
+          icon: "_renlianjiansuo",
+          title: "人像库检索"
         },
-        component: () => import("@/view/comment/comment.vue")
+        component: () => import("@/view/like-retrieve/index.vue")
       }
     ]
   },
   {
-    path: "/user-management",
-    name: "userManagement",
+    path: "/resource-management",
+    name: "resourceManagement",
     meta: {
       icon: "md-albums",
-      title: "用户管理"
+      title: "资源管理"
     },
     component: Main,
     children: [
       {
-        path: "/list",
-        name: "userList",
+        path: "/likelibrary",
+        name: "likeLibrary",
         meta: {
-          icon: "ios-people-outline",
-          title: "用户列表"
+          icon: "_guanli1",
+          title: "人像库管理"
         },
-        component: () => import("@/view/user-management/user.vue")
+        component: () => import("@/view/resource-management/index.vue")
+      }
+    ]
+  },
+  {
+    path: "/system-management",
+    name: "systemManagement",
+    meta: {
+      icon: "md-albums",
+      title: "系统管理"
+    },
+    component: Main,
+    children: [
+      {
+        path: "/department",
+        name: "bdManagement",
+        meta: {
+          icon: "_bumen",
+          title: "部门管理"
+        },
+        component: () => import("@/view/system-management/department.vue")
+      },
+      {
+        path: "/user",
+        name: "userManagement",
+        meta: {
+          icon: "_iconrenxiang",
+          title: "用户管理"
+        },
+        component: () => import("@/view/system-management/user.vue")
+      },
+      {
+        path: "/role",
+        name: "roleManagement",
+        meta: {
+          icon: "_jiaose",
+          title: "角色管理"
+        },
+        component: () => import("@/view/system-management/role.vue")
+      },
+      {
+        path: "/log",
+        name: "logManagement",
+        meta: {
+          icon: "_rizhi",
+          title: "系统日志"
+        },
+        component: () => import("@/view/system-management/log.vue")
       }
     ]
   }
-
 ];

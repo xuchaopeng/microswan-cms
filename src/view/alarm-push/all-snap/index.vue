@@ -1,5 +1,5 @@
 <template>
-  <div>Class</div>
+  <div>所有抓拍</div>
 </template>
 
 <script>

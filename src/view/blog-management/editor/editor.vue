@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import { saveArticle } from '@/api/article'
+import { saveArticle } from '@/api/article';
+
 export default {
   name: 'editor',
   data() {
@@ -48,31 +49,7 @@ export default {
       gist: '',
       content: '',
       category: [],
-      categorys: [
-        'JavaScript',
-        'ES6',
-        'jQuery',
-        'css',
-        'ajax',
-        'http',
-        'https',
-        'websocket',
-        'apache',
-        'Vue',
-        'react',
-        'react-native',
-        'android',
-        'node',
-        'mongo',
-        'CentOS',
-        'webpack',
-        'NW.js',
-        'Electron',
-        'easyUI',
-        'ECharts',
-        'wx',
-        'HBuilder'
-      ]
+      categorys: ["CSS3","NodeJs","React","Git","HTML5","Mongodb","Music","Vue","Web存储","Javascript","webpack","SEO优化","Travel生活","算法","设计模式","Taro"]
     }
   },
   mounted() {},
