@@ -416,3 +416,11 @@ export const setTitle = (routeItem, vm) => {
   const resTitle = pageTitle ? `${title} - ${pageTitle}` : title;
   window.document.title = resTitle;
 };
+
+export const resetParam = o => {
+  let param = "";
+  for (var k in o) {
+    param += "&" + k + "=" + encodeURIComponent(o[k]);
+  }
+  return "?" + param.slice(1);
+};

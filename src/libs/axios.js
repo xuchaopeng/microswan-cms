@@ -26,8 +26,12 @@ class HttpRequest {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        //
-      }
+        contentType: "application/json; charset=utf-8"
+      },
+      xhrFields: {
+        withCredentials: true
+      },
+      crossDomain: true
     };
     return config;
   }

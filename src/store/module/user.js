@@ -15,9 +15,10 @@ export default {
   state: {
     userName: "",
     policeNum: "",
+    departmentName: "",
     departmentId: "",
     token: getToken(),
-    access: "",
+    permissions: "",
     hasGetInfo: false,
     unreadCount: 0,
     messageUnreadList: [],
@@ -35,8 +36,11 @@ export default {
     setDepartmentId(state, id) {
       state.departmentId = id;
     },
-    setAccess(state, access) {
-      state.access = access;
+    setDepartmentName(state, name) {
+      state.departmentName = name;
+    },
+    setPermissions(state, permissions) {
+      state.permissions = permissions;
     },
     setToken(state, token) {
       state.token = token;
@@ -71,7 +75,9 @@ export default {
     messageUnreadCount: state => state.messageUnreadList.length,
     messageReadedCount: state => state.messageReadedList.length,
     messageTrashCount: state => state.messageTrashList.length,
-    departmentId: state => state.departmentId
+    departmentId: state => state.departmentId,
+    permissions: state => state.permissions,
+    departmentName: state => state.departmentName
   },
   actions: {
     // 登录
@@ -91,7 +97,10 @@ export default {
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
               commit("setDepartmentId", data.departmentId);
-              commit("setAccess", data.permissions ? data.permissions : []);
+              commit(
+                "setPermissions",
+                data.permissions ? data.permissions : []
+              );
               commit("setHasGetInfo", true);
               resolve(s);
             } else {
@@ -109,7 +118,7 @@ export default {
         logout(state.token)
           .then(() => {
             commit("setToken", "");
-            commit("setAccess", []);
+            commit("setPermissions", []);
             resolve();
           })
           .catch(err => {
@@ -117,7 +126,7 @@ export default {
           });
         // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
         // commit('setToken', '')
-        // commit('setAccess', [])
+        // commit('setPermissions', [])
         // resolve()
       });
     },
@@ -137,7 +146,10 @@ export default {
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
               commit("setDepartmentId", data.departmentId);
-              commit("setAccess", data.permissions ? data.permissions : []);
+              commit(
+                "setPermissions",
+                data.permissions ? data.permissions : []
+              );
               commit("setHasGetInfo", true);
               resolve(data);
             })

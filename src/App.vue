@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -11,11 +11,18 @@ export default {
 </script>
 
 <style lang="less">
-.size{
+.ivu-message {
+  width: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  // margin-top: -200px;
+}
+.size {
   width: 100%;
   height: 100%;
 }
-html,body{
+html,
+body {
   .size;
   overflow: hidden;
   margin: 0;

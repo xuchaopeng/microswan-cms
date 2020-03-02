@@ -1,4 +1,5 @@
 import axios from "@/libs/api.request";
+import { resetParam } from "@/libs/util";
 
 export const login = ({ userName, password }) => {
   const data = {
@@ -14,8 +15,8 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token, user_name) => {
   const data = {
-    username: user_name,
-    pwd: token
+    username: "admin",
+    pwd: "12345678"
   };
   return axios.request({
     url: "/api/user/login",
@@ -25,9 +26,11 @@ export const getUserInfo = (token, user_name) => {
 };
 
 export const logout = token => {
+  let param = {
+    token
+  };
   return axios.request({
-    url: "/api/user/logout",
-    data: { token },
+    url: "/api/user/logout" + resetParam(param),
     method: "get"
   });
 };
@@ -35,15 +38,13 @@ export const logout = token => {
 export const userList = ({ departmentId, pageNo, pageSize }) => {
   if (!pageSize) pageSize = 10;
   if (!pageNo) pageNo = 1;
-  const data = {
+  const param = {
     departmentId,
     pageNo,
     pageSize
   };
-  console.log(data, "list");
   return axios.request({
-    url: "/api/user/list",
-    data,
+    url: "/api/user/list" + resetParam(param),
     method: "get"
   });
 };

@@ -1,18 +1,576 @@
 <template>
-  <div class="user">角色管理 待开发中....</div>
+  <div class="role">
+    <Row :gutter="15">
+      <Col span="8">
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
+      </Col>
+      <Col span="16">
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
+        </p>
+        <Table :columns="column" :data="tabdata">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button></Button>
+            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        </div>
+      </div>
+      </Col>
+    </Row>
+    <div class="subtable" v-if="tk.sv">
+      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+      <div v-show="tk.add">
+        <p class="subtitle">添加角色</p>
+        <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+          <FormItem prop="name" label="角色名称">
+            <Input v-model="from.name"></Input>
+          </FormItem>
+          <FormItem prop="name" label="角色描述">
+            <Input v-model="from.description"></Input>
+          </FormItem>
+          <FormItem>
+            <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
+              <span v-if="!tk.loading">立即保存</span>
+              <span v-else>保存中...</span>
+            </Button>
+          </FormItem>
+        </Form>
+      </div>
+      <div v-show="tk.del">
+        <p class="subtitle">确认删除该角色吗?</p>
+        <p>{{currentRole.name}}</p>
+        <p class="dels">
+          <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+          <Button @click="closeBtn" type="warning">取消</Button>
+        </p>
+      </div>
+      <div v-show="tk.dis">
+        <p class="subtitle">编辑描述</p>
+        <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
+          <p>名称：{{currentRole.name}}</p>
+          <FormItem prop="name" label="描述">
+            <Input v-model="editorFrom.description"></Input>
+          </FormItem>
+          <FormItem>
+            <Button @click="editorSubmit" type="primary" :loading="tk.loading" long>
+              <span v-if="!tk.loading">立即保存</span>
+              <span v-else>保存中...</span>
+            </Button>
+          </FormItem>
+        </Form>
+      </div>
+      <div v-show="tk.pms" class="pmscnt">
+        <p class="subtitle">修改权限</p>
+        <div class="clearfix mrb10">
+          <span class="fl mr5">名称：</span><span class="fl">{{currentRole.name}}</span></div>
+        <div class="clearfix">
+          <span class="fl">权限：</span>
+          <div class="pmist fl">
+            <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
+          </div>
+        </div>
+        <p class="savepms"><Button @click="pmsSubmit" type="primary">保存</Button></p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import { getDepartmentTree, addRole, getRoleList, deleteRole, showPermissions } from '@/api/system';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
+//树形节点 设置disabled
 export default {
   data() {
-    return {}
+    return {
+      //弹框显示、关闭
+      tk: {
+        sv: '',
+        add: '',
+        editor: '',
+        del: '',
+        loading: false
+      },
+      //当前选中部门
+      currentDm: {
+        name: '',
+        id: ''
+      },
+      //操作当前角色
+      currentRole: {
+        name: '',
+        id: '',
+        description: '',
+        permissions: null //当前角色修改后的权限
+      },
+      //左侧部门列表
+      dmlist: [{}],
+      //右侧分页部门列表
+      tabdata: [],
+      column: [
+        {
+          title: '角色名称',
+          key: 'name'
+        },
+        {
+          title: '描述',
+          key: 'description'
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          key: 'cz'
+        }
+      ],
+      //部门列表数据总数量
+      totalCount: 1,
+      //角色添加，表单提交
+      from: {
+        name: '',
+        description: ''
+      },
+      rule: {
+        name: { required: true, message: '角色名称不能为空', trigger: 'blur' },
+        description: { required: false }
+      },
+      //角色描述编辑，表单提交
+      editorFrom: {
+        name: '',
+        description: ''
+      },
+      editorRule: {
+        name: { required: false, trigger: 'blur' },
+        permissions: { required: false, trigger: 'blur' }
+      },
+      //角色权限编辑
+      permissionsList: []
+    }
+  },
+  mounted() {
+    this.getTreeData();
+  },
+  computed: {
+    ...mapGetters(['departmentId'])
+  },
+  methods: {
+    //关闭小编辑弹窗
+    closeBtn() {
+      this.tk.sv = false;
+    },
+    //更新部门树数据
+    upDmList(a) {
+      //如果用户当前未选中任何部门，这里默认为最高级部门
+      if (!this.currentDm.id) this.currentDm.id = a.id;
+      let index = 1;
+      //渲染部门树数据
+      function getTree(tree = []) {
+        let arr = [];
+        if (!!tree && tree.length !== 0) {
+          tree.forEach(item => {
+            let obj = {};
+            obj.title = item.name;
+            obj.expand = index < 2 ? true : false;
+            obj.id = item.id;
+            obj.parentId = item.parentId;
+            obj.children = getTree(item.children);
+            arr.push(obj);
+          });
+          ++index;
+        }
+        return arr;
+      }
+      const b = getTree([a]);
+      this.dmlist.pop();
+      this.dmlist.push(b[0]);
+    },
+    //更新权限树数据
+    upPmsData(a) {
+      let obj = {
+        title: '权限设置',
+        expand: true,
+        disabled: true,
+        children: []
+      }
+      a.forEach(em => {
+        let e = {};
+        e.title = em.groupName;
+        e.group = 1;
+        e.children = [];
+        if (em.permissionVOS && em.permissionVOS.length) {
+          em.permissionVOS.forEach(pm => {
+            e.children.push({
+              title: pm.name,
+              expand: true,
+              id: pm.id,
+              checked: pm.checked
+            })
+          });
+        }
+        if (e.children.length == 0) e.disabled = true;
+        obj.children.push(e);
+      });
+      this.permissionsList.pop();
+      this.permissionsList.push(obj);
+    },
+    //获取部门树数据
+    getTreeData() {
+      getDepartmentTree(this.departmentId).then(res => {
+        let data = null;
+        const r = res.data;
+        if (r.code == 200 && r.data) {
+          data = r.data;
+          this.upDmList(data);
+        }
+      }).catch(res => { })
+    },
+    //切换页面
+    changePage(pageNo) {
+      this.pageNo = pageNo;
+      this.renderList();
+    },
+    //展现右侧角色列表
+    renderList() {
+      if (!this.currentDm.name || !this.currentDm.id) return;
+      let param = {
+        name: this.currentDm.name,
+        departmentId: this.currentDm.id,
+        pageNo: this.pageNo
+      }
+      getRoleList(param).then(res => {
+        let r = res.data;
+        console.log(res, '角色列表');
+        if (r.code == 200) {
+          const page = r.data.pageContent;
+          const len = this.tabdata.length;
+          if (page) {
+            this.tabdata.splice(0, len);
+            page.forEach(em => {
+              this.tabdata.push(em);
+            });
+            this.totalCount = r.data.totalCount;
+          }
+        }
+      });
+    },
+    //当前部门被选择
+    selectDepartment(item) {
+      if (!item || !item[0]) return;
+      this.currentDm.id = item[0].id;
+      this.currentDm.name = item[0].title;
+      this.renderList();
+    },
+    //添加新角色
+    addNewRole() {
+      if (!this.currentDm.name) {
+        this.$Message.success({
+          content: '请选择一个部门',
+          duration: 1.5,
+          closable: true
+        });
+        return;
+      }
+      //弹框提示操作
+      this.tk.sv = true;
+      this.tk.del = false;
+      this.tk.pms = false;
+      this.tk.add = true;
+    },
+    //修改角色权限
+    editorRole(row) {
+      if (!row) return;
+      this.currentRole.id = row.id;
+      this.currentRole.name = row.name;
+      this.currentRole.description = row.description;
+      //弹框提示操作
+      this.tk.sv = true;
+      this.tk.del = false;
+      this.tk.add = false;
+      this.tk.pms = true;
+      //获取所有可选角色权限
+      this.getPermissionsData();
+    },
+    //修改角色描述
+    editorDis(row) { },
+
+    //获取角色权限数组
+    getPermissionsData() {
+      const id = this.currentRole.id;
+      showPermissions(id).then(res => {
+        console.log(res, '有可选角色权限')
+        let r = res.data;
+        if (r.code == 200) {
+          this.upPmsData(r.data);
+        }
+      })
+    },
+    //删除角色
+    removeRole(row) {
+      if (!row) return;
+      this.currentRole.id = row.id;
+      this.currentRole.name = row.name;
+      this.currentRole.description = row.description;
+      //弹框提示操作
+      this.tk.sv = true;
+      this.tk.del = true;
+      this.tk.pms = false;
+      this.tk.add = false;
+    },
+    /**
+     * 接口调取成功响应
+     * v  1为角色增加成功  2为角色删除成功 3为角色编辑成功
+    */
+    upSuccess(v) {
+      if (v == 1) {
+        this.tk.loading = false;
+        this.tk.sv = false;
+        this.tk.add = false;
+        this.from.name = '';
+        this.from.description = '';
+        this.$Message.success({
+          content: '角色添加成功',
+          duration: 1.5,
+          closable: true
+        });
+      }
+
+      if (v == 2) {
+        this.tk.sv = false;
+        this.tk.del = false;
+        this.$Message.success({
+          content: '角色删除成功',
+          duration: 1.5,
+          closable: true
+        });
+      }
+      this.renderList();
+    },
+    /** 
+    * v  1为角色增加失败  2为角色删除失败 3为角色编辑失败
+   */
+    upError(v) {
+      if (v == 1) {
+        this.tk.loading = false;
+        this.tk.sv = false;
+        this.tk.add = false;
+        this.from.name = '';
+        this.from.description = '';
+        this.$Message.error({
+          content: '角色保存失败',
+          duration: 1.5,
+          closable: true
+        })
+      }
+
+      if (v == 2) {
+        this.tk.sv = false;
+        this.tk.del = false;
+        this.$Message.error({
+          content: '角色删除失败',
+          duration: 1.5,
+          closable: true
+        })
+      }
+    },
+    //删除提交
+    delSubmit() {
+      if (!this.currentRole.id) return;
+      deleteRole(this.currentRole.id).then(res => {
+        if (res.data.code == 200) this.upSuccess(2);
+        else this.upError(2);
+      }).catch(err => { this.upError(2); })
+    },
+    //保存提交
+    addSubmit() {
+      this.$refs['saveFrom'].validate(valid => {
+        if (valid) {
+          this.tk.loading = true;
+          let param = {
+            name: this.from.name,
+            departmentId: this.currentDm.id,
+            description: this.from.description
+          }
+          addRole(param).then(res => {
+            console.log(res, '角色添加成功');
+            if (res.data.code == 200) this.upSuccess(1);
+            else this.upError(1);
+          }).catch(err => { this.upError(1); })
+        }
+      })
+    },
+    //修改提交
+    editorSubmit() {
+      if (!this.currentRole.id) return;
+    },
+    //权限提交
+    pmsSubmit() { },
+    //修改权限
+    checkPermission(em, ary) {
+      const pms = em.filter(m => {
+        m
+      })
+      this.currentRole.permissions = em.slice(0);
+      console.log(em, '当前权限设置数据', ary)
+    }
   }
 }
 </script>
 
-<style lang="less" scoped>
-.user {
-  font-size: 30px;
+<style lang="less">
+.role {
+  font-size: 18px;
   text-align: center;
+  position: relative;
+  .subtable {
+    position: fixed;
+    width: 440px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 180px;
+    z-index: 10;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dcdee2;
+    background-color: #fff;
+
+    .subtitle {
+      padding: 10px 0;
+      position: relative;
+      text-align: center;
+    }
+    .pmscnt {
+      text-align: left;
+      padding: 10px;
+      .ivu-tree {
+        ul {
+          font-size: 16px;
+          text-align: left;
+        }
+      }
+      .pmist {
+        width: 300px;
+        height: 220px;
+        overflow-y: scroll;
+        background: #f4f4f4;
+        border: 1px solid #dfdfdfcc;
+      }
+      .savepms {
+        padding: 10px 0 10px 50px;
+      }
+    }
+    .close {
+      position: absolute;
+      right: 0;
+      top: 5px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .dels {
+      padding: 20px 0;
+      .ivu-btn-warning {
+        width: 80px;
+      }
+    }
+  }
+  .addbtn {
+    text-align: left;
+    margin-bottom: 15px;
+    .ivu-btn-large {
+      font-size: 16px;
+    }
+  }
+  .ivu-form {
+    .ivu-form-item-label {
+      width: 20%;
+      float: left;
+      font-size: 14px;
+    }
+    .ivu-form-item-content {
+      width: 80%;
+      float: right;
+    }
+    .ivu-btn-primary {
+      margin-top: 20px;
+      width: 50%;
+      float: left;
+    }
+  }
+  .comcss {
+    min-height: 300px;
+    background-color: #fff;
+  }
+  .dmcons {
+    padding: 10px;
+  }
+  .tbs {
+    .ivu-tree {
+      ul {
+        font-size: 16px;
+        text-align: left;
+      }
+    }
+  }
+  .iconfont {
+    font-size: 20px !important;
+    &.icon-icon_huabanfuben {
+      font-size: 24px !important;
+    }
+  }
+  .actions {
+    font-size: 16px;
+    overflow: hidden;
+    line-height: 33px;
+  }
+  .ivu-icon {
+    margin-right: 5px;
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+  .mr5 {
+    margin-right: 5px;
+  }
+  .mrb10 {
+    margin-bottom: 10px;
+  }
+  .fl {
+    float: left;
+  }
+  .fr {
+    float: right;
+  }
+  .p5 {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .tl {
+    text-align: left;
+  }
+  .clearfix {
+    overflow: hidden;
+  }
+  .pages {
+    padding: 15px;
+    font-size: 14px;
+    overflow: hidden;
+    background-color: #fff;
+    .ivu-page {
+      float: right;
+    }
+  }
 }
 </style>
