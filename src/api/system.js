@@ -115,4 +115,65 @@ export const showPermissions = id => {
   });
 };
 
+export const updateRole = ({ id, description }) => {
+  let data = {
+    id,
+    description
+  };
+  return axios.request({
+    url: "/api/role/update",
+    data,
+    method: "post"
+  });
+};
+
 //用户管理
+
+export const getUserList = ({ departmentId, pageNo = 1, pageSize = 10 }) => {
+  let param = {
+    departmentId,
+    pageNo,
+    pageSize
+  };
+  return axios.request({
+    url: "/api/user/list" + resetParam(param),
+    method: "get"
+  });
+};
+
+export const addUser = ({ departmentId, policeNum, pwd, roleId, username }) => {
+  let data = {
+    departmentId,
+    policeNum,
+    pwd,
+    roleId,
+    username
+  };
+  return axios.request({
+    url: "/api/user/add",
+    data,
+    method: "post"
+  });
+};
+
+export const deleteUser = id => {
+  let param = {
+    id
+  };
+  return axios.request({
+    url: "/api/user/delete" + resetParam(param),
+    method: "get"
+  });
+};
+
+export const updateUser = ({ id, roleId }) => {
+  let data = {
+    id,
+    roleId
+  };
+  return axios.request({
+    url: "/api/user/update",
+    data,
+    method: "post"
+  });
+};
