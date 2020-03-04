@@ -1,5 +1,7 @@
 <template>
-  <div class="user">系统日志 待开发中....</div>
+  <div class="user">系统日志 待开发中....
+  </div>
+
 </template>
 
 <script>

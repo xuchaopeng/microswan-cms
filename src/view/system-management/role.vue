@@ -21,7 +21,7 @@
         <Table :columns="column" :data="tabdata" no-data-text="暂无角色">
           <template slot-scope="{ row, index }" slot="action">
             <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button></Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
             <Button type="error" size="small" @click="removeRole(row)">删除</Button>
           </template>
         </Table>
@@ -258,7 +258,6 @@ export default {
       }
       getRoleList(param).then(res => {
         let r = res.data;
-        console.log(res, '角色列表');
         if (r.code == 200) {
           const page = r.data.pageContent;
           const len = this.tabdata.length;
@@ -283,7 +282,6 @@ export default {
     getPermissionsData() {
       const id = this.currentRole.id;
       showPermissions(id).then(res => {
-        console.log(res, '有可选角色权限')
         let r = res.data;
         if (r.code == 200) {
           this.upPmsData(r.data);
@@ -466,7 +464,6 @@ export default {
             description: this.from.description
           }
           addRole(param).then(res => {
-            console.log(res, '角色添加成功');
             if (res.data.code == 200) this.upSuccess(1);
             else this.upError(1);
           }).catch(err => { this.upError(1); })

@@ -141,6 +141,16 @@ export const getUserList = ({ departmentId, pageNo = 1, pageSize = 10 }) => {
   });
 };
 
+export const getListRoleOptions = departmentId => {
+  let param = {
+    departmentId
+  };
+  return axios.request({
+    url: "/api/user/listRoleOptions" + resetParam(param),
+    method: "get"
+  });
+};
+
 export const addUser = ({ departmentId, policeNum, pwd, roleId, username }) => {
   let data = {
     departmentId,

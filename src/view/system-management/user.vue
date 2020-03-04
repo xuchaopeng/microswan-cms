@@ -16,12 +16,11 @@
       <Col span="16">
       <div class="dmcons comcss">
         <p class="addbtn">
-          <Button type="success" size="large" @click="addNewRole">+添加新用户</Button>
+          <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
         </p>
         <Table :columns="column" :data="tabdata" no-data-text="暂无用户">
           <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button></Button>
+            <Button class="mr10" type="primary" size="small" @click="editorUser(row)">更新</Button>
             <Button type="error" size="small" @click="removeRole(row)">删除</Button>
           </template>
         </Table>
@@ -33,20 +32,27 @@
     </Row>
     <div class="subtable" v-if="tk.sv">
       <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
-      <div v-show="tk.add">
+      <div class="pr10 adduser" v-show="tk.add">
         <p class="subtitle">添加用户</p>
         <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
-          <FormItem prop="name" label="用户名称">
+          <FormItem prop="username" label="用户名">
             <Input v-model="from.username"></Input>
           </FormItem>
-          <FormItem prop="description" label="编号">
+          <FormItem prop="pwd" label="密码">
+            <Input v-model="from.pwd" type="password"></Input>
+          </FormItem>
+          <FormItem prop="pwdCheck" label="确认密码">
+            <Input v-model="from.pwdCheck" type="password"></Input>
+          </FormItem>
+          <FormItem prop="policeNum" label="编号">
             <Input v-model="from.policeNum"></Input>
           </FormItem>
-          <FormItem prop="description" label="角色">
-            <Input v-model="from.roleId"></Input>
-          </FormItem>
-          <FormItem prop="description" label="密码">
-            <Input v-model="from.pwd"></Input>
+          <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
+            <Select v-model="from.roleId" style="width:200px" placeholder="请设置角色">
+              <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">
+                {{ item.name }}
+              </Option>
+            </Select>
           </FormItem>
           <FormItem>
             <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
@@ -58,41 +64,30 @@
       </div>
       <div v-show="tk.del">
         <p class="subtitle">确认删除该用户吗?</p>
-        <p>{{currentUser.name}}</p>
+        <p>{{currentUser.username}}</p>
         <p class="dels">
           <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
           <Button @click="closeBtn" type="warning">取消</Button>
         </p>
       </div>
-      <div class="discnt" v-show="tk.dis">
-        <p class="subtitle">编辑描述</p>
-        <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
-          <div class="clearfix mrb10">
-            <span class="fl mr5">名称：</span><span class="fl">{{currentUser.name}}</span>
-          </div>
-          <FormItem prop="name" label="描述：">
-            <Input v-model="editorFrom.description" type="textarea"></Input>
-          </FormItem>
-          <FormItem>
-            <Button @click="editorSubmit" type="primary" :loading="tk.loading" long>
-              <span v-if="!tk.loading">立即保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </FormItem>
-        </Form>
-      </div>
       <div class="pmscnt" v-show="tk.pms">
-        <p class="subtitle">修改权限</p>
-        <div class="clearfix mrb10">
-          <span class="fl mr5">名称：</span><span class="fl">{{currentUser.name}}</span></div>
-        <div class="clearfix">
-          <span class="fl">权限：</span>
-          <div class="pmist fl">
-            <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
-          </div>
+        <p class="subtitle">用户角色更新</p>
+        <div class="clearfix mrb20">
+          <span class="fl mr5">名称：</span><span class="fl">{{currentUser.username}}</span>
+        </div>
+        <div class="clearfix mrb20">
+          <span class="fl mr5">编号：</span><span class="fl">{{currentUser.policeNum}}</span>
+        </div>
+        <div class="clearfix mrb20">
+          <span class="fl mr5">角色：</span>
+          <Select v-model="from.roleId" style="width:200px;float:left;">
+            <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">
+              {{ item.name }}
+            </Option>
+          </Select>
         </div>
         <p class="savepms">
-          <Button @click="pmsSubmit" type="primary" :loading="tk.loading">
+          <Button @click="userUpdateSubmit" type="primary" :loading="tk.loading">
             <span v-if="!tk.loading">保存</span>
             <span v-else>保存中...</span>
           </Button>
@@ -103,11 +98,56 @@
 </template>
 
 <script>
-import { getDepartmentTree, addRole, getUserList, deleteRole, showPermissions, assignRole, updateRole } from '@/api/system';
+import { getDepartmentTree, addUser, getUserList, deleteUser, getListRoleOptions, updateUser } from '@/api/system';
 import { mapMutations, mapActions, mapGetters } from 'vuex';
 //树形节点 设置disabled
 export default {
   data() {
+    //用户名至少6位
+    const userCheck = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('用户名不能为空'));
+      } else if (value.length < 6) {
+        callback(new Error('用户名长度至少为6位'));
+      } else {
+        callback();
+      }
+    }
+    //密码至少为8位
+    const pwdPass = (rule, value, callback) => {
+      const reg = /^\w{8,17}$/;
+      if (value == '') {
+        callback(new Error('请输入密码'));
+      } else if (!reg.test(value)) {
+        callback(new Error('只能包含字母、数字和下划线，至少8位'));
+      } else {
+        if (this.from.pwdCheck !== '') {
+          this.$refs.saveFrom.validateField('pwdCheck');
+        }
+        callback();
+      }
+    }
+    //密码再次验证
+    const pwdCheck = (rule, value, callback) => {
+      const reg = /^\w{8,17}$/;
+      if (!value) {
+        callback(new Error('请确认密码'));
+      } else if (!reg.test(value)) {
+        callback(new Error('只能包含字母、数字和下划线，至少8位'));
+      } else if (value !== this.from.pwd) {
+        callback(new Error('两次密码输入不一致'));
+      } else {
+        callback();
+      }
+    }
+    //角色验证
+    const setRole = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请设置一个角色A'));
+      } else {
+        callback();
+      }
+    }
     return {
       //弹框显示、关闭
       tk: {
@@ -131,7 +171,7 @@ export default {
       },
       //左侧部门列表
       dmlist: [{}],
-      //右侧分页部门列表
+      //右侧分页用户列表
       tabdata: [],
       column: [
         {
@@ -155,25 +195,18 @@ export default {
         username: "",
         policeNum: "",
         pwd: "",
-        roleId: '',
+        pwdCheck: "",
+        roleId: "",
       },
       rule: {
-        username: { required: true, message: '用户名称不能为空', trigger: 'blur' },
-        policeNum: { required: true, message: '用户编号不能为空', trigger: 'blur' },
-        pwd: { required: true, message: '密码不能为空', trigger: 'blur' },
-        roleId: { required: true, message: '角色不能为空', trigger: 'blur' }
+        username: [{ required: true, validator: userCheck, trigger: 'blur' }],
+        policeNum: [{ required: true, message: '用户编号不能为空', trigger: 'blur' }],
+        pwd: [{ required: true, validator: pwdPass, trigger: 'blur' }],
+        pwdCheck: [{ required: true, validator: pwdCheck, trigger: 'blur' }],
+        roleId: [{ required: true, validator: setRole, trigger: 'change' }]
       },
-      //用户描述编辑，表单提交
-      editorFrom: {
-        name: '',
-        description: ''
-      },
-      editorRule: {
-        name: { required: false, trigger: 'blur' },
-        permissions: { required: false, trigger: 'blur' }
-      },
-      //用户权限编辑
-      permissionsList: []
+      //部门可选角色列表
+      roleListOptions: []
     }
   },
   mounted() {
@@ -186,6 +219,19 @@ export default {
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
+    },
+    //根据部门id 来获取角色选项
+    getListRole() {
+      getListRoleOptions(this.currentDm.id).then(res => {
+        let r = res.data
+        if (r.code == 200) {
+          const len = this.roleListOptions.length;
+          this.roleListOptions.splice(0, len);
+          r.data.forEach(m => {
+            this.roleListOptions.push(m);
+          })
+        } else { }
+      }).catch(err => { })
     },
     //更新部门树数据
     upDmList(a) {
@@ -213,35 +259,6 @@ export default {
       this.dmlist.pop();
       this.dmlist.push(b[0]);
     },
-    //更新权限树数据
-    upPmsData(a) {
-      let obj = {
-        title: '权限设置',
-        expand: true,
-        disabled: true,
-        children: []
-      }
-      a.forEach(em => {
-        let e = {};
-        e.title = em.groupName;
-        e.group = 1;
-        e.children = [];
-        if (em.permissionVOS && em.permissionVOS.length) {
-          em.permissionVOS.forEach(pm => {
-            e.children.push({
-              title: pm.name,
-              expand: true,
-              id: pm.id,
-              checked: pm.checked
-            })
-          });
-        }
-        if (e.children.length == 0) e.disabled = true;
-        obj.children.push(e);
-      });
-      this.permissionsList.pop();
-      this.permissionsList.push(obj);
-    },
     //获取部门树数据
     getTreeData() {
       getDepartmentTree(this.departmentId).then(res => {
@@ -268,7 +285,6 @@ export default {
       }
       getUserList(param).then(res => {
         let r = res.data;
-        console.log(res, '用户列表');
         if (r.code == 200) {
           const page = r.data.pageContent;
           const len = this.tabdata.length;
@@ -284,33 +300,15 @@ export default {
     },
     //当前部门被选择
     selectDepartment(item) {
+      console.log(item, '部门数据')
       if (!item || !item[0]) return;
       this.currentDm.id = item[0].id;
       this.currentDm.name = item[0].title;
       this.renderList();
     },
-    //获取用户权限数组
-    getPermissionsData() {
-      const id = this.currentUser.id;
-      showPermissions(id).then(res => {
-        console.log(res, '有可选用户权限')
-        let r = res.data;
-        if (r.code == 200) {
-          this.upPmsData(r.data);
-        }
-      })
-    },
-    //修改权限
-    checkPermission(em, ary) {
-      let pms = [];
-      em.forEach(m => {
-        if (typeof m.id !== 'undefined') pms.push(m.id)
-      });
-      this.currentUser.permissions = pms;
-    },
     /**
      * 接口调取成功响应
-     * v  1为用户增加成功  2为用户删除成功 3为用户编辑成功 4权限设置成功
+     * v  1为用户增加成功  2为用户删除成功 3用户更新角色成功
     */
     upSuccess(v) {
       this.tk.loading = false;
@@ -318,8 +316,9 @@ export default {
       switch (v) {
         case 1:
           this.tk.add = false;
-          this.from.name = '';
-          this.from.description = '';
+          for (var k in this.from) {
+            this.from[k] = '';
+          }
           this.$Message.success({
             content: '用户添加成功',
             duration: 1.5,
@@ -335,35 +334,28 @@ export default {
           });
           break;
         case 3:
-          this.tk.dis = false;
-          this.$Message.success({
-            content: '用户描述编辑成功',
-            duration: 1.5,
-            closable: true
-          });
-        case 4:
           this.tk.pms = false;
-          this.currentUser.permissions = '';
           this.$Message.success({
-            content: '权限设置成功',
+            content: '用户角色更新成功',
             duration: 1.5,
             closable: true
           });
           break;
       }
-      if (v !== 4) this.renderList();
+      if (v !== 3) this.renderList();
     },
-    /** 
-    * v  1为用户增加失败  2为用户删除失败 3为用户编辑失败 4权限设置失败
-   */
+    /**
+    * v  1为用户增加失败  2为用户删除失败 3用户更新角色失败
+    * */
     upError(v) {
       this.tk.loading = false;
       this.tk.sv = false;
       switch (v) {
         case 1:
           this.tk.add = false;
-          this.from.name = '';
-          this.from.description = '';
+          for (var k in this.from) {
+            this.from[k] = '';
+          }
           this.$Message.error({
             content: '用户保存失败',
             duration: 1.5,
@@ -379,18 +371,9 @@ export default {
           })
           break;
         case 3:
-          this.tk.dis = false;
-          this.$Message.error({
-            content: '用户描述编辑失败',
-            duration: 1.5,
-            closable: true
-          })
-          break;
-        case 4:
           this.tk.pms = false;
-          this.currentUser.permissions = '';
           this.$Message.error({
-            content: '权限设置失败',
+            content: '用户角色更新失败',
             duration: 1.5,
             closable: true
           })
@@ -398,7 +381,7 @@ export default {
       }
     },
     //添加新用户
-    addNewRole() {
+    addNewUser() {
       if (!this.currentDm.name) {
         this.$Message.success({
           content: '请选择一个部门',
@@ -412,55 +395,39 @@ export default {
       this.tk.del = false;
       this.tk.pms = false;
       this.tk.add = true;
-      this.tk.dis = false;
+      //获取对应部门角色
+      this.getListRole();
     },
     //修改用户权限
-    editorRole(row) {
+    editorUser(row) {
       if (!row) return;
       this.currentUser.id = row.id;
-      this.currentUser.name = row.name;
-      this.currentUser.description = row.description;
+      this.currentUser.username = row.username;
+      this.currentUser.policeNum = row.policeNum;
       //弹框提示操作
       this.tk.sv = true;
       this.tk.del = false;
       this.tk.add = false;
-      this.tk.dis = false;
       this.tk.pms = true;
       //获取所有可选用户权限
-      this.getPermissionsData();
-    },
-    //修改用户描述
-    editorDis(row) {
-      if (!row) return;
-      this.currentUser.id = row.id;
-      this.currentUser.name = row.name;
-      this.currentUser.description = row.description;
-      this.editorFrom.description = row.description;
-      //弹框提示操作
-      this.tk.sv = true;
-      this.tk.del = false;
-      this.tk.add = false;
-      this.tk.pms = false;
-      this.tk.dis = true;
+      this.getListRole();
     },
     //删除用户
     removeRole(row) {
       if (!row) return;
       this.currentUser.id = row.id;
-      this.currentUser.name = row.name;
-      this.currentUser.description = row.description;
+      this.currentUser.username = row.username;
+      this.currentUser.policeNum = row.policeNum;
       //弹框提示操作
       this.tk.sv = true;
       this.tk.del = true;
       this.tk.pms = false;
       this.tk.add = false;
-      this.tk.dis = false;
     },
-
     //删除提交
     delSubmit() {
       if (!this.currentUser.id) return;
-      deleteRole(this.currentUser.id).then(res => {
+      deleteUser(this.currentUser.id).then(res => {
         if (res.data.code == 200) this.upSuccess(2);
         else this.upError(2);
       }).catch(err => { this.upError(2); })
@@ -468,45 +435,36 @@ export default {
     //保存提交
     addSubmit() {
       this.$refs['saveFrom'].validate(valid => {
+        console.log(this.from, '新用户注册信息', valid);
         if (valid) {
           this.tk.loading = true;
           let param = {
-            name: this.from.name,
+            username: this.from.username,
             departmentId: this.currentDm.id,
-            description: this.from.description
+            policeNum: this.from.policeNum,
+            pwd: this.from.pwd,
+            roleId: this.from.roleId,
           }
-          addRole(param).then(res => {
-            console.log(res, '用户添加成功');
+          addUser(param).then(res => {
             if (res.data.code == 200) this.upSuccess(1);
             else this.upError(1);
           }).catch(err => { this.upError(1); })
         }
       })
     },
-    //修改提交
-    editorSubmit() {
-      if (!this.currentUser.id) return;
+    //用户更新提交
+    userUpdateSubmit() {
+      console.log(this.from.roleId, this.currentUser.id);
+      if (!this.from.roleId) return;
       let param = {
         id: this.currentUser.id,
-        description: this.editorFrom.description
-      }
-      updateRole(param).then(res => {
-        if (res.data.code == 200) this.upSuccess(3);
-        else this.upError(3);
-      }).catch(er => { this.upError(3); });
-    },
-    //权限提交 权限即改动必位数组
-    pmsSubmit() {
-      if (!this.currentUser.id || !this.currentUser.permissions) return;
-      let param = {
-        id: this.currentUser.id,
-        permissions: this.currentUser.permissions
+        roleId: this.from.roleId
       }
       this.tk.loading = true;
-      assignRole(param).then(res => {
-        if (res.data.code == 200) this.upSuccess(4);
-        else this.upError(4);
-      }).catch(err => { this.upError(4); })
+      updateUser(param).then(res => {
+        if (res.data.code == 200) this.upSuccess(3);
+        else this.upError(3);
+      }).catch(err => { this.upError(3); })
     }
   }
 }
@@ -529,11 +487,23 @@ export default {
     border-radius: 5px;
     border: 1px solid #dcdee2;
     background-color: #fff;
-
+    .ivu-select {
+      display: block;
+    }
     .subtitle {
       padding: 10px 0;
       position: relative;
       text-align: center;
+    }
+    .adduser {
+      .ivu-form-item {
+        margin-bottom: 40px;
+      }
+      .ivu-form {
+        .ivu-btn-primary {
+          margin-top: 0;
+        }
+      }
     }
     .pmscnt {
       text-align: left;
@@ -553,18 +523,6 @@ export default {
       }
       .savepms {
         padding: 10px 0 10px 50px;
-      }
-    }
-    .discnt {
-      padding: 10px;
-      text-align: left;
-      .ivu-form .ivu-form-item-label {
-        width: auto;
-        font-size: 18px;
-        padding-right: 5px;
-      }
-      .ivu-form .ivu-form-item-content {
-        float: left;
       }
     }
     .close {
@@ -642,6 +600,9 @@ export default {
   .mrb10 {
     margin-bottom: 10px;
   }
+  .mrb20 {
+    margin-bottom: 20px;
+  }
   .fl {
     float: left;
   }
@@ -658,6 +619,9 @@ export default {
   }
   .clearfix {
     overflow: hidden;
+  }
+  .pr10 {
+    padding-right: 10px;
   }
   .pages {
     padding: 15px;
