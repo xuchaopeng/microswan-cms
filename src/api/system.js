@@ -187,3 +187,29 @@ export const updateUser = ({ id, roleId }) => {
     method: "post"
   });
 };
+
+//日志管理
+export const getOperation = () => {
+  return axios.request({
+    url: "/api/log/listOperationOption",
+    method: "get"
+  });
+};
+
+export const getLogList = ({
+  departmentId,
+  operation,
+  pageNo = 1,
+  pageSize = 10
+}) => {
+  let param = {
+    departmentId,
+    operation,
+    pageNo,
+    pageSize
+  };
+  return axios.request({
+    url: "/api/log/list" + resetParam(param),
+    method: "get"
+  });
+};

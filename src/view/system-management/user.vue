@@ -300,7 +300,7 @@ export default {
     },
     //当前部门被选择
     selectDepartment(item) {
-      console.log(item, '部门数据')
+      // console.log(item, '部门数据')
       if (!item || !item[0]) return;
       this.currentDm.id = item[0].id;
       this.currentDm.name = item[0].title;
@@ -435,7 +435,7 @@ export default {
     //保存提交
     addSubmit() {
       this.$refs['saveFrom'].validate(valid => {
-        console.log(this.from, '新用户注册信息', valid);
+        // console.log(this.from, '新用户注册信息', valid);
         if (valid) {
           this.tk.loading = true;
           let param = {
@@ -454,7 +454,7 @@ export default {
     },
     //用户更新提交
     userUpdateSubmit() {
-      console.log(this.from.roleId, this.currentUser.id);
+      // console.log(this.from.roleId, this.currentUser.id);
       if (!this.from.roleId) return;
       let param = {
         id: this.currentUser.id,
