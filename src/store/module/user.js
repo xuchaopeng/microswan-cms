@@ -17,6 +17,7 @@ export default {
     policeNum: "",
     departmentName: "",
     departmentId: "",
+    departmentList: [],
     token: getToken(),
     permissions: "",
     hasGetInfo: false,
@@ -32,6 +33,9 @@ export default {
     },
     setUserName(state, name) {
       state.userName = name;
+    },
+    setDepartmentList(state, data) {
+      state.departmentList = data;
     },
     setDepartmentId(state, id) {
       state.departmentId = id;
@@ -77,7 +81,8 @@ export default {
     messageTrashCount: state => state.messageTrashList.length,
     departmentId: state => state.departmentId,
     permissions: state => state.permissions,
-    departmentName: state => state.departmentName
+    departmentName: state => state.departmentName,
+    departmentList: state => state.departmentList
   },
   actions: {
     // 登录

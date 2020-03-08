@@ -7,7 +7,7 @@ export default {
   allAlarm: "所有报警",
   allSnap: "所有抓拍",
   retrieve: "人像检索",
-  resourceManagement: "人像库管理",
+  resourceManagement: "资源管理",
   likeLibrary: "人像库管理",
   likeRetrieve: "人像检索",
   bdManagement: "部门管理",

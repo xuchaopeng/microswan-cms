@@ -15,7 +15,6 @@ export default {
   width: auto !important;
   top: 50% !important;
   left: 50% !important;
-  // margin-top: -200px;
 }
 .size {
   width: 100%;

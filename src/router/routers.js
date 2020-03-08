@@ -124,7 +124,7 @@ export default [
           icon: "_guanli1",
           title: "人像库管理"
         },
-        component: () => import("@/view/resource-management/index.vue")
+        component: () => import("@/view/resource-management/facelib.vue")
       }
     ]
   },

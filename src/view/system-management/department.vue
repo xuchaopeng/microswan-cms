@@ -8,7 +8,7 @@
             <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
           </span>
           <span class="fr">
-            <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" />
+            <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
             <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
             <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
           </span>
@@ -57,7 +57,7 @@
 
 <script>
 import { getDepartmentTree, addDepartment, delDepartment, getDepartmentList } from '@/api/system';
-import { mapMutations, mapActions, mapGetters } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 //树形节点 设置disabled
 export default {
   data() {
@@ -107,9 +107,10 @@ export default {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(['departmentId'])
+    ...mapGetters(['departmentId', 'departmentList'])
   },
   methods: {
+    ...mapMutations(['setDepartmentList']),
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
@@ -136,7 +137,7 @@ export default {
         }
         return arr;
       }
-      const b = getTree([a]);
+      const b = getTree(a);
       this.dmlist.pop();
       this.dmlist.push(b[0]);
     },
@@ -147,7 +148,9 @@ export default {
         const r = res.data;
         if (r.code == 200 && r.data) {
           data = r.data;
-          this.upDmList(data);
+          let list = [data];
+          this.upDmList(list);
+          this.setDepartmentList(list);
         }
       }).catch(res => { })
     },

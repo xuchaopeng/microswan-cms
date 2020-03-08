@@ -99,7 +99,7 @@
 
 <script>
 import { getDepartmentTree, addUser, getUserList, deleteUser, getListRoleOptions, updateUser } from '@/api/system';
-import { mapMutations, mapActions, mapGetters } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 //树形节点 设置disabled
 export default {
   data() {
@@ -213,9 +213,10 @@ export default {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(['departmentId'])
+    ...mapGetters(['departmentId', 'departmentList'])
   },
   methods: {
+    ...mapMutations(['setDepartmentList']),
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
@@ -255,18 +256,24 @@ export default {
         }
         return arr;
       }
-      const b = getTree([a]);
+      const b = getTree(a);
       this.dmlist.pop();
       this.dmlist.push(b[0]);
     },
     //获取部门树数据
     getTreeData() {
+      if (this.departmentList && this.departmentList.length) {
+        this.upDmList(this.departmentList);
+        return;
+      }
       getDepartmentTree(this.departmentId).then(res => {
         let data = null;
         const r = res.data;
         if (r.code == 200 && r.data) {
           data = r.data;
-          this.upDmList(data);
+          let list = [data];
+          this.upDmList(list);
+          this.setDepartmentList(list);
         }
       }).catch(res => { })
     },
@@ -435,7 +442,6 @@ export default {
     //保存提交
     addSubmit() {
       this.$refs['saveFrom'].validate(valid => {
-        // console.log(this.from, '新用户注册信息', valid);
         if (valid) {
           this.tk.loading = true;
           let param = {

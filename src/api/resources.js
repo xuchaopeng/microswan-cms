@@ -25,3 +25,28 @@ export const deleteFaceLib = id => {
     method: "get"
   });
 };
+
+export const getLibTypes = () => {
+  return axios.request({
+    url: "/api/faceLib/getLibType",
+    method: "get"
+  });
+};
+
+export const getFaceLibList = ({
+  departmentId,
+  pageNo = 1,
+  pageSize = 10,
+  type
+}) => {
+  let param = {
+    departmentId,
+    pageNo,
+    pageSize,
+    type
+  };
+  return axios.request({
+    url: "/api/faceLib/list" + resetParam(param),
+    method: "get"
+  });
+};
