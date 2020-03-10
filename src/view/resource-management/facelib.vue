@@ -20,7 +20,9 @@
         </p>
         <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
           <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">编辑</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">
+              编辑
+            </Button>
             <Button type="error" size="small" @click="removeFaceLib(row)">删除</Button>
           </template>
         </Table>
@@ -58,14 +60,31 @@
       </template>
 
       <template v-else-if="type == 2">
-        <div>
-          徐超鹏1
+        <div class="delete">
+          <p class="subtitle">确认删除人像库吗?</p>
+          <p>{{currentLib.libName}}</p>
+          <p class="dels">
+            <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
         </div>
       </template>
 
       <template v-else-if="type == 3">
-        <div>
-          徐超鹏2
+        <div class="editorFaceLib">
+          <p class="subtitle">人像库编辑</p>
+          <div class="clearfix mrb20">
+            <span class="fl mr5">名称：</span><span class="fl">{{currentLib.libName}}</span>
+          </div>
+          <div class="clearfix mrb20">
+            <span class="fl mr5">描述：</span><span class="fl">{{currentLib.description}}</span>
+          </div>
+          <p class="savepms">
+            <Button @click="updateSubmit" type="primary" :loading="loading">
+              <span v-if="!loading">保存</span>
+              <span v-else>保存中...</span>
+            </Button>
+          </p>
         </div>
       </template>
     </div>
@@ -74,7 +93,7 @@
 
 <script>
 import { getDepartmentTree } from '@/api/system';
-import { getLibTypes, addFaceLib, getFaceLibList } from '@/api/resources';
+import { getLibTypes, addFaceLib, getFaceLibList, deleteFaceLib } from '@/api/resources';
 import { mapMutations, mapGetters } from 'vuex';
 export default {
   data() {
@@ -94,14 +113,21 @@ export default {
         name: '',
         id: ''
       },
+      //当前操作人像库
+      currentLib: {
+        libName: "",
+        id: "",
+        description: "",
+        subscribed: ''
+      },
       //左侧部门列表
       dmlist: [{}],
       //右侧分页部门列表
       tabdata: [],
       column: [
         {
-          title: '角色名称',
-          key: 'name'
+          title: '名称',
+          key: 'libName'
         },
         {
           title: '描述',
@@ -180,10 +206,11 @@ export default {
       let param = {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo,
-        type: 3
+        type: 0
       }
       getFaceLibList(param).then(res => {
         let r = res.data;
+        console.log(r, 'facelist')
         if (r.code == 200) {
           const page = r.data.pageContent;
           const len = this.tabdata.length;
@@ -262,7 +289,15 @@ export default {
             closable: true
           });
           break;
+        case 2:
+          this.$Message.success({
+            content: '人像库删除成功',
+            duration: 1.5,
+            closable: true
+          });
+          break;
       }
+      this.renderList();
     },
     //失败状态提示
     upError(v) {
@@ -276,19 +311,41 @@ export default {
             closable: true
           });
           break;
+        case 2:
+          this.$Message.success({
+            content: '人像库删除失败',
+            duration: 1.5,
+            closable: true
+          });
+          break;
       }
     },
     //删除人像库
-    removeFaceLib() { },
+    removeFaceLib(row) {
+      if (!row) return;
+      this.currentLib.id = row.id;
+      this.currentLib.subscribed = row.subscribed;
+      this.currentLib.libName = row.libName;
+      this.currentLib.description = row.description;
+      //弹框提示操作
+      this.type = 2;
+    },
     //编辑提交
-    editorFaceLib() { },
+    editorFaceLib(row) {
+      if (!row) return;
+      this.currentLib.id = row.id;
+      this.currentLib.subscribed = row.subscribed;
+      this.currentLib.libName = row.libName;
+      this.currentLib.description = row.description;
+      this.type = 3;
+    },
     //添加提交
     addSubmit() {
       this.$refs['saveFrom'].validate(valid => {
         if (valid) {
           this.loading = true;
           let param = {
-            "departmentId": this.departmentId,
+            "departmentId": this.currentDm.id,
             "description": this.from.description,
             "libName": this.from.libName,
             "type": this.from.type
@@ -299,7 +356,17 @@ export default {
           }).catch(err => { this.upError(1) })
         }
       })
-    }
+    },
+    //删除提交
+    delSubmit() {
+      if (!this.currentLib.id) return;
+      deleteFaceLib(this.currentLib.id).then(res => {
+        if (res.data.code == 200) this.upSuccess(2);
+        else this.upError(2);
+      }).catch(err => { this.upError(2); })
+    },
+    //更新编辑提交
+    updateSubmit() { }
   }
 }
 </script>
@@ -324,8 +391,12 @@ export default {
       padding: 10px 0;
       position: relative;
       text-align: center;
+      font-size: 18px;
     }
-    .pmscnt {
+    .delete {
+      font-size: 16px;
+    }
+    .editorFaceLib {
       text-align: left;
       padding: 10px;
       .ivu-tree {
@@ -438,6 +509,18 @@ export default {
     .ivu-page {
       float: right;
     }
+  }
+  .clearfix {
+    overflow: hidden;
+  }
+  .mr10 {
+    margin-right: 10px;
+  }
+  .mr5 {
+    margin-right: 5px;
+  }
+  .mrb20 {
+    margin-bottom: 20px;
   }
   .fl {
     float: left;
