@@ -1,7 +1,7 @@
 <template>
   <div class="facelib">
     <Row :gutter="15">
-      <Col span="8">
+      <Col span="6">
       <Card class="comcss">
         <div class="actions">
           <span class="fl">
@@ -13,17 +13,32 @@
         </div>
       </Card>
       </Col>
-      <Col span="16">
+      <Col span="18">
       <div class="dmcons comcss">
-        <p class="addbtn">
-          <Button type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
-        </p>
+        <div class="addbtn">
+          <Button class="mr20" type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
+          <Select class="mr10" v-model="libType" style="width:200px;" placeholder="请选择库类型">
+            <Option v-for="item in faceLibType" :value="item.value">
+              {{ item.name }}
+            </Option>
+          </Select>
+          <Button class="ml10" type="primary" icon="ios-search" @click="searchLib">搜索</Button>
+        </div>
         <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
           <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="success" size="small" @click="enterFace(row)">
+              查看
+            </Button>
             <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">
               编辑
             </Button>
-            <Button type="error" size="small" @click="removeFaceLib(row)">删除</Button>
+            <Button class="mr10" type="error" size="small" @click="removeFaceLib(row)">删除</Button>
+            <Button v-if="!row.subscribed" type="success" ghost size="small" @click="changeSubscribe(row)">
+              订阅
+            </Button>
+            <Button v-if="row.subscribed" type="warning" ghost size="small" @click="changeSubscribe(row)">
+              取消订阅
+            </Button>
           </template>
         </Table>
         <div class="pages" v-if="totalCount > 10">
@@ -37,11 +52,8 @@
       <template v-if="type == 1">
         <p class="subtitle">添加人像库</p>
         <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
-          <FormItem prop="libName" label="名称">
+          <FormItem prop="libName" label="库名">
             <Input v-model="from.libName"></Input>
-          </FormItem>
-          <FormItem prop="description" label="描述">
-            <Input v-model="from.description"></Input>
           </FormItem>
           <FormItem prop="type" label="类型">
             <Select v-model="from.type" style="width:200px" placeholder="选择人像库类型">
@@ -49,6 +61,9 @@
                 {{ item.name }}
               </Option>
             </Select>
+          </FormItem>
+          <FormItem prop="description" label="备注">
+            <Input v-model="from.description"></Input>
           </FormItem>
           <FormItem>
             <Button @click="addSubmit" type="primary" :loading="loading" long>
@@ -72,28 +87,38 @@
 
       <template v-else-if="type == 3">
         <div class="editorFaceLib">
-          <p class="subtitle">人像库编辑</p>
-          <div class="clearfix mrb20">
-            <span class="fl mr5">名称：</span><span class="fl">{{currentLib.libName}}</span>
-          </div>
-          <div class="clearfix mrb20">
-            <span class="fl mr5">描述：</span><span class="fl">{{currentLib.description}}</span>
-          </div>
-          <p class="savepms">
-            <Button @click="updateSubmit" type="primary" :loading="loading">
-              <span v-if="!loading">保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </p>
+          <p class="subtitle">修改人像库</p>
+          <Form ref="editorFrom" :model="editorFrom" :rules="rule" @keydown.enter.native="updateSubmit">
+            <div class="clearfix mrb20">
+              <span class="fl alislf">库名：</span><span class="fl alisrg">{{currentLib.libName}}</span>
+            </div>
+            <div class="clearfix mrb20">
+              <span class="fl alislf">备注：</span><span class="fl alisrg">{{currentLib.description}}</span>
+            </div>
+            <FormItem prop="libName" label="库名">
+              <Input v-model="editorFrom.libName"></Input>
+            </FormItem>
+            <FormItem prop="description" label="备注">
+              <Input v-model="editorFrom.description" type="textarea"></Input>
+            </FormItem>
+            <FormItem>
+              <Button @click="updateSubmit" type="primary" :loading="loading" long>
+                <span v-if="!loading">立即保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
         </div>
       </template>
     </div>
+    <FaceLib :item="currentLib" @closeFaceLib="closeFaceLib" v-show="viewFaceDetails"></FaceLib>
   </div>
 </template>
 
 <script>
+import FaceLib from '_c/face-lib';
 import { getDepartmentTree } from '@/api/system';
-import { getLibTypes, addFaceLib, getFaceLibList, deleteFaceLib } from '@/api/resources';
+import { getLibTypes, addFaceLib, getFaceLibList, deleteFaceLib, updateFaceLib, subscribe, unsubscribe } from '@/api/resources';
 import { mapMutations, mapGetters } from 'vuex';
 export default {
   data() {
@@ -152,11 +177,24 @@ export default {
         description: [{ required: false }],
         type: [{ required: true, validator: setlibtype, trigger: 'change' }]
       },
+      //人像库编辑
+      editorFrom: {
+        libName: '',
+        description: ''
+      },
+      rule: {
+        libName: [{ required: true, message: '人像库名称不能为空', trigger: 'blur' }],
+        description: [{ required: false }],
+      },
       //部门可选角色列表
-      faceLibType: []
+      faceLibType: [],
+      libType: '',
+      //查看该人像库详情
+      viewFaceDetails: false
     }
   },
   mounted() {
+    this.getLibList();
     this.getTreeData();
   },
   computed: {
@@ -201,12 +239,12 @@ export default {
       this.dmlist.push(b[0]);
     },
     //展现右侧人像库列表
-    renderList() {
+    renderList(type = '') {
       if (!this.currentDm.name || !this.currentDm.id) return;
       let param = {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo,
-        type: 0
+        type: type
       }
       getFaceLibList(param).then(res => {
         let r = res.data;
@@ -296,6 +334,13 @@ export default {
             closable: true
           });
           break;
+        case 3:
+          this.$Message.success({
+            content: '人像库修改成功',
+            duration: 1.5,
+            closable: true
+          });
+          break;
       }
       this.renderList();
     },
@@ -305,39 +350,84 @@ export default {
       this.type = '';
       switch (v) {
         case 1:
-          this.$Message.success({
+          this.$Message.error({
             content: '人像库添加失败',
             duration: 1.5,
             closable: true
           });
           break;
         case 2:
-          this.$Message.success({
+          this.$Message.error({
             content: '人像库删除失败',
+            duration: 1.5,
+            closable: true
+          });
+          break;
+        case 3:
+          this.$Message.error({
+            content: '人像库修改失败',
+            duration: 1.5,
+            closable: true
+          });
+          break;
+        case 4:
+          this.$Message.error({
+            content: '人像库订阅失败',
             duration: 1.5,
             closable: true
           });
           break;
       }
     },
-    //删除人像库
-    removeFaceLib(row) {
-      if (!row) return;
+    setCurrentLib(row) {
       this.currentLib.id = row.id;
       this.currentLib.subscribed = row.subscribed;
       this.currentLib.libName = row.libName;
       this.currentLib.description = row.description;
+    },
+    //删除人像库
+    removeFaceLib(row) {
+      if (!row) return;
+      this.setCurrentLib(row);
       //弹框提示操作
       this.type = 2;
     },
     //编辑提交
     editorFaceLib(row) {
       if (!row) return;
-      this.currentLib.id = row.id;
-      this.currentLib.subscribed = row.subscribed;
-      this.currentLib.libName = row.libName;
-      this.currentLib.description = row.description;
+      this.setCurrentLib(row);
+      //初始化修改框
+      this.editorFrom.libName = this.currentLib.libName;
+      this.editorFrom.description = this.currentLib.description;
       this.type = 3;
+    },
+    //订阅与取消订阅
+    changeSubscribe(row) {
+      if (!row) return;
+      this.setCurrentLib(row);
+      //订阅发送
+      if (!row.subscribed) {
+        subscribe(this.currentLib.id).then(res => {
+          if (res.data.code == 200) {
+            row.subscribed = true;
+          } else this.upError(4);
+        }).catch(err => { this.upError(4) })
+      } else {
+        unsubscribe(this.currentLib.id).then(res => {
+          if (res.data.code == 200) this.upSuccess(4);
+          else this.upError(4);
+        }).catch(err => { this.upError(4) })
+      }
+    },
+    //进入人像库详情
+    enterFace(row) {
+      if (!row) return;
+      this.setCurrentLib(row);
+      this.viewFaceDetails = true;
+    },
+    //关闭人像详情页
+    closeFaceLib() {
+      this.viewFaceDetails = false;
     },
     //添加提交
     addSubmit() {
@@ -365,8 +455,34 @@ export default {
         else this.upError(2);
       }).catch(err => { this.upError(2); })
     },
-    //更新编辑提交
-    updateSubmit() { }
+    //修改编辑提交
+    updateSubmit() {
+      console.log('1');
+      this.$refs['editorFrom'].validate(valid => {
+        console.log('2');
+        if (!valid) return;
+        console.log('3');
+        let param = {
+          description: this.editorFrom.description,
+          libName: this.editorFrom.libName,
+          id: this.currentLib.id
+        }
+        this.loading = true;
+        updateFaceLib(param).then(res => {
+          console.log('4');
+          console.log(res, 'xcpppp');
+          if (res.data.code == 200) this.upSuccess(3);
+          else this.upError(3);
+        }).catch(err => { this.upError(3); console.log('5'); })
+      })
+    },
+    //按类型刷选库
+    searchLib() {
+      this.renderList(this.libType);
+    }
+  },
+  components: {
+    FaceLib
   }
 }
 </script>
@@ -374,6 +490,7 @@ export default {
 <style lang="less">
 .facelib {
   text-align: center;
+  position: relative;
   .subtable {
     position: fixed;
     width: 440px;
@@ -399,11 +516,31 @@ export default {
     .editorFaceLib {
       text-align: left;
       padding: 10px;
+      font-size: 14px;
+      .ivu-form-item {
+        margin-bottom: 40px;
+      }
+      .ivu-form {
+        .ivu-btn-primary {
+          margin-top: 0;
+        }
+      }
       .ivu-tree {
         ul {
           font-size: 16px;
           text-align: left;
         }
+      }
+      .alislf {
+        padding: 5px;
+        box-sizing: border-box;
+        width: 20%;
+        text-align: right;
+      }
+      .alisrg {
+        padding: 5px;
+        box-sizing: border-box;
+        width: 80%;
       }
       .pmist {
         width: 300px;
@@ -494,8 +631,21 @@ export default {
   .addbtn {
     text-align: left;
     margin-bottom: 15px;
+    overflow: hidden;
     .ivu-btn-large {
       font-size: 16px;
+    }
+    .ivu-select {
+      height: 35px;
+      width: 160px;
+      .ivu-select-selection {
+        .ivu-select-selected-value {
+          line-height: 35px;
+        }
+        .ivu-select-placeholder {
+          line-height: 35px;
+        }
+      }
     }
   }
   .dmcons {
@@ -518,6 +668,12 @@ export default {
   }
   .mr5 {
     margin-right: 5px;
+  }
+  .mr20 {
+    margin-right: 20px;
+  }
+  .w20 {
+    width: 20%;
   }
   .mrb20 {
     margin-bottom: 20px;

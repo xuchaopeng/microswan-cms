@@ -26,12 +26,12 @@ class HttpRequest {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        contentType: "application/json; charset=utf-8"
-      },
-      xhrFields: {
-        withCredentials: true
-      },
-      crossDomain: true
+        "Content-Type": "application/json; charset=utf-8"
+      }
+      // xhrFields: {
+      //   withCredentials: true
+      // },
+      // crossDomain: true
     };
     return config;
   }
@@ -83,6 +83,13 @@ class HttpRequest {
     );
   }
   request(options) {
+    console.log(options, "xcp");
+    if (options.data instanceof FormData) {
+      options.headers = {
+        "Content-Type": "multipart/form-data"
+      };
+    }
+    console.log(options.data instanceof FormData, "是否是FormData实例");
     const instance = axios.create();
     options = Object.assign(this.getInsideConfig(), options);
     this.interceptors(instance, options.url);

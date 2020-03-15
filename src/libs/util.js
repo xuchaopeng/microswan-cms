@@ -416,11 +416,79 @@ export const setTitle = (routeItem, vm) => {
   const resTitle = pageTitle ? `${title} - ${pageTitle}` : title;
   window.document.title = resTitle;
 };
-
+/**
+ * 参数拼接
+ * @param {*} o
+ */
 export const resetParam = o => {
   let param = "";
   for (var k in o) {
     param += "&" + k + "=" + encodeURIComponent(o[k]);
   }
   return "?" + param.slice(1);
+};
+/**
+ * 对象转换为FormData对象
+ * @param {*} obj
+ * @param {*} form
+ * @param {*} namespace
+ */
+export const objectToFormData = (obj, form, namespace) => {
+  const fd = form || new FormData();
+  let formKey;
+  for (var property in obj) {
+    if (obj.hasOwnProperty(property)) {
+      let key = Array.isArray(obj) ? "[]" : `[${property}]`;
+      if (namespace) {
+        formKey = namespace + key;
+      } else {
+        formKey = property;
+      }
+      if (
+        typeof obj[property] === "object" &&
+        !(obj[property] instanceof File)
+      ) {
+        objectToFormData(obj[property], fd, formKey);
+      } else {
+        fd.append(formKey, obj[property]);
+      }
+    }
+  }
+  return fd;
+};
+
+export const makeFormData = (obj, form_data) => {
+  var data = [];
+  if (obj instanceof File) {
+    data.push({ key: "", value: obj });
+  } else if (obj instanceof Array) {
+    for (var j = 0, len = obj.length; j < len; j++) {
+      // @ts-ignore
+      var arr = makeFormData(obj[j]);
+      for (var k = 0, l = arr.length; k < l; k++) {
+        var key = !!form_data ? j + arr[k].key : "[" + j + "]" + arr[k].key;
+        data.push({ key: key, value: arr[k].value });
+      }
+    }
+  } else if (typeof obj == "object") {
+    // @ts-ignore
+    for (var j in obj) {
+      // @ts-ignore
+      var arr = makeFormData(obj[j]);
+      for (var k = 0, l = arr.length; k < l; k++) {
+        var key = !!form_data ? j + arr[k].key : "[" + j + "]" + arr[k].key;
+        data.push({ key: key, value: arr[k].value });
+      }
+    }
+  } else {
+    data.push({ key: "", value: obj });
+  }
+  if (!!form_data) {
+    // 封装
+    for (var i = 0, len = data.length; i < len; i++) {
+      form_data.append(data[i].key, data[i].value);
+    }
+  } else {
+    return data;
+  }
 };
