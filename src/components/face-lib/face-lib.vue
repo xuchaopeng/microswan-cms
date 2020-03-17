@@ -2,7 +2,7 @@
   <div class="facelibitem">
     <Card>
       <p class="" slot="title">
-        <Button class="addface" ghost @click="addFace">
+        <Button class="addface" ghost @click="addNewFace">
           <Icon class="iconfont icon-icon-test"></Icon>
           添加人像
         </Button>
@@ -10,12 +10,12 @@
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
       </p>
       <ul class="facelist">
-        <li class="item">
+        <li class="item" v-for="em in dataList">
           <div class="img">
-            <img :src="imgsrc" alt="/">
+            <img src="" alt="/">
           </div>
           <div class="dis">
-            HAHAHAH
+            {{em.name}}
           </div>
         </li>
       </ul>
@@ -35,17 +35,14 @@
           <FormItem prop="ethnic" label="民族">
             <Input v-model="from.ethnic"></Input>
           </FormItem>
-          <!-- <FormItem prop="idaddress" label="地址">
-            <Input v-model="from.idaddress"></Input>
-          </FormItem> -->
           <FormItem prop="idcard" label="身份证号">
             <Input v-model="from.idcard"></Input>
           </FormItem>
           <div class="pic">
-            人像背景图<input type="file" id="imgfile" size="40" @change="viewmypic" />
+            人像背景图<input type="file" ref="BJfile" size="40" />
           </div>
           <div class="pic">
-            身份证照片<input type="file" id="imgfile" size="40" @change="viewmypic" />
+            身份证照片<input type="file" ref="IDfile" size="40" />
           </div>
           <FormItem>
             <Button @click="addSubmit" type="primary" :loading="loading" long>
@@ -60,7 +57,9 @@
 </template>
 
 <script>
+import './index.less';
 import imgsrc from '@/assets/images/1.jpg';
+import { getFaceList, addFace } from '@/api/resources';
 export default {
   name: 'Facelibitem',
   props: {
@@ -73,13 +72,14 @@ export default {
     return {
       imgsrc,
       closesub: false,
+      pageNo: 1,
       type: '',
       loading: false,
+      dataList: [],
       from: {
         name: '',
         alias: '',
         ethnic: '',
-        idaddress: '',
         idcard: '',
         file: ''
       },
@@ -88,6 +88,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.renderList();
+  },
   methods: {
     closeBtn() {
       this.$emit('closeFaceLib');
@@ -95,119 +98,81 @@ export default {
     closeSub() {
       this.closesub = true;
     },
-    addFace() {
+    renderList() {
+      let param = {
+        libId: this.item.id,
+        pageNo: this.pageNo,
+        pageSize: 20
+      };
+      console.log(param, '111')
+      getFaceList(param).then(res => {
+        if (res.data.code == 200) {
+          console.log(res.data, '库图片列表');
+        }
+      });
+    },
+    addNewFace() {
       this.closesub = false;
       this.type = 1;
-      console.log('HAHHAHHAHA');
     },
-    viewmypic(showimg, imgfile) { console.log(showimg, 'xcpppv') },
-    addSubmit() { }
+    upSuccess(v) {
+      this.loading = false;
+      this.closesub = true;
+      this.type = '';
+      switch (v) {
+        case 1:
+          for (var k in this.from) {
+            this.from[k] = '';
+          }
+          this.$Message.success({
+            content: '人像添加成功',
+            duration: 1.5,
+            closable: true
+          });
+          break;
+      }
+      this.renderList();
+    },
+    upError() {
+      this.loading = false;
+      this.closesub = true;
+      this.type = '';
+      switch (v) {
+        case 1:
+          this.$Message.error({
+            content: '人像添加失败',
+            duration: 1.5,
+            closable: true
+          });
+          break;
+      }
+    },
+    addSubmit() {
+      this.$refs['saveFrom'].validate(valid => {
+        if (valid) {
+          if (typeof this.item.id == 'undefined') return;
+          this.loading = true;
+          let file1 = this.$refs.BJfile;
+          let file2 = this.$refs.IDfile;
+          const formData = new window.FormData();
+          const v = {
+            name: this.from.name,
+            alias: this.from.alias,
+            ethnic: this.from.ethnic,
+            idcard: this.from.idcard,
+            libId: this.item.id
+          };
+          var blod = new Blob([JSON.stringify(v)], { type: "application/json" });
+          formData.append('addVO', blod);
+          formData.append('file', file1.files[0]);
+          formData.append('idFile', file2.files[0]);
+          addFace(formData).then(res => {
+            if (res.data.code == 200) this.upSuccess(1);
+            else this.upError(4);
+          }).catch(err => { this.upError(1); })
+        }
+      })
+    }
   }
 }
 </script>
-
-<style lang="less">
-.facelibitem {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  background-color: #064667;
-  z-index: 11;
-  .sub {
-    position: absolute;
-    width: 410px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #dcdee2;
-    background-color: #fff;
-    .subtitle {
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
-    .ivu-form {
-      .ivu-form-item-content {
-        width: 85%;
-      }
-      .ivu-form-item-label {
-        width: 15%;
-      }
-      .ivu-btn-primary {
-        margin-top: 0;
-      }
-    }
-  }
-  .ivu-card-head {
-    background-color: #1183bf;
-    p {
-      color: #fff;
-    }
-  }
-  .ivu-card-bordered {
-    border-color: #389cc8;
-  }
-  .ivu-card-body {
-    background-color: #064667;
-  }
-  .ivu-card-bordered {
-    height: 100%;
-    background-color: #064667;
-  }
-  .addface {
-    position: absolute;
-    top: 16px;
-    left: 15px;
-    color: #fff;
-    opacity: 0.7;
-    &:hover {
-      color: #fff;
-      border-color: #fff;
-      opacity: 1;
-    }
-    .icon-icon-test {
-      font-size: 14px !important;
-    }
-  }
-  .close {
-    position: absolute;
-    right: 0;
-    top: 5px;
-    cursor: pointer;
-    z-index: 10;
-  }
-  .facelist {
-    overflow: hidden;
-    .item {
-      float: left;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      width: 225px;
-      height: 150px;
-      background-color: #fff;
-      box-sizing: border-box;
-      padding: 20px 10px;
-      border-radius: 5px;
-      .img {
-        width: 110px;
-        width: 110px;
-        float: left;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .dis {
-        float: right;
-        width: 80px;
-        height: 110px;
-      }
-    }
-  }
-}
-</style>

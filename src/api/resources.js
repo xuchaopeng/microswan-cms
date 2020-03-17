@@ -84,12 +84,7 @@ export const unsubscribe = id => {
   });
 };
 
-export const addFace = ({ file, addVO, idFile }) => {
-  let data = {
-    file: file,
-    addVO: addVO,
-    idFile: idFile
-  };
+export const addFace = data => {
   return axios.request({
     url: "/api/face/add",
     data,
@@ -97,28 +92,14 @@ export const addFace = ({ file, addVO, idFile }) => {
   });
 };
 
-export const addFace1 = FromData => {
-  let data = {
-    file: FromData.get("file"),
-    addVO: FromData.get("addVO"),
-    idFile: FromData.get("idFile")
+export const getFaceList = ({ libId, pageNo = 1, pageSize = 10 }) => {
+  let param = {
+    libId,
+    pageNo,
+    pageSize
   };
   return axios.request({
-    url: "/api/face/add",
-    data,
-    method: "post"
-  });
-};
-
-export const addFace2 = data => {
-  // let data = {
-  //   file: file,
-  //   addVO: addVO,
-  //   idFile: idFile
-  // };
-  return axios.request({
-    url: "/api/face/add",
-    data,
-    method: "post"
+    url: "/api/face/list" + resetParam(param),
+    method: "get"
   });
 };
