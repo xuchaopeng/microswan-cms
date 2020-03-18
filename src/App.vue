@@ -29,5 +29,8 @@ body {
 }
 #app {
   .size;
+  .ivu-menu {
+    z-index: 11;
+  }
 }
 </style>

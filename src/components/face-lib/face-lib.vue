@@ -9,10 +9,11 @@
         {{item.libName}}
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
       </p>
+      <p class="nohasface" v-show="nohasface">暂无人像</p>
       <ul class="facelist">
-        <li class="item" v-for="em in dataList">
+        <li class="item" v-for="em in dataList" @click="renderDetails(em)">
           <div class="img">
-            <img src="" alt="/">
+            <img :src="em.facePicPath" alt="/">
           </div>
           <div class="dis">
             {{em.name}}
@@ -20,7 +21,25 @@
         </li>
       </ul>
     </Card>
-    <div class="sub" v-if="!closesub">
+    <div class="popup" v-show="ispop">
+      <div class="pop"></div>
+      <div class="cons">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
+        <p class="facepic">
+          <img :src="currentFace.facePicPath" alt="">
+        </p>
+        <p class="backpic">
+          <img :src="currentFace.backPicPath" alt="">
+        </p>
+        <div class="dis">
+          <p>姓名：{{currentFace.name}}</p>
+          <p>民族：{{currentFace.ethnic}}</p>
+          <p>别名： {{currentFace.alias}}</p>
+          <p>库名：{{currentFace.name}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="sub" v-show="!closesub">
       <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub">
       </Icon>
       <template v-if="type == 1">
@@ -60,22 +79,31 @@
 import './index.less';
 import imgsrc from '@/assets/images/1.jpg';
 import { getFaceList, addFace } from '@/api/resources';
+const Imgbase = 'https://118.24.53.165/';
 export default {
   name: 'Facelibitem',
   props: {
     item: {
       type: Object,
       default: () => ({})
+    },
+    libId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       imgsrc,
-      closesub: false,
+      totalCount: 1,
+      closesub: true,
       pageNo: 1,
       type: '',
       loading: false,
+      nohasface: false,
       dataList: [],
+      ispop: false,
+      currentFace: {},
       from: {
         name: '',
         alias: '',
@@ -89,14 +117,45 @@ export default {
     }
   },
   mounted() {
+    this.closesub = true;
     this.renderList();
   },
   methods: {
     closeBtn() {
+      // console.log('libId', this.libId);
+      // console.log('cacheLidId', this.cacheLidId);
+      // if (this.cacheLidId !== this.libId) {
+      //   this.cacheLidId = this.libId //缓存库id
+      //   this.dataList = [];
+      // }
+      this.cacheLidId = this.libId //缓存库id
+      this.dataList = [];
       this.$emit('closeFaceLib');
+      this.nohasface = false;
     },
     closeSub() {
       this.closesub = true;
+    },
+    closePopup() {
+      this.ispop = false;
+    },
+    filterData(em) {
+      return {
+        IDAddress: Imgbase + em.IDAddress,
+        alias: "ss" + em.alias,
+        backPicPath: Imgbase + em.backPicPath,
+        ethnic: em.ethnic,
+        facePicPath: Imgbase + em.facePicPath,
+        id: em.id,
+        libId: em.libId,
+        name: em.name
+      }
+    },
+    renderDetails(em) {
+      this.currentFace = {
+        ...em
+      }
+      this.ispop = true;
     },
     renderList() {
       let param = {
@@ -104,10 +163,20 @@ export default {
         pageNo: this.pageNo,
         pageSize: 20
       };
-      console.log(param, '111')
       getFaceList(param).then(res => {
-        if (res.data.code == 200) {
-          console.log(res.data, '库图片列表');
+        let r = res.data;
+        console.log(res.data, '库图片列表');
+        if (r.code == 200) {
+          const page = r.data.pageContent;
+          const len = this.dataList.length;
+          if (page) {
+            this.dataList.splice(0, len);
+            page.forEach(em => {
+              this.dataList.push(this.filterData(em));
+            });
+            this.totalCount = r.data.totalCount;
+            if (!page.length) this.nohasface = true;
+          }
         }
       });
     },
@@ -172,6 +241,15 @@ export default {
           }).catch(err => { this.upError(1); })
         }
       })
+    }
+  },
+  watch: {
+    item(a) {
+      console.log(a, '变化了item');
+    },
+    libId(b) {
+      this.renderList();
+      console.log(b, '变化了xcp');
     }
   }
 }

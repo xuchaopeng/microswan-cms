@@ -111,7 +111,7 @@
         </div>
       </template>
     </div>
-    <FaceLib :item="currentLib" @closeFaceLib="closeFaceLib" v-show="viewFaceDetails"></FaceLib>
+    <FaceLib :item="currentLib" :libId="Number(currentLib.id)" @closeFaceLib="closeFaceLib" v-show="viewFaceDetails"></FaceLib>
   </div>
 </template>
 
