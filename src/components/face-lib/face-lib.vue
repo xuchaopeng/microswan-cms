@@ -16,16 +16,22 @@
             <img :src="em.facePicPath" alt="/">
           </div>
           <div class="dis">
-            {{em.name}}
+            <Icon class="iconfont icon-ai14"></Icon>{{em.name}}
           </div>
         </li>
       </ul>
+      <div class="pages" v-if="totalCount > 10">
+        <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+      </div>
     </Card>
     <div class="popup" v-show="ispop">
       <div class="pop"></div>
       <div class="cons">
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
         <p class="facepic">
+          <span class="cirs" @click="deleteFace">
+            <Icon class="iconfont icon-icon_huabanfuben"></Icon>
+          </span>
           <img :src="currentFace.facePicPath" alt="">
         </p>
         <p class="backpic">
@@ -71,6 +77,16 @@
           </FormItem>
         </Form>
       </template>
+      <template v-else-if="type == 2">
+        <div class="delete">
+          <p>确认删除该人像吗?</p>
+          <p>{{currentFace.name}}</p>
+          <p class="dels">
+            <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
+            <Button @click="closeSub" type="warning">取消</Button>
+          </p>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -78,7 +94,7 @@
 <script>
 import './index.less';
 import imgsrc from '@/assets/images/1.jpg';
-import { getFaceList, addFace } from '@/api/resources';
+import { getFaceList, addFace, delFace } from '@/api/resources';
 const Imgbase = 'https://118.24.53.165/';
 export default {
   name: 'Facelibitem',
@@ -90,6 +106,10 @@ export default {
     libId: {
       type: Number,
       default: 0
+    },
+    ischange: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -122,12 +142,6 @@ export default {
   },
   methods: {
     closeBtn() {
-      // console.log('libId', this.libId);
-      // console.log('cacheLidId', this.cacheLidId);
-      // if (this.cacheLidId !== this.libId) {
-      //   this.cacheLidId = this.libId //缓存库id
-      //   this.dataList = [];
-      // }
       this.cacheLidId = this.libId //缓存库id
       this.dataList = [];
       this.$emit('closeFaceLib');
@@ -151,6 +165,10 @@ export default {
         name: em.name
       }
     },
+    changePage(pageNo) {
+      this.pageNo = pageNo;
+      this.renderList();
+    },
     renderDetails(em) {
       this.currentFace = {
         ...em
@@ -161,7 +179,7 @@ export default {
       let param = {
         libId: this.item.id,
         pageNo: this.pageNo,
-        pageSize: 20
+        pageSize: 10
       };
       getFaceList(param).then(res => {
         let r = res.data;
@@ -184,6 +202,10 @@ export default {
       this.closesub = false;
       this.type = 1;
     },
+    deleteFace() {
+      this.closesub = false;
+      this.type = 2;
+    },
     upSuccess(v) {
       this.loading = false;
       this.closesub = true;
@@ -199,6 +221,14 @@ export default {
             closable: true
           });
           break;
+        case 2:
+          this.ispop = false;
+          this.$Message.success({
+            content: '人像删除成功',
+            duration: 1.5,
+            closable: true
+          });
+          break;
       }
       this.renderList();
     },
@@ -210,6 +240,13 @@ export default {
         case 1:
           this.$Message.error({
             content: '人像添加失败',
+            duration: 1.5,
+            closable: true
+          });
+          break;
+        case 2:
+          this.$Message.error({
+            content: '人像删除失败',
             duration: 1.5,
             closable: true
           });
@@ -241,15 +278,18 @@ export default {
           }).catch(err => { this.upError(1); })
         }
       })
+    },
+    delSubmit() {
+      if (!this.currentFace.id) return;
+      delFace(this.currentFace.id).then(res => {
+        if (res.data.code == 200) this.upSuccess(2);
+        else this.upError(2);
+      }).catch(err => { this.upError(2); })
     }
   },
   watch: {
-    item(a) {
-      console.log(a, '变化了item');
-    },
-    libId(b) {
-      this.renderList();
-      console.log(b, '变化了xcp');
+    ischange(c) {
+      if (c) this.renderList();
     }
   }
 }

@@ -103,3 +103,13 @@ export const getFaceList = ({ libId, pageNo = 1, pageSize = 10 }) => {
     method: "get"
   });
 };
+
+export const delFace = id => {
+  let param = {
+    id
+  };
+  return axios.request({
+    url: "/api/face/delete" + resetParam(param),
+    method: "get"
+  });
+};
