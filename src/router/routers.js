@@ -69,42 +69,33 @@ export default [
         component: () => import("@/view/alarm-push/realtime-push/index.vue")
       },
       {
-        path: "/allalarm",
-        name: "allAlarm",
+        path: "/infopush",
+        name: "infopush",
         meta: {
           icon: "ios-paper",
-          title: "所有报警"
+          title: "消息推送"
         },
-        component: () => import("@/view/alarm-push/all-alarm/index.vue")
-      },
-      {
-        path: "/allsnap",
-        name: "allSnap",
-        meta: {
-          icon: "_ai14",
-          title: "所有抓拍"
-        },
-        component: () => import("@/view/alarm-push/all-snap/index.vue")
+        component: () => import("@/view/alarm-push/info-push/index.vue")
       }
     ]
   },
   {
-    path: "/like-retrieve",
-    name: "likeRetrieve",
+    path: "/device-management",
+    name: "deviceManagement",
     meta: {
-      icon: "_renlianjiansuo",
-      title: "人像检索"
+      icon: "_guanli",
+      title: "设备管理"
     },
     component: Main,
     children: [
       {
-        path: "/retrieve",
-        name: "retrieve",
+        path: "/device",
+        name: "device",
         meta: {
-          icon: "_renlianjiansuo",
-          title: "人像库检索"
+          icon: "_guanli",
+          title: "设备管理"
         },
-        component: () => import("@/view/like-retrieve/index.vue")
+        component: () => import("@/view/device-management/index.vue")
       }
     ]
   },

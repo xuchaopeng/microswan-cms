@@ -14,5 +14,8 @@ export default {
   userManagement: "用户管理",
   roleManagement: "角色管理",
   logManagement: "日志管理",
-  components: "组件"
+  components: "组件",
+  infopush: "消息推送",
+  deviceManagement: "设备管理",
+  device: "设备管理"
 };

@@ -183,7 +183,7 @@ export default {
       };
       getFaceList(param).then(res => {
         let r = res.data;
-        console.log(res.data, '库图片列表');
+        // console.log(res.data, '库图片列表');
         if (r.code == 200) {
           const page = r.data.pageContent;
           const len = this.dataList.length;
