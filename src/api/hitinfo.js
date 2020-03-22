@@ -21,7 +21,7 @@ export const getNewestHitInfo = departmentId => {
 export const hitInfoAck = ({ id, isSame }) => {
   let data = {
     id,
-    isSame
+    status: isSame
   };
   return axios.request({
     url: "/api/faceLib/hitInfoAck" + resetParam(data),
@@ -43,14 +43,14 @@ export const getListHitInfo = ({ departmentId, pageNo = 1, pageSize = 10 }) => {
 };
 
 //查看人像轨迹
-export const faceTrack = ({ faceId, pageNo = 1, pageSize = 10 }) => {
+export const getFaceTrack = ({ faceId, pageNo = 1, pageSize = 10 }) => {
   let data = {
     faceId,
     pageNo,
     pageSize
   };
   return axios.request({
-    url: "/api/Labcefib/track;" + resetParam(data),
+    url: "/api/faceLib/track" + resetParam(data),
     method: "get"
   });
 };

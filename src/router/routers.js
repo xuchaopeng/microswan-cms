@@ -30,25 +30,25 @@ export default [
   {
     path: "/",
     name: "_home",
-    redirect: "/home",
+    redirect: "/realtimepush",
     component: Main,
     meta: {
       hideInMenu: true,
       notCache: true
-    },
-    children: [
-      {
-        path: "/home",
-        name: "home",
-        meta: {
-          hideInMenu: true,
-          title: "首页",
-          notCache: true,
-          icon: "md-home"
-        },
-        component: () => import("@/view/single-page/home")
-      }
-    ]
+    }
+    // children: [
+    //   {
+    //     path: "/home", // /home  /alarm-push/realtimepush
+    //     name: "home", //home realtimepush
+    //     meta: {
+    //       hideInMenu: true,
+    //       title: "首页", //首页 实时推送
+    //       notCache: true,
+    //       icon: "md-home" // md-home  _tuisong
+    //     },
+    //     component: () => import("@/view/single-page/home/home.vue")
+    //   }
+    // ]
   },
   {
     path: "/alarm-push",

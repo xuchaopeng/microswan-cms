@@ -1,0 +1,131 @@
+.hitdetails {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  .pop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: #000;
+    opacity: 0.4;
+  }
+  .con {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 890px;
+    height: 460px;
+    padding: 40px 35px 10px 35px;
+    border-radius: 5px;
+    transform: translate(-50%, -50%);
+    background-color: #006288;
+    z-index: 11;
+    .close {
+      position: absolute;
+      right: 0;
+      top: 5px;
+      cursor: pointer;
+      z-index: 10;
+      color: #fff;
+    }
+    .facepic {
+      width: 220px;
+      height: 220px;
+      margin-right: 20px;
+      border: 1px solid #4da0c0;
+      position: relative;
+      .cirs {
+        position: absolute;
+        top: 5px;
+        left: 2px;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #48c6cb;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+        .icon-icon_huabanfuben {
+          color: #48c6cb;
+          margin-right: 0;
+        }
+      }
+    }
+    .passpic {
+      width: 220px;
+      height: 220px;
+      border: 1px solid #4da0c0;
+      margin-right: 20px;
+    }
+    .backpic {
+      width: 335px;
+      height: 220px;
+      border: 1px solid #4da0c0;
+    }
+    .pic {
+      width: 100%;
+      height: 100%;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .dis {
+      padding-top: 15px;
+      color: #41bfe2;
+      font-size: 12px;
+      text-align: left;
+      line-height: 35px;
+      .seeTrack {
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .score {
+        text-align: center;
+        color: #fff;
+        font-size: 20px;
+        .icon-renxiangcaiji {
+          margin-right: 20px;
+          font-size: 40px !important;
+        }
+      }
+      .needsure {
+        padding-top: 20px;
+        text-align: center;
+        .btns {
+          display: inline-block;
+          margin-right: 40px;
+          padding-top: 55px;
+          width: 50px;
+          position: relative;
+          font-size: 16px;
+          cursor: pointer;
+          &:nth-child(3) {
+            cursor: default;
+          }
+          .iconfont {
+            color: #0b3a53;
+            position: absolute;
+            top: 0;
+            left: 0;
+            &.icon-yiwen {
+              color: #fff;
+            }
+          }
+        }
+        .iconfont {
+          font-size: 50px !important;
+        }
+      }
+    }
+  }
+  .fl {
+    float: left;
+  }
+}

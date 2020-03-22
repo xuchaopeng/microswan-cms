@@ -1,42 +1,200 @@
 <template>
-  <div>部门消息推送</div>
+  <div class="infopush">
+    <Row :gutter="15">
+      <Col span="6">
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />消息列表
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
+      </Col>
+      <Col span="18">
+        <div class="dmcons comcss">
+          <ul class="hitInfoList">
+            <li class="item" v-for="em in dataList" @click="renderDetails(em)">
+              <div class="img">
+                <img :src="em.facePicPath" alt="/" />
+              </div>
+              <div class="dis">
+                <p class="score">
+                  <Icon class="iconfont icon-renxiangcaiji"></Icon
+                  >{{ em.score }}
+                </p>
+                <p class="time">
+                  <Icon class="iconfont icon-shijian"></Icon>{{ em.reportTime }}
+                </p>
+              </div>
+            </li>
+          </ul>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
+        </div>
+      </Col>
+    </Row>
+    <HitDetails
+      :item="currentFace"
+      :viewHitDetails="viewHitDetails"
+      @closeFace="closeFaceDetails"
+    ></HitDetails>
+  </div>
 </template>
 
 <script>
-import { getNewestHitInfo, getListHitInfo } from '@/api/hitinfo';
+import "./infopush.less";
+import HitDetails from "_c/hit-details";
+import { getDepartmentTree } from "@/api/system";
+import { getListHitInfo } from "@/api/hitinfo";
+import { mapMutations, mapGetters } from "vuex";
+const Imgbase = "https://118.24.53.165/";
 export default {
   data() {
-    return {}
+    return {
+      viewHitDetails: false,
+      totalCount: 1,
+      //当前人像
+      currentFace: {},
+      //当前选中部门
+      currentDm: {
+        name: "",
+        id: ""
+      },
+      //左侧部门列表
+      dmlist: [{}],
+      //右侧列表数据
+      dataList: []
+    };
   },
   mounted() {
-    // getNewestHitInfo(1).then(res => {
-    //   console.log(res);
-    // }).catch(err => { console.log(err); });
-    getListHitInfo({ departmentId: 1 }).then(res => {
-      console.log(res, 'getListHitInfo');
-    }).catch(err => { console.log(err); });
-    // WebSocketTest();
-    // function WebSocketTest() {
-    //   if ('WebSocket' in window) {
-    //     //  /user/queue/hitInfo    /api/faceLib/getNewestHitInfo
-    //     var ws = new window.WebSocket("ws://localhost:8080/user/queue/hitInfo?departmentId=1");
-    //     ws.onopen = function () {
-    //       console.log('数据已链接上');
-    //       ws.send('');
-    //     };
-    //     ws.onmessage = function (evt) {
-    //       console.log(evt, '数据接受了');
-    //     };
-    //     ws.onclose = function () {
-    //       console.log('链接已经关闭');
-    //     }
-    //   } else {
-    //     console.log('浏览器不支持 WebSocket');
-    //   }
-    // }
+    this.getTreeData();
+    this.renderList();
+  },
+  computed: {
+    ...mapGetters(["departmentId", "departmentList"])
   },
   methods: {
-
+    ...mapMutations(["setDepartmentList"]),
+    //当前部门被选择
+    selectDepartment(item) {
+      if (!item || !item[0]) return;
+      this.currentDm.id = item[0].id;
+      this.currentDm.name = item[0].title;
+      this.renderList();
+    },
+    //更新部门树数据
+    updateDepartmentList(a) {
+      //如果用户当前未选中任何部门，这里默认为最高级部门
+      if (!this.currentDm.id) this.currentDm.id = a.id;
+      let index = 1;
+      function getTree(tree = []) {
+        let arr = [];
+        if (!!tree && tree.length !== 0) {
+          tree.forEach(item => {
+            let obj = {};
+            obj.title = item.name;
+            obj.expand = index < 2 ? true : false;
+            obj.id = item.id;
+            obj.parentId = item.parentId;
+            obj.children = getTree(item.children);
+            arr.push(obj);
+          });
+          ++index;
+        }
+        return arr;
+      }
+      const b = getTree(a);
+      this.dmlist.pop();
+      this.dmlist.push(b[0]);
+    },
+    //获取部门树数据
+    getTreeData() {
+      if (this.departmentList && this.departmentList.length) {
+        this.updateDepartmentList(this.departmentList);
+        return;
+      }
+      getDepartmentTree(this.departmentId)
+        .then(res => {
+          let data = null;
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            data = r.data;
+            let list = [data];
+            this.updateDepartmentList(list);
+            this.setDepartmentList(list);
+          }
+        })
+        .catch(res => {});
+    },
+    //数据字段序列化
+    filterData(em) {
+      return {
+        departmentId: em.departmentId,
+        backPicPath: Imgbase + em.hitBackgroundPicturePath,
+        facePicPath: Imgbase + em.hitFacePicturePath,
+        id: em.id,
+        lat: em.lat,
+        libId: em.libId,
+        lng: em.lng,
+        passerBackPicPath: Imgbase + em.passerbyBackgroundPicturePath,
+        passerFacePicPath: Imgbase + em.passerbyFacePicturePath,
+        policeNum: em.policeNum,
+        reportTime: em.reportTime,
+        score: String(em.score) + "%",
+        status: em.status
+      };
+    },
+    //展现部门消息列表
+    renderList() {
+      let param = {
+        departmentId: this.currentDm.id || "",
+        pageNo: this.pageNo
+      };
+      getListHitInfo(param).then(res => {
+        let r = res.data;
+        if (r.code == 200) {
+          const page = r.data.pageContent;
+          const len = this.dataList.length;
+          if (page) {
+            this.dataList.splice(0, len);
+            page.forEach(em => {
+              this.dataList.push(this.filterData(em));
+            });
+            this.totalCount = r.data.totalCount;
+            if (!page.length) this.nohasface = true;
+          }
+        }
+      });
+    },
+    //切换页数
+    changePage(pageNo) {
+      this.pageNo = pageNo;
+      this.renderList();
+    },
+    //展示人像详情页
+    renderDetails(em) {
+      this.currentFace = {
+        ...em
+      };
+      this.viewHitDetails = true;
+    },
+    //关闭人像详情页
+    closeFaceDetails() {
+      this.currentFace = {};
+      this.viewHitDetails = false;
+    }
+  },
+  components: {
+    HitDetails
   }
-}
+};
 </script>

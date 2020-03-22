@@ -1,0 +1,127 @@
+.facetracks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 22;
+  .closeTrack {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    cursor: pointer;
+    z-index: 10;
+    color: #fff;
+  }
+  .popTrack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: #000;
+    opacity: 0.4;
+  }
+  .conTrack {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1020px;
+    height: 500px;
+    transform: translate(-50%, -50%);
+    background-color: #006288;
+    z-index: 11;
+    background-color: #064667;
+    border: 2px solid #389cc8;
+    .nav {
+      background-color: #1183bf;
+      color: #fff;
+      line-height: 30px;
+      text-align: left;
+      padding-left: 20px;
+      span {
+        margin-left: 10px;
+        text-align: center;
+        display: inline-block;
+        width: 80px;
+        background-color: #1e9fff;
+        border-radius: 2px;
+      }
+    }
+    .list {
+      margin-top: 30px;
+    }
+    .trackList {
+      overflow: hidden;
+      padding: 0 15px;
+      .item {
+        cursor: pointer;
+        float: left;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        width: 225px;
+        height: 145px;
+        background-color: #fff;
+        box-sizing: border-box;
+        padding: 20px 0px 20px 15px;
+        border-radius: 5px;
+        .img {
+          width: 100px;
+          height: 100px;
+          float: left;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .dis {
+          float: right;
+          width: 100px;
+          line-height: 25px;
+          font-size: 12px;
+          text-align: left;
+          padding-top: 20px;
+          .icon-ai14 {
+            color: #1183bf;
+          }
+          .score {
+            line-height: 30px;
+            color: #3cb5e2;
+            font-size: 20px;
+            margin-bottom: 5px;
+            .iconfont {
+              position: relative;
+              top: -2px;
+              left: -2px;
+              font-size: 30px !important;
+              color: #31b783;
+            }
+          }
+          .time {
+            font-size: 12px;
+            color: #737673;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            .iconfont {
+              color: #b5c1d1;
+              margin-right: 0;
+              font-size: 14px !important;
+            }
+          }
+        }
+      }
+    }
+    .trackPage {
+      padding-top: 30px;
+      .ivu-page {
+        display: inline-block;
+        padding: 10px 30px;
+        background-color: #1e5e7f;
+        color: #fff;
+        text-align: center;
+      }
+    }
+  }
+}
