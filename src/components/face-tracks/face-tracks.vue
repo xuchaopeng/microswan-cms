@@ -15,7 +15,7 @@
       </p>
       <div class="list">
         <ul class="trackList">
-          <li class="item" v-for="em in dataList" @click="renderDetails(em)">
+          <li class="item" v-for="em in dataList">
             <div class="img">
               <img :src="em.facePicPath" alt="/" />
             </div>

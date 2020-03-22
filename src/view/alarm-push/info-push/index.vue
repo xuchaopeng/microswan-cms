@@ -15,6 +15,9 @@
       </Col>
       <Col span="18">
         <div class="dmcons comcss">
+          <div class="nohasHitInfo" v-show="nohasHitInfo">
+            该部门暂无推送消息
+          </div>
           <ul class="hitInfoList">
             <li class="item" v-for="em in dataList" @click="renderDetails(em)">
               <div class="img">
@@ -53,6 +56,7 @@
 <script>
 import "./infopush.less";
 import HitDetails from "_c/hit-details";
+import { creatScore } from "@/libs/util";
 import { getDepartmentTree } from "@/api/system";
 import { getListHitInfo } from "@/api/hitinfo";
 import { mapMutations, mapGetters } from "vuex";
@@ -72,10 +76,13 @@ export default {
       //左侧部门列表
       dmlist: [{}],
       //右侧列表数据
-      dataList: []
+      dataList: [],
+      //是否有推送消息
+      nohasHitInfo: false
     };
   },
   mounted() {
+    this.nohasHitInfo = false;
     this.getTreeData();
     this.renderList();
   },
@@ -148,8 +155,8 @@ export default {
         passerBackPicPath: Imgbase + em.passerbyBackgroundPicturePath,
         passerFacePicPath: Imgbase + em.passerbyFacePicturePath,
         policeNum: em.policeNum,
-        reportTime: em.reportTime,
-        score: String(em.score) + "%",
+        reportTime: em.reportTime.replace(/-/g, "/"),
+        score: creatScore(em.score),
         status: em.status
       };
     },
@@ -159,6 +166,7 @@ export default {
         departmentId: this.currentDm.id || "",
         pageNo: this.pageNo
       };
+      this.nohasHitInfo = false;
       getListHitInfo(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -170,7 +178,7 @@ export default {
               this.dataList.push(this.filterData(em));
             });
             this.totalCount = r.data.totalCount;
-            if (!page.length) this.nohasface = true;
+            if (!page.length) this.nohasHitInfo = true;
           }
         }
       });
@@ -188,9 +196,10 @@ export default {
       this.viewHitDetails = true;
     },
     //关闭人像详情页
-    closeFaceDetails() {
+    closeFaceDetails(needUpdateList) {
       this.currentFace = {};
       this.viewHitDetails = false;
+      if (needUpdateList) this.renderList();
     }
   },
   components: {

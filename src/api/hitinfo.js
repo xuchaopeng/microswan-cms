@@ -18,10 +18,10 @@ export const getNewestHitInfo = departmentId => {
 //4、接口 “人像库推送消息展示” ，该接口会调整，不传部门的话，查看全部  新页面。
 
 //人像库推送消息确认
-export const hitInfoAck = ({ id, isSame }) => {
+export const hitInfoAck = ({ id, status }) => {
   let data = {
     id,
-    status: isSame
+    status
   };
   return axios.request({
     url: "/api/faceLib/hitInfoAck" + resetParam(data),
@@ -51,6 +51,17 @@ export const getFaceTrack = ({ faceId, pageNo = 1, pageSize = 10 }) => {
   };
   return axios.request({
     url: "/api/faceLib/track" + resetParam(data),
+    method: "get"
+  });
+};
+
+//查看人像详情
+export const getFaceDetails = id => {
+  let data = {
+    id
+  };
+  return axios.request({
+    url: "/api/face/getById" + resetParam(data),
     method: "get"
   });
 };

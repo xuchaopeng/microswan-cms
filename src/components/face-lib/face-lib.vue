@@ -6,51 +6,76 @@
           <Icon class="iconfont icon-icon-test"></Icon>
           添加人像
         </Button>
-        {{item.libName}}
-        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+        {{ item.libName }}
+        <Icon
+          class="close"
+          custom="icon iconfont icon-close"
+          size="24"
+          @click="closeBtn"
+        />
       </p>
       <p class="nohasface" v-show="nohasface">暂无人像</p>
       <ul class="facelist">
         <li class="item" v-for="em in dataList" @click="renderDetails(em)">
           <div class="img">
-            <img :src="em.facePicPath" alt="/">
+            <img :src="em.facePicPath" alt="/" />
           </div>
           <div class="dis">
-            <Icon class="iconfont icon-ai14"></Icon>{{em.name}}
+            <Icon class="iconfont icon-ai14"></Icon>{{ em.name }}
           </div>
         </li>
       </ul>
       <div class="pages" v-if="totalCount > 10">
-        <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        <Page
+          :total="totalCount"
+          show-elevator
+          show-total
+          @on-change="changePage"
+        />
       </div>
     </Card>
     <div class="popup" v-show="ispop">
       <div class="pop"></div>
       <div class="cons">
-        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
+        <Icon
+          class="close"
+          custom="icon iconfont icon-close"
+          size="24"
+          @click="closePopup"
+        ></Icon>
         <p class="facepic">
           <span class="cirs" @click="deleteFace">
             <Icon class="iconfont icon-icon_huabanfuben"></Icon>
           </span>
-          <img :src="currentFace.facePicPath" alt="">
+          <img :src="currentFace.facePicPath" alt="" />
         </p>
         <p class="backpic">
-          <img :src="currentFace.backPicPath" alt="">
+          <img :src="currentFace.backPicPath" alt="" />
         </p>
         <div class="dis">
-          <p>姓名：{{currentFace.name}}</p>
-          <p>民族：{{currentFace.ethnic}}</p>
-          <p>别名： {{currentFace.alias}}</p>
-          <p>库名：{{currentFace.name}}</p>
+          <p>姓名：{{ currentFace.name }}</p>
+          <p>民族：{{ currentFace.ethnic }}</p>
+          <p>别名： {{ currentFace.alias }}</p>
+          <p>库名：{{ currentFace.name }}</p>
         </div>
       </div>
     </div>
     <div class="sub" v-show="!closesub">
-      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub">
+      <Icon
+        class="close"
+        custom="icon iconfont icon-close"
+        size="24"
+        @click="closeSub"
+      >
       </Icon>
       <template v-if="type == 1">
         <p class="subtitle">添加人像HAHA</p>
-        <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+        <Form
+          ref="saveFrom"
+          :model="from"
+          :rules="rule"
+          @keydown.enter.native="addSubmit"
+        >
           <FormItem prop="name" label="姓名">
             <Input v-model="from.name"></Input>
           </FormItem>
@@ -80,7 +105,7 @@
       <template v-else-if="type == 2">
         <div class="delete">
           <p>确认删除该人像吗?</p>
-          <p>{{currentFace.name}}</p>
+          <p>{{ currentFace.name }}</p>
           <p class="dels">
             <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
             <Button @click="closeSub" type="warning">取消</Button>
@@ -92,12 +117,12 @@
 </template>
 
 <script>
-import './index.less';
-import imgsrc from '@/assets/images/1.jpg';
-import { getFaceList, addFace, delFace } from '@/api/resources';
-const Imgbase = 'https://118.24.53.165/';
+import "./index.less";
+import imgsrc from "@/assets/images/1.jpg";
+import { getFaceList, addFace, delFace } from "@/api/resources";
+const Imgbase = "https://118.24.53.165/";
 export default {
-  name: 'Facelibitem',
+  name: "Facelibitem",
   props: {
     item: {
       type: Object,
@@ -118,23 +143,23 @@ export default {
       totalCount: 1,
       closesub: true,
       pageNo: 1,
-      type: '',
+      type: "",
       loading: false,
       nohasface: false,
       dataList: [],
       ispop: false,
       currentFace: {},
       from: {
-        name: '',
-        alias: '',
-        ethnic: '',
-        idcard: '',
-        file: ''
+        name: "",
+        alias: "",
+        ethnic: "",
+        idcard: "",
+        file: ""
       },
       rule: {
-        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+        name: [{ required: true, message: "姓名不能为空", trigger: "blur" }]
       }
-    }
+    };
   },
   mounted() {
     this.closesub = true;
@@ -142,9 +167,9 @@ export default {
   },
   methods: {
     closeBtn() {
-      this.cacheLidId = this.libId //缓存库id
+      this.cacheLidId = this.libId; //缓存库id
       this.dataList = [];
-      this.$emit('closeFaceLib');
+      this.$emit("closeFaceLib");
       this.nohasface = false;
     },
     closeSub() {
@@ -163,7 +188,7 @@ export default {
         id: em.id,
         libId: em.libId,
         name: em.name
-      }
+      };
     },
     changePage(pageNo) {
       this.pageNo = pageNo;
@@ -172,7 +197,7 @@ export default {
     renderDetails(em) {
       this.currentFace = {
         ...em
-      }
+      };
       this.ispop = true;
     },
     renderList() {
@@ -209,14 +234,14 @@ export default {
     upSuccess(v) {
       this.loading = false;
       this.closesub = true;
-      this.type = '';
+      this.type = "";
       switch (v) {
         case 1:
           for (var k in this.from) {
-            this.from[k] = '';
+            this.from[k] = "";
           }
           this.$Message.success({
-            content: '人像添加成功',
+            content: "人像添加成功",
             duration: 1.5,
             closable: true
           });
@@ -224,7 +249,7 @@ export default {
         case 2:
           this.ispop = false;
           this.$Message.success({
-            content: '人像删除成功',
+            content: "人像删除成功",
             duration: 1.5,
             closable: true
           });
@@ -232,21 +257,21 @@ export default {
       }
       this.renderList();
     },
-    upError() {
+    upError(v) {
       this.loading = false;
       this.closesub = true;
-      this.type = '';
+      this.type = "";
       switch (v) {
         case 1:
           this.$Message.error({
-            content: '人像添加失败',
+            content: "人像添加失败",
             duration: 1.5,
             closable: true
           });
           break;
         case 2:
           this.$Message.error({
-            content: '人像删除失败',
+            content: "人像删除失败",
             duration: 1.5,
             closable: true
           });
@@ -254,9 +279,9 @@ export default {
       }
     },
     addSubmit() {
-      this.$refs['saveFrom'].validate(valid => {
+      this.$refs["saveFrom"].validate(valid => {
         if (valid) {
-          if (typeof this.item.id == 'undefined') return;
+          if (typeof this.item.id == "undefined") return;
           this.loading = true;
           let file1 = this.$refs.BJfile;
           let file2 = this.$refs.IDfile;
@@ -268,23 +293,33 @@ export default {
             idcard: this.from.idcard,
             libId: this.item.id
           };
-          var blod = new Blob([JSON.stringify(v)], { type: "application/json" });
-          formData.append('addVO', blod);
-          formData.append('file', file1.files[0]);
-          formData.append('idFile', file2.files[0]);
-          addFace(formData).then(res => {
-            if (res.data.code == 200) this.upSuccess(1);
-            else this.upError(4);
-          }).catch(err => { this.upError(1); })
+          var blod = new Blob([JSON.stringify(v)], {
+            type: "application/json"
+          });
+          formData.append("addVO", blod);
+          formData.append("file", file1.files[0]);
+          formData.append("idFile", file2.files[0]);
+          addFace(formData)
+            .then(res => {
+              if (res.data.code == 200) this.upSuccess(1);
+              else this.upError(4);
+            })
+            .catch(err => {
+              this.upError(1);
+            });
         }
-      })
+      });
     },
     delSubmit() {
       if (!this.currentFace.id) return;
-      delFace(this.currentFace.id).then(res => {
-        if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(2);
-      }).catch(err => { this.upError(2); })
+      delFace(this.currentFace.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(2);
+          else this.upError(2);
+        })
+        .catch(err => {
+          this.upError(2);
+        });
     }
   },
   watch: {
@@ -292,5 +327,5 @@ export default {
       if (c) this.renderList();
     }
   }
-}
+};
 </script>

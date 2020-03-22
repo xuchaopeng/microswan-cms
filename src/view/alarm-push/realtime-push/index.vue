@@ -74,28 +74,35 @@
         </div>
       </div>
     </div>
+    <HitDetails
+      :item="currentFace"
+      :viewHitDetails="viewHitDetails"
+      @closeFace="closeFaceDetails"
+    ></HitDetails>
   </div>
 </template>
 
 <script>
 import "./realtime.less";
+import HitDetails from "_c/hit-details";
 import SockJs from "sockjs-client";
 import Stomp from "stompjs";
 import { getNewestHitInfo, getListHitInfo } from "@/api/hitinfo";
 export default {
   data() {
     return {
+      viewHitDetails: false,
+      currentFace: {},
       dataList: []
     };
   },
   mounted() {
     getListHitInfo({ departmentId: 1 })
-      .then(res => {
-        console.log(res, "getListHitInfo");
-      })
+      .then(res => {})
       .catch(err => {
         console.log(err);
       });
+    this.initwebsocket();
   },
   beforeDestroy() {},
   methods: {
@@ -107,13 +114,10 @@ export default {
       this.socket = new SockJs("http://118.24.53.165:8080/ws");
       this.stompclient = Stomp.over(this.socket);
       this.stompclient.connect(
-        {
-          "Content-Type": "text/plain"
-        },
+        {},
         frame => {
-          console.log("connect" + frame, "HAHAHA");
           this.stompclient.subscribe("/user/queue/hitInfo", msg => {
-            console.log(msg, "连接成功");
+            console.log(JSON.parse(msg.body), "连接成功");
           });
         },
         err => {
@@ -130,7 +134,23 @@ export default {
       this.$router.push({
         name: "infopush"
       });
+    },
+    //展示人像详情页
+    renderDetails(em) {
+      this.currentFace = {
+        ...em
+      };
+      this.viewHitDetails = true;
+    },
+    //关闭人像详情
+    closeFaceDetails(needUpdateList) {
+      this.currentFace = {};
+      this.viewHitDetails = false;
+      if (needUpdateList) this.renderList();
     }
+  },
+  components: {
+    HitDetails
   }
 };
 </script>

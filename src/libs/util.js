@@ -492,3 +492,12 @@ export const makeFormData = (obj, form_data) => {
     return data;
   }
 };
+/**
+ * 修正相似度
+ * @param {*} score
+ */
+export const creatScore = score => {
+  if (!score) return null;
+  score = Number(score);
+  return score.toFixed(2) + "%";
+};
