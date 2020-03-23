@@ -59,7 +59,7 @@
 import "./infopush.less";
 import HitDetails from "_c/hit-details";
 import Loading from "_c/loading";
-import { creatScore } from "@/libs/util";
+import { creatScore, getAddress } from "@/libs/util";
 import { getDepartmentTree } from "@/api/system";
 import { getListHitInfo } from "@/api/hitinfo";
 import { mapMutations, mapGetters } from "vuex";
@@ -150,7 +150,7 @@ export default {
     },
     //数据字段序列化
     filterData(em) {
-      return {
+      let nem = {
         departmentId: em.departmentId,
         backPicPath: Imgbase + em.hitBackgroundPicturePath,
         facePicPath: Imgbase + em.hitFacePicturePath,
@@ -165,6 +165,8 @@ export default {
         score: creatScore(em.score),
         status: em.status
       };
+      nem.address = getAddress(nem);
+      return nem;
     },
     //展现部门消息列表
     renderList() {

@@ -17,8 +17,9 @@
         </div>
         <div class="dis">
           <p class="seeTrack" @click="seeTrack">
-            <Icon class="iconfont icon-ai14"></Icon>查看人像轨迹 >
+            查看人像轨迹 <Icon class="iconfont icon-youce"></Icon>
           </p>
+          <p><Icon class="iconfont icon-ai14"></Icon>{{ item.address }}</p>
         </div>
       </div>
       <div class="passpic fl">
@@ -139,7 +140,6 @@ export default {
   },
   watch: {
     viewHitDetails(view) {
-      console.log("SFFSFSFSFSFFSFSF", this.item);
       if (view) {
         getFaceDetails(this.item.id).then(res => {
           let r = res.data ? res.data : {};

@@ -2,23 +2,26 @@
   <div class="realtime">
     <div class="container">
       <Loading v-if="!dataList.length"></Loading>
-      <div class="hitBackPic" v-show="dataList.length">
+      <div class="hitBackPic" v-if="dataList.length">
         <Carousel
           v-model="value"
           :autoplay="setting.autoplay"
           :dots="setting.dots"
+          :height="setting.height"
         >
           <CarouselItem v-for="item in dataList">
-            <p class="sub">
-              <span class="ms" @click="renderDetails(item)"
-                ><Icon class="iconfont icon-ai14"></Icon> 查看详情
-              </span>
-              <span class="pos">定位：{{ item.address }}</span>
-            </p>
-            <div class="demo-carousel">
-              <p class="pic">
-                <img :src="item.backPicPath" alt="" width="678" height="507" />
+            <div style="width:678px;height:507px;">
+              <p class="sub">
+                <span class="ms" @click="renderDetails(item)"
+                  ><Icon class="iconfont icon-ai14"></Icon> 查看详情
+                </span>
+                <span class="pos">定位：{{ item.address }}</span>
               </p>
+              <div class="demo-carousel">
+                <p class="pic">
+                  <img :src="item.backPicPath" width="678" height="507" />
+                </p>
+              </div>
             </div>
           </CarouselItem>
         </Carousel>
@@ -79,7 +82,8 @@ export default {
         dots: "none",
         radiusDot: false,
         trigger: "hover",
-        arrow: "hover"
+        arrow: "hover",
+        height: 537
       },
       xcp: [{ a: 1 }, { b: 2 }],
       viewHitDetails: false,

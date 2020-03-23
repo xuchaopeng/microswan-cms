@@ -21,11 +21,16 @@
             </div>
             <div class="dis">
               <p class="score">
-                <Icon class="iconfont icon-renxiangcaiji"></Icon>99.00
+                <Icon class="iconfont icon-renxiangcaiji"></Icon
+                >{{ em.score.replace("%", "") }}
               </p>
               <p class="time">
                 <Icon class="iconfont icon-shijian"></Icon>
-                2020/03/22 15:29:00
+                {{ em.reportTime }}
+              </p>
+              <p class="address">
+                <Icon class="iconfont icon-ai14"></Icon>
+                {{ em.address }}
               </p>
             </div>
           </li>
@@ -45,6 +50,7 @@
 
 <script>
 import "./index.less";
+import { creatScore, getAddress } from "@/libs/util";
 import { getFaceTrack } from "@/api/hitinfo";
 const Imgbase = "https://118.24.53.165/";
 export default {
@@ -72,7 +78,7 @@ export default {
     },
     //数据字段序列化
     filterData(em) {
-      return {
+      let nem = {
         departmentId: em.departmentId,
         backPicPath: Imgbase + em.hitBackgroundPicturePath,
         facePicPath: Imgbase + em.hitFacePicturePath,
@@ -83,10 +89,12 @@ export default {
         passerBackPicPath: Imgbase + em.passerbyBackgroundPicturePath,
         passerFacePicPath: Imgbase + em.passerbyFacePicturePath,
         policeNum: em.policeNum,
-        reportTime: em.reportTime,
-        score: String(em.score) + "%",
+        reportTime: em.reportTime.replace(/-/g, "/"),
+        score: creatScore(em.score),
         status: em.status
       };
+      getAddress(nem);
+      return nem;
     },
     //展示人像轨迹列表
     renderList() {
