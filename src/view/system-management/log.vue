@@ -1,79 +1,98 @@
 <template>
   <div class="log">
     <Row :gutter="15">
-      <Col span="8">
-      <Card class="comcss bmlist">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-        </div>
-        <div class="tables">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+      <Col span="6">
+        <Card class="comcss bmlist">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+          </div>
+          <div class="tables">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
-      <Col span="16">
-      <div class="dmcons comcss">
-        <div class="search">
-          <Select v-model="selectOperation" style="width:200px;" placeholder="请选择操作">
-            <Option v-for="item in operation" :value="item">
-              {{ item }}
-            </Option>
-          </Select>
-          <Button class="ml10" type="primary" icon="ios-search" @click="searchLog">搜索</Button>
+      <Col span="18">
+        <div class="dmcons comcss">
+          <div class="search">
+            <Select
+              v-model="selectOperation"
+              style="width:200px;"
+              placeholder="请选择操作"
+            >
+              <Option v-for="item in operation" :value="item">
+                {{ item }}
+              </Option>
+            </Select>
+            <Button
+              class="ml10"
+              type="primary"
+              icon="ios-search"
+              @click="searchLog"
+              >搜索</Button
+            >
+          </div>
+          <Table
+            :columns="column"
+            :data="tabdata"
+            class="comcss"
+            no-data-text="该部门下暂无数据"
+          ></Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
         </div>
-        <Table :columns="column" :data="tabdata" class="comcss"></Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-        </div>
-      </div>
       </Col>
     </Row>
-
   </div>
 </template>
 
 <script>
-import { getDepartmentTree, getOperation, getLogList } from '@/api/system';
-import { mapGetters, mapMutations } from 'vuex';
+import { getDepartmentTree, getOperation, getLogList } from "@/api/system";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
       //当前选中部门
       currentDm: {
-        name: '',
-        id: ''
+        name: "",
+        id: ""
       },
       //左侧部门列表
       dmlist: [{}],
       operation: [],
-      selectOperation: '',
+      selectOperation: "",
       totalCount: 1,
       tabdata: [],
       column: [
         {
-          title: '用户名',
-          key: 'username'
+          title: "用户名",
+          key: "username"
         },
         {
-          title: '操作名称',
-          key: 'operation'
+          title: "操作名称",
+          key: "operation"
         },
         {
-          title: '操作IP',
-          key: 'ip'
+          title: "操作IP",
+          key: "ip"
         },
         {
-          title: '创建时间',
-          key: 'createTime'
+          title: "创建时间",
+          key: "createTime"
         },
         {
-          title: '内容',
-          key: 'content'
+          title: "内容",
+          key: "content"
         }
-      ],
-    }
+      ]
+    };
   },
   mounted() {
     this.pageNo = 1;
@@ -81,10 +100,10 @@ export default {
     this.getActions();
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(["departmentId", "departmentList"])
   },
   methods: {
-    ...mapMutations(['setDepartmentList']),
+    ...mapMutations(["setDepartmentList"]),
     //更新部门树数据
     upDmList(a) {
       //如果用户当前未选中任何部门，这里默认为最高级部门
@@ -117,16 +136,18 @@ export default {
         this.upDmList(this.departmentList);
         return;
       }
-      getDepartmentTree(this.departmentId).then(res => {
-        let data = null;
-        const r = res.data;
-        if (r.code == 200 && r.data) {
-          data = r.data;
-          let list = [data];
-          this.upDmList(list);
-          this.setDepartmentList(list);
-        }
-      }).catch(res => { })
+      getDepartmentTree(this.departmentId)
+        .then(res => {
+          let data = null;
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            data = r.data;
+            let list = [data];
+            this.upDmList(list);
+            this.setDepartmentList(list);
+          }
+        })
+        .catch(res => {});
     },
     //当前部门被选择
     selectDepartment(item) {
@@ -143,7 +164,7 @@ export default {
     searchLog() {
       if (!this.currentDm.name) {
         this.$Message.success({
-          content: '请选择一个部门',
+          content: "请选择一个部门",
           duration: 1.5,
           closable: true
         });
@@ -151,7 +172,7 @@ export default {
       }
       if (!this.selectOperation) {
         this.$Message.success({
-          content: '请选择日志查询操作',
+          content: "请选择日志查询操作",
           duration: 1.5,
           closable: true
         });
@@ -162,11 +183,13 @@ export default {
     },
     //获取日志选项
     getActions() {
-      getOperation().then(res => {
-        if (res.data.code == 200) {
-          this.operation = res.data.data;
-        }
-      }).catch(err => { })
+      getOperation()
+        .then(res => {
+          if (res.data.code == 200) {
+            this.operation = res.data.data;
+          }
+        })
+        .catch(err => {});
     },
     //获取日志数据
     getLogData() {
@@ -174,24 +197,26 @@ export default {
         departmentId: this.departmentId,
         operation: this.selectOperation,
         pageNo: this.pageNo
-      }
-      getLogList(param).then(res => {
-        const r = res.data;
-        if (r.code == 200 && r.data) {
-          const page = r.data.pageContent;
-          const len = this.tabdata.length;
-          if (page && page.length) {
-            this.tabdata.splice(0, len);
-            page.forEach(em => {
-              this.tabdata.push(em);
-            });
-            this.totalCount = r.data.totalCount;
+      };
+      getLogList(param)
+        .then(res => {
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            const page = r.data.pageContent;
+            const len = this.tabdata.length;
+            if (page && page.length) {
+              this.tabdata.splice(0, len);
+              page.forEach(em => {
+                this.tabdata.push(em);
+              });
+              this.totalCount = r.data.totalCount;
+            }
           }
-        }
-      }).catch(err => { })
+        })
+        .catch(err => {});
     }
   }
-}
+};
 </script>
 
 <style lang="less">

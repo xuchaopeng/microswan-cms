@@ -9,12 +9,14 @@
             </span>
           </div>
           <div class="tbs">
+            <Loading color="#504C4C" :size="25" v-if="isloading2"></Loading>
             <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
           </div>
         </Card>
       </Col>
       <Col span="18">
         <div class="dmcons comcss">
+          <Loading v-if="isloading"></Loading>
           <div class="nohasHitInfo" v-show="nohasHitInfo">
             该部门暂无推送消息
           </div>
@@ -56,6 +58,7 @@
 <script>
 import "./infopush.less";
 import HitDetails from "_c/hit-details";
+import Loading from "_c/loading";
 import { creatScore } from "@/libs/util";
 import { getDepartmentTree } from "@/api/system";
 import { getListHitInfo } from "@/api/hitinfo";
@@ -64,6 +67,8 @@ const Imgbase = "https://118.24.53.165/";
 export default {
   data() {
     return {
+      isloading: true,
+      isloading2: true,
       viewHitDetails: false,
       totalCount: 1,
       //当前人像
@@ -122,6 +127,7 @@ export default {
       const b = getTree(a);
       this.dmlist.pop();
       this.dmlist.push(b[0]);
+      this.isloading2 = false;
     },
     //获取部门树数据
     getTreeData() {
@@ -167,21 +173,27 @@ export default {
         pageNo: this.pageNo
       };
       this.nohasHitInfo = false;
-      getListHitInfo(param).then(res => {
-        let r = res.data;
-        if (r.code == 200) {
-          const page = r.data.pageContent;
-          const len = this.dataList.length;
-          if (page) {
-            this.dataList.splice(0, len);
-            page.forEach(em => {
-              this.dataList.push(this.filterData(em));
-            });
-            this.totalCount = r.data.totalCount;
-            if (!page.length) this.nohasHitInfo = true;
+      this.isloading = true;
+      getListHitInfo(param)
+        .then(res => {
+          this.isloading = false;
+          let r = res.data;
+          if (r.code == 200) {
+            const page = r.data.pageContent;
+            const len = this.dataList.length;
+            if (page) {
+              this.dataList.splice(0, len);
+              page.forEach(em => {
+                this.dataList.push(this.filterData(em));
+              });
+              this.totalCount = r.data.totalCount;
+              if (!page.length) this.nohasHitInfo = true;
+            }
           }
-        }
-      });
+        })
+        .catch(err => {
+          this.isloading = false;
+        });
     },
     //切换页数
     changePage(pageNo) {
@@ -203,7 +215,8 @@ export default {
     }
   },
   components: {
-    HitDetails
+    HitDetails,
+    Loading
   }
 };
 </script>

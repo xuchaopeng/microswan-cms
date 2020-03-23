@@ -6,7 +6,7 @@
         class="close"
         custom="icon iconfont icon-close"
         size="24"
-        @click="closePopup"
+        @click="closePopup(false)"
       ></Icon>
       <div class="facepic fl">
         <div class="pic">

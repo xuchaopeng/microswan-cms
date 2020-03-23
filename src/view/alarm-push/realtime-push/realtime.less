@@ -1,19 +1,35 @@
 .realtime {
   background-color: #064768;
   border-radius: 5px;
-  min-height: 300px;
+  // min-height: 300px;
+  min-height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
   .sub {
     width: 100%;
     line-height: 30px;
+    height: 30px;
     background-color: #0085bd;
     color: #fff;
-    text-align: center;
+    text-align: left;
+    .ms {
+      padding-left: 20px;
+      float: left;
+      cursor: pointer;
+      .iconfont {
+        margin-right: 5px;
+        font-size: 20px !important;
+      }
+    }
+    .pos {
+      padding-right: 30px;
+      float: right;
+    }
   }
   .hitBackPic {
     margin: 0 auto;
-    width: 730px;
+    width: 680px;
     max-width: 100%;
     height: auto;
     border: 1px solid #32bcdc;
@@ -30,7 +46,7 @@
   .hitFacePic {
     border: 2px solid #32bcdc;
     margin: 15px auto 0 auto;
-    width: 730px;
+    width: 680px;
     max-width: 100%;
     .sub {
       padding: 0 20px;
@@ -69,8 +85,14 @@
     overflow: hidden;
     li {
       float: left;
-      width: 110px;
+      width: 115px;
       margin-right: 8px;
+      cursor: pointer;
+      &.cur {
+        .pic {
+          border: 2px solid #fff;
+        }
+      }
       .pic {
         width: 100%;
         height: 110px;

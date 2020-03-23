@@ -501,3 +501,20 @@ export const creatScore = score => {
   score = Number(score);
   return score.toFixed(2) + "%";
 };
+/**
+ * 获取经纬度对应地址
+ * @param {*} item
+ */
+export const getAddress = item => {
+  if (!item) return;
+  if (!item.lng || !item.lat) return;
+  const lng = item.lng;
+  const lat = item.lat;
+  var point = new BMap.Point(lng, lat);
+  var gc = new BMap.Geocoder();
+  gc.getLocation(point, function(rs) {
+    item.address = rs.address;
+    // console.log(rs, "HAHAH");
+    // var mapAddress = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+  });
+};

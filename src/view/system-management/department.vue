@@ -1,42 +1,76 @@
 <template>
   <div class="department">
     <Row :gutter="15">
-      <Col span="8">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-          <span class="fr">
-            <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
-            <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
-            <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
-          </span>
-        </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+      <Col span="6">
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+            <span class="fr">
+              <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
+              <Icon
+                class="p5"
+                custom="icon iconfont icon-xinzengliebiao"
+                @click="addDm"
+                size="24"
+              />
+              <Icon
+                class="p5"
+                custom="icon iconfont icon-icon_huabanfuben"
+                @click="deleteDm"
+                size="24"
+              />
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
-      <Col span="16">
-      <div class="dmcons comcss">
-        <Table :columns="column" :data="tabdata"></Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+      <Col span="18">
+        <div class="dmcons comcss">
+          <Table
+            :columns="column"
+            :data="tabdata"
+            no-data-text="该部门下暂无数据"
+          ></Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
     <div class="subtable" v-if="tk.sv">
-      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+      <Icon
+        class="close"
+        custom="icon iconfont icon-close"
+        size="24"
+        @click="closeBtn"
+      />
       <div v-show="tk.add">
         <p class="subtitle">添加部门</p>
-        <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="saveSubmit">
+        <Form
+          ref="saveFrom"
+          :model="from"
+          :rules="rule"
+          @keydown.enter.native="saveSubmit"
+        >
           <FormItem prop="name" label="部门名称">
             <Input v-model="from.name"></Input>
           </FormItem>
           <FormItem>
-            <Button @click="saveSubmit" type="primary" :loading="tk.loading" long>
+            <Button
+              @click="saveSubmit"
+              type="primary"
+              :loading="tk.loading"
+              long
+            >
               <span v-if="!tk.loading">立即保存</span>
               <span v-else>保存中...</span>
             </Button>
@@ -45,9 +79,11 @@
       </div>
       <div v-show="tk.del">
         <p class="subtitle">确认删除该部门吗?</p>
-        <p>{{currentDm.name}}</p>
+        <p>{{ currentDm.name }}</p>
         <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+          <Button class="mr5" @click="delSubmit" type="primary"
+            >确认删除</Button
+          >
           <Button @click="closeBtn" type="warning">取消</Button>
         </p>
       </div>
@@ -56,24 +92,29 @@
 </template>
 
 <script>
-import { getDepartmentTree, addDepartment, delDepartment, getDepartmentList } from '@/api/system';
-import { mapMutations, mapGetters } from 'vuex';
+import {
+  getDepartmentTree,
+  addDepartment,
+  delDepartment,
+  getDepartmentList
+} from "@/api/system";
+import { mapMutations, mapGetters } from "vuex";
 //树形节点 设置disabled
 export default {
   data() {
     return {
       //弹框显示、关闭
       tk: {
-        sv: '',
-        add: '',
-        editor: '',
-        del: '',
+        sv: "",
+        add: "",
+        editor: "",
+        del: "",
         loading: false
       },
       //当前选中部门
       currentDm: {
-        name: '',
-        id: ''
+        name: "",
+        id: ""
       },
       //左侧部门列表
       dmlist: [{}],
@@ -81,36 +122,36 @@ export default {
       tabdata: [],
       column: [
         {
-          title: '部门名称',
-          key: 'name'
+          title: "部门名称",
+          key: "name"
         },
         {
-          title: '创建时间',
-          key: 'createTime'
+          title: "创建时间",
+          key: "createTime"
         },
         {
-          title: '更新时间',
-          key: 'updateTime'
+          title: "更新时间",
+          key: "updateTime"
         }
       ],
-      totalCount: 1,//部门列表数据总数量
+      totalCount: 1, //部门列表数据总数量
       //表单提交
       from: {
-        name: ''
+        name: ""
       },
       rule: {
-        name: { required: true, message: '部门名称不能为空', trigger: 'blur' }
+        name: { required: true, message: "部门名称不能为空", trigger: "blur" }
       }
-    }
+    };
   },
   mounted() {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(["departmentId", "departmentList"])
   },
   methods: {
-    ...mapMutations(['setDepartmentList']),
+    ...mapMutations(["setDepartmentList"]),
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
@@ -143,28 +184,30 @@ export default {
     },
     //获取部门树数据
     getTreeData() {
-      getDepartmentTree(this.departmentId).then(res => {
-        let data = null;
-        const r = res.data;
-        if (r.code == 200 && r.data) {
-          data = r.data;
-          let list = [data];
-          this.upDmList(list);
-          this.setDepartmentList(list);
-        }
-      }).catch(res => { })
+      getDepartmentTree(this.departmentId)
+        .then(res => {
+          let data = null;
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            data = r.data;
+            let list = [data];
+            this.upDmList(list);
+            this.setDepartmentList(list);
+          }
+        })
+        .catch(res => {});
     },
     /**
      * v  1为部门更新成功  2为删除成功 3为编辑成功
-    */
+     */
     upSuccess(v) {
       if (v == 1) {
         this.tk.loading = false;
         this.tk.sv = false;
         this.tk.add = false;
-        this.from.name = '';
+        this.from.name = "";
         this.$Message.success({
-          content: '部门保存成功',
+          content: "部门保存成功",
           duration: 1.5,
           closable: true
         });
@@ -173,37 +216,37 @@ export default {
         this.tk.sv = false;
         this.tk.del = false;
         this.$Message.success({
-          content: '部门删除成功',
+          content: "部门删除成功",
           duration: 1.5,
           closable: true
         });
       }
-      this.getTreeData();//更新数据
+      this.getTreeData(); //更新数据
     },
-    /** 
+    /**
      * v  1为部门更新失败  2为删除失败 3为编辑失败
-    */
+     */
     upError(v) {
       if (v == 1) {
         this.tk.loading = false;
         this.tk.sv = false;
         this.tk.add = false;
-        this.from.name = '';
+        this.from.name = "";
         this.$Message.error({
-          content: '部门保存失败',
+          content: "部门保存失败",
           duration: 1.5,
           closable: true
-        })
+        });
       }
 
       if (v == 2) {
         this.tk.sv = false;
         this.tk.del = false;
         this.$Message.error({
-          content: '部门删除失败',
+          content: "部门删除失败",
           duration: 1.5,
           closable: true
-        })
+        });
       }
     },
     //切换页面
@@ -218,7 +261,7 @@ export default {
         name: this.currentDm.name,
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
-      }
+      };
       getDepartmentList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -242,12 +285,14 @@ export default {
       this.renderList();
     },
     //编辑部门
-    editorDm() { console.log('编辑部门') },
+    editorDm() {
+      console.log("编辑部门");
+    },
     //添加部门
     addDm() {
       if (!this.currentDm.name) {
         this.$Message.success({
-          content: '请选择一个部门',
+          content: "请选择一个部门",
           duration: 1.5,
           closable: true
         });
@@ -261,7 +306,7 @@ export default {
     deleteDm() {
       if (!this.currentDm.name) {
         this.$Message.success({
-          content: '请选择一个部门',
+          content: "请选择一个部门",
           duration: 1.5,
           closable: true
         });
@@ -274,29 +319,37 @@ export default {
     //删除提交
     delSubmit() {
       if (!this.currentDm.id) return;
-      delDepartment(this.currentDm.id).then(res => {
-        if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(2);
-      }).catch(err => { this.upError(2); })
+      delDepartment(this.currentDm.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(2);
+          else this.upError(2);
+        })
+        .catch(err => {
+          this.upError(2);
+        });
     },
     //保存提交
     saveSubmit() {
-      this.$refs['saveFrom'].validate(valid => {
+      this.$refs["saveFrom"].validate(valid => {
         if (valid) {
           this.tk.loading = true;
           let param = {
             name: this.from.name,
             parentId: this.currentDm.id
-          }
-          addDepartment(param).then(res => {
-            if (res.data.code == 200) this.upSuccess(1);
-            else this.upError(1);
-          }).catch(err => { this.upError(1); })
+          };
+          addDepartment(param)
+            .then(res => {
+              if (res.data.code == 200) this.upSuccess(1);
+              else this.upError(1);
+            })
+            .catch(err => {
+              this.upError(1);
+            });
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="less">

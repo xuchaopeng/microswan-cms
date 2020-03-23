@@ -1,41 +1,76 @@
 <template>
   <div class="role">
     <Row :gutter="15">
-      <Col span="8">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-        </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+      <Col span="6">
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
-      <Col span="16">
-      <div class="dmcons comcss">
-        <p class="addbtn">
-          <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
-        </p>
-        <Table :columns="column" :data="tabdata" no-data-text="暂无角色">
-          <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
-            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
-          </template>
-        </Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+      <Col span="18">
+        <div class="dmcons comcss">
+          <p class="addbtn">
+            <Button type="success" size="large" @click="addNewRole"
+              >+添加新角色</Button
+            >
+          </p>
+          <Table
+            :columns="column"
+            :data="tabdata"
+            no-data-text="该部门下暂无角色"
+          >
+            <template slot-scope="{ row, index }" slot="action">
+              <Button
+                class="mr10"
+                type="primary"
+                size="small"
+                @click="editorDis(row)"
+                >编辑描述</Button
+              >
+              <Button
+                class="mr10"
+                type="primary"
+                size="small"
+                @click="editorRole(row)"
+                >修改权限</Button
+              >
+              <Button type="error" size="small" @click="removeRole(row)"
+                >删除</Button
+              >
+            </template>
+          </Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
     <div class="subtable" v-if="tk.sv">
-      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+      <Icon
+        class="close"
+        custom="icon iconfont icon-close"
+        size="24"
+        @click="closeBtn"
+      />
       <div v-show="tk.add">
         <p class="subtitle">添加角色</p>
-        <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+        <Form
+          ref="saveFrom"
+          :model="from"
+          :rules="rule"
+          @keydown.enter.native="addSubmit"
+        >
           <FormItem prop="name" label="角色名称">
             <Input v-model="from.name"></Input>
           </FormItem>
@@ -43,7 +78,12 @@
             <Input v-model="from.description"></Input>
           </FormItem>
           <FormItem>
-            <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
+            <Button
+              @click="addSubmit"
+              type="primary"
+              :loading="tk.loading"
+              long
+            >
               <span v-if="!tk.loading">立即保存</span>
               <span v-else>保存中...</span>
             </Button>
@@ -52,23 +92,36 @@
       </div>
       <div v-show="tk.del">
         <p class="subtitle">确认删除该角色吗?</p>
-        <p>{{currentRole.name}}</p>
+        <p>{{ currentRole.name }}</p>
         <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+          <Button class="mr5" @click="delSubmit" type="primary"
+            >确认删除</Button
+          >
           <Button @click="closeBtn" type="warning">取消</Button>
         </p>
       </div>
       <div class="discnt" v-show="tk.dis">
         <p class="subtitle">编辑描述</p>
-        <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
+        <Form
+          ref="editorFrom"
+          :model="editorFrom"
+          :rules="editorRule"
+          @keydown.enter.native="editorSubmit"
+        >
           <div class="clearfix mrb10">
-            <span class="fl mr5">名称：</span><span class="fl">{{currentRole.name}}</span>
+            <span class="fl mr5">名称：</span
+            ><span class="fl">{{ currentRole.name }}</span>
           </div>
           <FormItem prop="name" label="描述：">
             <Input v-model="editorFrom.description" type="textarea"></Input>
           </FormItem>
           <FormItem>
-            <Button @click="editorSubmit" type="primary" :loading="tk.loading" long>
+            <Button
+              @click="editorSubmit"
+              type="primary"
+              :loading="tk.loading"
+              long
+            >
               <span v-if="!tk.loading">立即保存</span>
               <span v-else>保存中...</span>
             </Button>
@@ -78,11 +131,18 @@
       <div class="pmscnt" v-show="tk.pms">
         <p class="subtitle">修改权限</p>
         <div class="clearfix mrb10">
-          <span class="fl mr5">名称：</span><span class="fl">{{currentRole.name}}</span></div>
+          <span class="fl mr5">名称：</span
+          ><span class="fl">{{ currentRole.name }}</span>
+        </div>
         <div class="clearfix">
           <span class="fl">权限：</span>
           <div class="pmist fl">
-            <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
+            <Tree
+              class="fl"
+              :data="permissionsList"
+              @on-check-change="checkPermission"
+              show-checkbox
+            ></Tree>
           </div>
         </div>
         <p class="savepms">
@@ -97,30 +157,38 @@
 </template>
 
 <script>
-import { getDepartmentTree, addRole, getRoleList, deleteRole, showPermissions, assignRole, updateRole } from '@/api/system';
-import { mapMutations, mapGetters } from 'vuex';
+import {
+  getDepartmentTree,
+  addRole,
+  getRoleList,
+  deleteRole,
+  showPermissions,
+  assignRole,
+  updateRole
+} from "@/api/system";
+import { mapMutations, mapGetters } from "vuex";
 //树形节点 设置disabled
 export default {
   data() {
     return {
       //弹框显示、关闭
       tk: {
-        sv: '',
-        add: '',
-        editor: '',
-        del: '',
+        sv: "",
+        add: "",
+        editor: "",
+        del: "",
         loading: false
       },
       //当前选中部门
       currentDm: {
-        name: '',
-        id: ''
+        name: "",
+        id: ""
       },
       //操作当前角色
       currentRole: {
-        name: '',
-        id: '',
-        description: '',
+        name: "",
+        id: "",
+        description: "",
         permissions: null //当前角色修改后的权限
       },
       //左侧部门列表
@@ -129,51 +197,51 @@ export default {
       tabdata: [],
       column: [
         {
-          title: '角色名称',
-          key: 'name'
+          title: "角色名称",
+          key: "name"
         },
         {
-          title: '描述',
-          key: 'description'
+          title: "描述",
+          key: "description"
         },
         {
-          title: '操作',
-          slot: 'action',
-          key: 'cz'
+          title: "操作",
+          slot: "action",
+          key: "cz"
         }
       ],
       //部门列表数据总数量
       totalCount: 1,
       //角色添加，表单提交
       from: {
-        name: '',
-        description: ''
+        name: "",
+        description: ""
       },
       rule: {
-        name: { required: true, message: '角色名称不能为空', trigger: 'blur' },
+        name: { required: true, message: "角色名称不能为空", trigger: "blur" },
         description: { required: false }
       },
       //角色描述编辑，表单提交
       editorFrom: {
-        name: '',
-        description: ''
+        name: "",
+        description: ""
       },
       editorRule: {
-        name: { required: false, trigger: 'blur' },
-        permissions: { required: false, trigger: 'blur' }
+        name: { required: false, trigger: "blur" },
+        permissions: { required: false, trigger: "blur" }
       },
       //角色权限编辑
       permissionsList: []
-    }
+    };
   },
   mounted() {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(["departmentId", "departmentList"])
   },
   methods: {
-    ...mapMutations(['setDepartmentList']),
+    ...mapMutations(["setDepartmentList"]),
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
@@ -207,11 +275,11 @@ export default {
     //更新权限树数据
     upPmsData(a) {
       let obj = {
-        title: '权限设置',
+        title: "权限设置",
         expand: true,
         disabled: true,
         children: []
-      }
+      };
       a.forEach(em => {
         let e = {};
         e.title = em.groupName;
@@ -224,7 +292,7 @@ export default {
               expand: true,
               id: pm.id,
               checked: pm.checked
-            })
+            });
           });
         }
         if (e.children.length == 0) e.disabled = true;
@@ -239,16 +307,18 @@ export default {
         this.upDmList(this.departmentList);
         return;
       }
-      getDepartmentTree(this.departmentId).then(res => {
-        let data = null;
-        const r = res.data;
-        if (r.code == 200 && r.data) {
-          data = r.data;
-          let list = [data];
-          this.upDmList(list);
-          this.setDepartmentList(list);
-        }
-      }).catch(res => { })
+      getDepartmentTree(this.departmentId)
+        .then(res => {
+          let data = null;
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            data = r.data;
+            let list = [data];
+            this.upDmList(list);
+            this.setDepartmentList(list);
+          }
+        })
+        .catch(res => {});
     },
     //切换页面
     changePage(pageNo) {
@@ -262,7 +332,7 @@ export default {
         name: this.currentDm.name,
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
-      }
+      };
       getRoleList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -293,30 +363,30 @@ export default {
         if (r.code == 200) {
           this.upPmsData(r.data);
         }
-      })
+      });
     },
     //修改权限
     checkPermission(em, ary) {
       let pms = [];
       em.forEach(m => {
-        if (typeof m.id !== 'undefined') pms.push(m.id)
+        if (typeof m.id !== "undefined") pms.push(m.id);
       });
       this.currentRole.permissions = pms;
     },
     /**
      * 接口调取成功响应
      * v  1为角色增加成功  2为角色删除成功 3为角色编辑成功 4权限设置成功
-    */
+     */
     upSuccess(v) {
       this.tk.loading = false;
       this.tk.sv = false;
       switch (v) {
         case 1:
           this.tk.add = false;
-          this.from.name = '';
-          this.from.description = '';
+          this.from.name = "";
+          this.from.description = "";
           this.$Message.success({
-            content: '角色添加成功',
+            content: "角色添加成功",
             duration: 1.5,
             closable: true
           });
@@ -324,7 +394,7 @@ export default {
         case 2:
           this.tk.del = false;
           this.$Message.success({
-            content: '角色删除成功',
+            content: "角色删除成功",
             duration: 1.5,
             closable: true
           });
@@ -332,15 +402,15 @@ export default {
         case 3:
           this.tk.dis = false;
           this.$Message.success({
-            content: '角色描述编辑成功',
+            content: "角色描述编辑成功",
             duration: 1.5,
             closable: true
           });
         case 4:
           this.tk.pms = false;
-          this.currentRole.permissions = '';
+          this.currentRole.permissions = "";
           this.$Message.success({
-            content: '权限设置成功',
+            content: "权限设置成功",
             duration: 1.5,
             closable: true
           });
@@ -348,19 +418,19 @@ export default {
       }
       if (v !== 4) this.renderList();
     },
-    /** 
-    * v  1为角色增加失败  2为角色删除失败 3为角色编辑失败 4权限设置失败
-   */
+    /**
+     * v  1为角色增加失败  2为角色删除失败 3为角色编辑失败 4权限设置失败
+     */
     upError(v) {
       this.tk.loading = false;
       this.tk.sv = false;
       switch (v) {
         case 1:
           this.tk.add = false;
-          this.from.name = '';
-          this.from.description = '';
+          this.from.name = "";
+          this.from.description = "";
           this.$Message.error({
-            content: '角色保存失败',
+            content: "角色保存失败",
             duration: 1.5,
             closable: true
           });
@@ -368,27 +438,27 @@ export default {
         case 2:
           this.tk.del = false;
           this.$Message.error({
-            content: '角色删除失败',
+            content: "角色删除失败",
             duration: 1.5,
             closable: true
-          })
+          });
           break;
         case 3:
           this.tk.dis = false;
           this.$Message.error({
-            content: '角色描述编辑失败',
+            content: "角色描述编辑失败",
             duration: 1.5,
             closable: true
-          })
+          });
           break;
         case 4:
           this.tk.pms = false;
-          this.currentRole.permissions = '';
+          this.currentRole.permissions = "";
           this.$Message.error({
-            content: '权限设置失败',
+            content: "权限设置失败",
             duration: 1.5,
             closable: true
-          })
+          });
           break;
       }
     },
@@ -396,7 +466,7 @@ export default {
     addNewRole() {
       if (!this.currentDm.name) {
         this.$Message.success({
-          content: '请选择一个部门',
+          content: "请选择一个部门",
           duration: 1.5,
           closable: true
         });
@@ -455,27 +525,35 @@ export default {
     //删除提交
     delSubmit() {
       if (!this.currentRole.id) return;
-      deleteRole(this.currentRole.id).then(res => {
-        if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(2);
-      }).catch(err => { this.upError(2); })
+      deleteRole(this.currentRole.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(2);
+          else this.upError(2);
+        })
+        .catch(err => {
+          this.upError(2);
+        });
     },
     //保存提交
     addSubmit() {
-      this.$refs['saveFrom'].validate(valid => {
+      this.$refs["saveFrom"].validate(valid => {
         if (valid) {
           this.tk.loading = true;
           let param = {
             name: this.from.name,
             departmentId: this.currentDm.id,
             description: this.from.description
-          }
-          addRole(param).then(res => {
-            if (res.data.code == 200) this.upSuccess(1);
-            else this.upError(1);
-          }).catch(err => { this.upError(1); })
+          };
+          addRole(param)
+            .then(res => {
+              if (res.data.code == 200) this.upSuccess(1);
+              else this.upError(1);
+            })
+            .catch(err => {
+              this.upError(1);
+            });
         }
-      })
+      });
     },
     //修改提交
     editorSubmit() {
@@ -483,11 +561,15 @@ export default {
       let param = {
         id: this.currentRole.id,
         description: this.editorFrom.description
-      }
-      updateRole(param).then(res => {
-        if (res.data.code == 200) this.upSuccess(3);
-        else this.upError(3);
-      }).catch(er => { this.upError(3); });
+      };
+      updateRole(param)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(3);
+          else this.upError(3);
+        })
+        .catch(er => {
+          this.upError(3);
+        });
     },
     //权限提交 权限即改动必位数组
     pmsSubmit() {
@@ -495,15 +577,19 @@ export default {
       let param = {
         id: this.currentRole.id,
         permissions: this.currentRole.permissions
-      }
+      };
       this.tk.loading = true;
-      assignRole(param).then(res => {
-        if (res.data.code == 200) this.upSuccess(4);
-        else this.upError(4);
-      }).catch(err => { this.upError(4); })
+      assignRole(param)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(4);
+          else this.upError(4);
+        })
+        .catch(err => {
+          this.upError(4);
+        });
     }
   }
-}
+};
 </script>
 
 <style lang="less">

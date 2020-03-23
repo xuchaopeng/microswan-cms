@@ -1,40 +1,69 @@
 <template>
   <div class="user">
     <Row :gutter="15">
-      <Col span="8">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-        </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+      <Col span="6">
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
-      <Col span="16">
-      <div class="dmcons comcss">
-        <p class="addbtn">
-          <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
-        </p>
-        <Table :columns="column" :data="tabdata" no-data-text="暂无用户">
-          <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="primary" size="small" @click="editorUser(row)">更新</Button>
-            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
-          </template>
-        </Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+      <Col span="18">
+        <div class="dmcons comcss">
+          <p class="addbtn">
+            <Button type="success" size="large" @click="addNewUser"
+              >+添加新用户</Button
+            >
+          </p>
+          <Table
+            :columns="column"
+            :data="tabdata"
+            no-data-text="该部门下暂无用户"
+          >
+            <template slot-scope="{ row, index }" slot="action">
+              <Button
+                class="mr10"
+                type="primary"
+                size="small"
+                @click="editorUser(row)"
+                >更新</Button
+              >
+              <Button type="error" size="small" @click="removeRole(row)"
+                >删除</Button
+              >
+            </template>
+          </Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
     <div class="subtable" v-if="tk.sv">
-      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+      <Icon
+        class="close"
+        custom="icon iconfont icon-close"
+        size="24"
+        @click="closeBtn"
+      />
       <div class="pr10 adduser" v-show="tk.add">
         <p class="subtitle">添加用户</p>
-        <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+        <Form
+          ref="saveFrom"
+          :model="from"
+          :rules="rule"
+          @keydown.enter.native="addSubmit"
+        >
           <FormItem prop="username" label="用户名">
             <Input v-model="from.username"></Input>
           </FormItem>
@@ -48,14 +77,27 @@
             <Input v-model="from.policeNum"></Input>
           </FormItem>
           <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
-            <Select v-model="from.roleId" style="width:200px" placeholder="请设置角色">
-              <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">
+            <Select
+              v-model="from.roleId"
+              style="width:200px"
+              placeholder="请设置角色"
+            >
+              <Option
+                v-for="item in roleListOptions"
+                :value="item.id"
+                :key="item.id"
+              >
                 {{ item.name }}
               </Option>
             </Select>
           </FormItem>
           <FormItem>
-            <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
+            <Button
+              @click="addSubmit"
+              type="primary"
+              :loading="tk.loading"
+              long
+            >
               <span v-if="!tk.loading">立即保存</span>
               <span v-else>保存中...</span>
             </Button>
@@ -64,30 +106,42 @@
       </div>
       <div v-show="tk.del">
         <p class="subtitle">确认删除该用户吗?</p>
-        <p>{{currentUser.username}}</p>
+        <p>{{ currentUser.username }}</p>
         <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+          <Button class="mr5" @click="delSubmit" type="primary"
+            >确认删除</Button
+          >
           <Button @click="closeBtn" type="warning">取消</Button>
         </p>
       </div>
       <div class="pmscnt" v-show="tk.pms">
         <p class="subtitle">用户角色更新</p>
         <div class="clearfix mrb20">
-          <span class="fl mr5">名称：</span><span class="fl">{{currentUser.username}}</span>
+          <span class="fl mr5">名称：</span
+          ><span class="fl">{{ currentUser.username }}</span>
         </div>
         <div class="clearfix mrb20">
-          <span class="fl mr5">编号：</span><span class="fl">{{currentUser.policeNum}}</span>
+          <span class="fl mr5">编号：</span
+          ><span class="fl">{{ currentUser.policeNum }}</span>
         </div>
         <div class="clearfix mrb20">
           <span class="fl mr5">角色：</span>
           <Select v-model="from.roleId" style="width:200px;float:left;">
-            <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">
+            <Option
+              v-for="item in roleListOptions"
+              :value="item.id"
+              :key="item.id"
+            >
               {{ item.name }}
             </Option>
           </Select>
         </div>
         <p class="savepms">
-          <Button @click="userUpdateSubmit" type="primary" :loading="tk.loading">
+          <Button
+            @click="userUpdateSubmit"
+            type="primary"
+            :loading="tk.loading"
+          >
             <span v-if="!tk.loading">保存</span>
             <span v-else>保存中...</span>
           </Button>
@@ -98,75 +152,82 @@
 </template>
 
 <script>
-import { getDepartmentTree, addUser, getUserList, deleteUser, getListRoleOptions, updateUser } from '@/api/system';
-import { mapMutations, mapGetters } from 'vuex';
+import {
+  getDepartmentTree,
+  addUser,
+  getUserList,
+  deleteUser,
+  getListRoleOptions,
+  updateUser
+} from "@/api/system";
+import { mapMutations, mapGetters } from "vuex";
 //树形节点 设置disabled
 export default {
   data() {
     //用户名至少6位
     const userCheck = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('用户名不能为空'));
+        callback(new Error("用户名不能为空"));
       } else if (value.length < 6) {
-        callback(new Error('用户名长度至少为6位'));
+        callback(new Error("用户名长度至少为6位"));
       } else {
         callback();
       }
-    }
+    };
     //密码至少为8位
     const pwdPass = (rule, value, callback) => {
       const reg = /^\w{8,17}$/;
-      if (value == '') {
-        callback(new Error('请输入密码'));
+      if (value == "") {
+        callback(new Error("请输入密码"));
       } else if (!reg.test(value)) {
-        callback(new Error('只能包含字母、数字和下划线，至少8位'));
+        callback(new Error("只能包含字母、数字和下划线，至少8位"));
       } else {
-        if (this.from.pwdCheck !== '') {
-          this.$refs.saveFrom.validateField('pwdCheck');
+        if (this.from.pwdCheck !== "") {
+          this.$refs.saveFrom.validateField("pwdCheck");
         }
         callback();
       }
-    }
+    };
     //密码再次验证
     const pwdCheck = (rule, value, callback) => {
       const reg = /^\w{8,17}$/;
       if (!value) {
-        callback(new Error('请确认密码'));
+        callback(new Error("请确认密码"));
       } else if (!reg.test(value)) {
-        callback(new Error('只能包含字母、数字和下划线，至少8位'));
+        callback(new Error("只能包含字母、数字和下划线，至少8位"));
       } else if (value !== this.from.pwd) {
-        callback(new Error('两次密码输入不一致'));
+        callback(new Error("两次密码输入不一致"));
       } else {
         callback();
       }
-    }
+    };
     //角色验证
     const setRole = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请设置一个角色A'));
+        callback(new Error("请设置一个角色A"));
       } else {
         callback();
       }
-    }
+    };
     return {
       //弹框显示、关闭
       tk: {
-        sv: '',
-        add: '',
-        editor: '',
-        del: '',
+        sv: "",
+        add: "",
+        editor: "",
+        del: "",
         loading: false
       },
       //当前选中部门
       currentDm: {
-        name: '',
-        id: ''
+        name: "",
+        id: ""
       },
       //操作当前用户
       currentUser: {
-        name: '',
-        id: '',
-        description: '',
+        name: "",
+        id: "",
+        description: "",
         permissions: null //当前用户修改后的权限
       },
       //左侧部门列表
@@ -175,17 +236,17 @@ export default {
       tabdata: [],
       column: [
         {
-          title: '用户名称',
-          key: 'username'
+          title: "用户名称",
+          key: "username"
         },
         {
-          title: '编号',
-          key: 'policeNum'
+          title: "编号",
+          key: "policeNum"
         },
         {
-          title: '操作',
-          slot: 'action',
-          key: 'cz'
+          title: "操作",
+          slot: "action",
+          key: "cz"
         }
       ],
       //部门列表数据总数量
@@ -196,43 +257,48 @@ export default {
         policeNum: "",
         pwd: "",
         pwdCheck: "",
-        roleId: "",
+        roleId: ""
       },
       rule: {
-        username: [{ required: true, validator: userCheck, trigger: 'blur' }],
-        policeNum: [{ required: true, message: '用户编号不能为空', trigger: 'blur' }],
-        pwd: [{ required: true, validator: pwdPass, trigger: 'blur' }],
-        pwdCheck: [{ required: true, validator: pwdCheck, trigger: 'blur' }],
-        roleId: [{ required: true, validator: setRole, trigger: 'change' }]
+        username: [{ required: true, validator: userCheck, trigger: "blur" }],
+        policeNum: [
+          { required: true, message: "用户编号不能为空", trigger: "blur" }
+        ],
+        pwd: [{ required: true, validator: pwdPass, trigger: "blur" }],
+        pwdCheck: [{ required: true, validator: pwdCheck, trigger: "blur" }],
+        roleId: [{ required: true, validator: setRole, trigger: "change" }]
       },
       //部门可选角色列表
       roleListOptions: []
-    }
+    };
   },
   mounted() {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(["departmentId", "departmentList"])
   },
   methods: {
-    ...mapMutations(['setDepartmentList']),
+    ...mapMutations(["setDepartmentList"]),
     //关闭小编辑弹窗
     closeBtn() {
       this.tk.sv = false;
     },
     //根据部门id 来获取角色选项
     getListRole() {
-      getListRoleOptions(this.currentDm.id).then(res => {
-        let r = res.data
-        if (r.code == 200) {
-          const len = this.roleListOptions.length;
-          this.roleListOptions.splice(0, len);
-          r.data.forEach(m => {
-            this.roleListOptions.push(m);
-          })
-        } else { }
-      }).catch(err => { })
+      getListRoleOptions(this.currentDm.id)
+        .then(res => {
+          let r = res.data;
+          if (r.code == 200) {
+            const len = this.roleListOptions.length;
+            this.roleListOptions.splice(0, len);
+            r.data.forEach(m => {
+              this.roleListOptions.push(m);
+            });
+          } else {
+          }
+        })
+        .catch(err => {});
     },
     //更新部门树数据
     upDmList(a) {
@@ -266,16 +332,18 @@ export default {
         this.upDmList(this.departmentList);
         return;
       }
-      getDepartmentTree(this.departmentId).then(res => {
-        let data = null;
-        const r = res.data;
-        if (r.code == 200 && r.data) {
-          data = r.data;
-          let list = [data];
-          this.upDmList(list);
-          this.setDepartmentList(list);
-        }
-      }).catch(res => { })
+      getDepartmentTree(this.departmentId)
+        .then(res => {
+          let data = null;
+          const r = res.data;
+          if (r.code == 200 && r.data) {
+            data = r.data;
+            let list = [data];
+            this.upDmList(list);
+            this.setDepartmentList(list);
+          }
+        })
+        .catch(res => {});
     },
     //切换页面
     changePage(pageNo) {
@@ -289,7 +357,7 @@ export default {
         name: this.currentDm.name,
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
-      }
+      };
       getUserList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -316,7 +384,7 @@ export default {
     /**
      * 接口调取成功响应
      * v  1为用户增加成功  2为用户删除成功 3用户更新角色成功
-    */
+     */
     upSuccess(v) {
       this.tk.loading = false;
       this.tk.sv = false;
@@ -324,10 +392,10 @@ export default {
         case 1:
           this.tk.add = false;
           for (var k in this.from) {
-            this.from[k] = '';
+            this.from[k] = "";
           }
           this.$Message.success({
-            content: '用户添加成功',
+            content: "用户添加成功",
             duration: 1.5,
             closable: true
           });
@@ -335,7 +403,7 @@ export default {
         case 2:
           this.tk.del = false;
           this.$Message.success({
-            content: '用户删除成功',
+            content: "用户删除成功",
             duration: 1.5,
             closable: true
           });
@@ -343,7 +411,7 @@ export default {
         case 3:
           this.tk.pms = false;
           this.$Message.success({
-            content: '用户角色更新成功',
+            content: "用户角色更新成功",
             duration: 1.5,
             closable: true
           });
@@ -352,8 +420,8 @@ export default {
       if (v !== 3) this.renderList();
     },
     /**
-    * v  1为用户增加失败  2为用户删除失败 3用户更新角色失败
-    * */
+     * v  1为用户增加失败  2为用户删除失败 3用户更新角色失败
+     * */
     upError(v) {
       this.tk.loading = false;
       this.tk.sv = false;
@@ -361,10 +429,10 @@ export default {
         case 1:
           this.tk.add = false;
           for (var k in this.from) {
-            this.from[k] = '';
+            this.from[k] = "";
           }
           this.$Message.error({
-            content: '用户保存失败',
+            content: "用户保存失败",
             duration: 1.5,
             closable: true
           });
@@ -372,18 +440,18 @@ export default {
         case 2:
           this.tk.del = false;
           this.$Message.error({
-            content: '用户删除失败',
+            content: "用户删除失败",
             duration: 1.5,
             closable: true
-          })
+          });
           break;
         case 3:
           this.tk.pms = false;
           this.$Message.error({
-            content: '用户角色更新失败',
+            content: "用户角色更新失败",
             duration: 1.5,
             closable: true
-          })
+          });
           break;
       }
     },
@@ -391,7 +459,7 @@ export default {
     addNewUser() {
       if (!this.currentDm.name) {
         this.$Message.success({
-          content: '请选择一个部门',
+          content: "请选择一个部门",
           duration: 1.5,
           closable: true
         });
@@ -434,14 +502,18 @@ export default {
     //删除提交
     delSubmit() {
       if (!this.currentUser.id) return;
-      deleteUser(this.currentUser.id).then(res => {
-        if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(2);
-      }).catch(err => { this.upError(2); })
+      deleteUser(this.currentUser.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(2);
+          else this.upError(2);
+        })
+        .catch(err => {
+          this.upError(2);
+        });
     },
     //保存提交
     addSubmit() {
-      this.$refs['saveFrom'].validate(valid => {
+      this.$refs["saveFrom"].validate(valid => {
         if (valid) {
           this.tk.loading = true;
           let param = {
@@ -449,14 +521,18 @@ export default {
             departmentId: this.currentDm.id,
             policeNum: this.from.policeNum,
             pwd: this.from.pwd,
-            roleId: this.from.roleId,
-          }
-          addUser(param).then(res => {
-            if (res.data.code == 200) this.upSuccess(1);
-            else this.upError(1);
-          }).catch(err => { this.upError(1); })
+            roleId: this.from.roleId
+          };
+          addUser(param)
+            .then(res => {
+              if (res.data.code == 200) this.upSuccess(1);
+              else this.upError(1);
+            })
+            .catch(err => {
+              this.upError(1);
+            });
         }
-      })
+      });
     },
     //用户更新提交
     userUpdateSubmit() {
@@ -465,15 +541,19 @@ export default {
       let param = {
         id: this.currentUser.id,
         roleId: this.from.roleId
-      }
+      };
       this.tk.loading = true;
-      updateUser(param).then(res => {
-        if (res.data.code == 200) this.upSuccess(3);
-        else this.upError(3);
-      }).catch(err => { this.upError(3); })
+      updateUser(param)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(3);
+          else this.upError(3);
+        })
+        .catch(err => {
+          this.upError(3);
+        });
     }
   }
-}
+};
 </script>
 
 <style lang="less">
