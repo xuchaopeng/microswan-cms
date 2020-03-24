@@ -1,108 +1,56 @@
 .facelibitem {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  // top: 50%;
-  // left: 50%;
-  // transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  background-color: #064667;
-  z-index: 12;
-  .sub {
-    position: fixed;
-    width: 410px;
-    left: 50%;
+  z-index: 22;
+  .pop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.5;
+    z-index: 12;
+  }
+  .cons {
+    position: absolute;
+    min-width: 1000px;
+    height: 500px;
     top: 50%;
+    left: 50%;
+    background-color: #064667;
     transform: translate(-50%, -50%);
-    z-index: 10;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #dcdee2;
-    background-color: #fff;
-    z-index: 25;
-    .subtitle {
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
-    .ivu-form {
-      .ivu-form-item-content {
-        width: 85%;
-      }
-      .ivu-form-item-label {
-        width: 15%;
-      }
-      .ivu-btn-primary {
-        margin-top: 0;
-      }
-    }
-  }
-  .ivu-card {
-    transition: none;
-  }
-  .ivu-card-head {
-    background-color: #1183bf;
-    p {
+    z-index: 15;
+    .title {
+      width: 100%;
+      line-height: 35px;
+      height: 35px;
+      background-color: #1183bf;
       color: #fff;
     }
   }
-  .ivu-card-bordered {
-    border-color: #389cc8;
-  }
-  .ivu-card-body {
-    background-color: #064667;
-  }
-  .ivu-card-bordered {
-    height: 100%;
-    background-color: #064667;
-  }
   .addface {
     position: absolute;
-    top: 17px;
-    left: 15px;
+    top: 4px;
+    left: 21px;
     color: #fff;
     opacity: 0.7;
+    padding: 3px 6px;
     &:hover {
       color: #fff;
       border-color: #fff;
       opacity: 1;
     }
     .icon-icon-test {
-      font-size: 14px !important;
+      font-size: 12px !important;
     }
-  }
-  .delete {
-    p {
-      margin-bottom: 15px;
-    }
-  }
-  .nohasface {
-    font-size: 14px;
-    line-height: 40px;
-    color: #a3e0f1;
-  }
-  .pages {
-    padding: 15px;
-    font-size: 14px;
-    overflow: hidden;
-    // background-color: #fff;
-    color: #1183bf;
-    .ivu-page {
-      float: right;
-    }
-  }
-  .close {
-    position: absolute;
-    right: 0;
-    top: 5px;
-    cursor: pointer;
-    z-index: 10;
   }
   .facelist {
     overflow: hidden;
-    // display: -webkit-flex;
-    // justify-content: center;
-    // align-items: center;
+    padding: 20px 20px 10px 35px;
     .item {
       cursor: pointer;
       float: left;
@@ -125,6 +73,7 @@
       }
       .dis {
         float: right;
+        overflow: hidden;
         width: 100%;
         height: 50px;
         line-height: 25px;
@@ -141,6 +90,151 @@
       }
     }
   }
+  .pages1 {
+    padding: 5px 20px 5px 5px;
+    font-size: 14px;
+    overflow: hidden;
+    color: #fff;
+    position: absolute;
+    bottom: 10px;
+    right: 5px;
+    .ivu-page {
+      float: right;
+    }
+  }
+  .sub {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 30;
+    .subpop {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-color: #000;
+      opacity: 0.6;
+      z-index: 12;
+    }
+    .submiddle {
+      position: absolute;
+      width: 410px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #dcdee2;
+      background-color: #fff;
+      z-index: 13;
+    }
+    .subtitle {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .ivu-form {
+      .ivu-form-item-content {
+        width: 80%;
+      }
+      .ivu-form-item-label {
+        width: 20%;
+      }
+      .ivu-btn-primary {
+        margin-top: 0;
+      }
+    }
+    .faceimg {
+      text-align: left;
+      margin-bottom: 24px;
+      .txt {
+        display: inline-block;
+        width: 20%;
+        position: relative;
+        right: -2px;
+      }
+      .files {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: middle;
+        .pic {
+          float: left;
+          max-width: 210px;
+          height: 50px;
+          margin-right: 5px;
+          img {
+            max-width: 100%;
+            height: 100%;
+          }
+        }
+        .img {
+          float: left;
+          width: 50px;
+          height: 50px;
+          background-color: #f0f0f0;
+          cursor: pointer;
+          text-align: center;
+          position: relative;
+          border-radius: 5px;
+          .iconfont {
+            line-height: 50px;
+            color: #999;
+            font-size: 30px !important;
+            cursor: pointer;
+          }
+          input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+          }
+        }
+      }
+    }
+  }
+  .ivu-card {
+    transition: none;
+  }
+  .ivu-card-head {
+    background-color: #1183bf;
+    p {
+      color: #fff;
+    }
+  }
+  .ivu-card-bordered {
+    border-color: #389cc8;
+  }
+  .ivu-card-body {
+    background-color: #064667;
+  }
+  .ivu-card-bordered {
+    height: 100%;
+    background-color: #064667;
+  }
+  .delete {
+    p {
+      margin-bottom: 15px;
+    }
+  }
+  .nohasface {
+    font-size: 14px;
+    line-height: 40px;
+    color: #a3e0f1;
+  }
+  .close {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    cursor: pointer;
+    z-index: 10;
+  }
   .popup {
     position: fixed;
     width: 100%;
@@ -156,9 +250,10 @@
       opacity: 0.5;
       z-index: 1;
     }
-    .cons {
-      width: 670px;
-      // height: 320px;
+    .popcons {
+      // width: 670px;
+      min-width: 500px;
+      max-width: 80%;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -170,21 +265,28 @@
       border-radius: 5px;
       box-sizing: border-box;
       padding: 20px 30px 20px 30px;
+      .xcp {
+        width: auto;
+        padding-left: 220px;
+        display: block;
+        position: relative;
+        // max-width: 80%;
+      }
       .facepic {
-        float: left;
-        margin-right: 30px;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 190px;
         height: 190px;
         box-sizing: border-box;
         border: 1px solid #fff;
-        position: relative;
         .cirs {
           position: absolute;
           top: 5px;
           left: 2px;
           width: 30px;
           height: 30px;
-          border: 1px solid #48c6cb;
+          border: 2px solid #48c6cb;
           border-radius: 50%;
           text-align: center;
           line-height: 30px;
@@ -192,6 +294,8 @@
           .icon-icon_huabanfuben {
             color: #48c6cb;
             margin-right: 0;
+            position: relative;
+            top: -3px;
           }
         }
 
@@ -201,13 +305,14 @@
         }
       }
       .backpic {
-        float: left;
         height: 190px;
-        width: 335px;
+        // width: 335px;
+        max-width: 100%;
         box-sizing: border-box;
-        border: 1px solid #fff;
+        // border: 1px solid #fff;
+        overflow: hidden;
         img {
-          width: 100%;
+          // width: 100%;
           height: 100%;
         }
       }
@@ -222,5 +327,8 @@
         color: #a3e0f1;
       }
     }
+  }
+  .loading {
+    padding-top: 10px;
   }
 }

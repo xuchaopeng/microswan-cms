@@ -1,18 +1,17 @@
 <template>
   <div class="facelibitem">
-    <Card>
-      <p class="" slot="title">
+    <div class="pop"></div>
+    <div class="cons">
+      <p class="title">
         <Button class="addface" ghost @click="addNewFace">
           <Icon class="iconfont icon-icon-test"></Icon>
           添加人像
         </Button>
         {{ item.libName }}
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closeBtn"
-        />
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+      </p>
+      <p class="loading" v-if="isloading">
+        <Loading color="#D9DCDE"></Loading>
       </p>
       <p class="nohasface" v-show="nohasface">暂无人像</p>
       <ul class="facelist">
@@ -21,37 +20,29 @@
             <img :src="em.facePicPath" alt="/" />
           </div>
           <div class="dis">
-            <Icon class="iconfont icon-ai14"></Icon>{{ em.name }}
+            {{ em.name }}
           </div>
         </li>
       </ul>
-      <div class="pages" v-if="totalCount > 10">
-        <Page
-          :total="totalCount"
-          show-elevator
-          show-total
-          @on-change="changePage"
-        />
+      <div class="pages1" v-if="totalCount > 10">
+        <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
       </div>
-    </Card>
+    </div>
     <div class="popup" v-show="ispop">
       <div class="pop"></div>
-      <div class="cons">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closePopup"
-        ></Icon>
-        <p class="facepic">
-          <span class="cirs" @click="deleteFace">
-            <Icon class="iconfont icon-icon_huabanfuben"></Icon>
-          </span>
-          <img :src="currentFace.facePicPath" alt="" />
-        </p>
-        <p class="backpic">
-          <img :src="currentFace.backPicPath" alt="" />
-        </p>
+      <div class="popcons">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
+        <div class="xcp">
+          <p class="facepic">
+            <span class="cirs" @click="deleteFace">
+              <Icon class="iconfont icon-icon_huabanfuben"></Icon>
+            </span>
+            <img :src="currentFace.facePicPath" alt="" />
+          </p>
+          <p class="backpic">
+            <img :src="currentFace.backPicPath" alt="" />
+          </p>
+        </div>
         <div class="dis">
           <p>姓名：{{ currentFace.name }}</p>
           <p>民族：{{ currentFace.ethnic }}</p>
@@ -61,57 +52,69 @@
       </div>
     </div>
     <div class="sub" v-show="!closesub">
-      <Icon
-        class="close"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closeSub"
-      >
-      </Icon>
-      <template v-if="type == 1">
-        <p class="subtitle">添加人像HAHA</p>
-        <Form
-          ref="saveFrom"
-          :model="from"
-          :rules="rule"
-          @keydown.enter.native="addSubmit"
-        >
-          <FormItem prop="name" label="姓名">
-            <Input v-model="from.name"></Input>
-          </FormItem>
-          <FormItem prop="alias" label="别名">
-            <Input v-model="from.alias"></Input>
-          </FormItem>
-          <FormItem prop="ethnic" label="民族">
-            <Input v-model="from.ethnic"></Input>
-          </FormItem>
-          <FormItem prop="idcard" label="身份证号">
-            <Input v-model="from.idcard"></Input>
-          </FormItem>
-          <div class="pic">
-            人像背景图<input type="file" ref="BJfile" size="40" />
+      <div class="subpop"></div>
+      <div class="submiddle">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub">
+        </Icon>
+        <template v-if="type == 1">
+          <p class="subtitle">添加人像</p>
+          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+            <FormItem prop="name" label="姓名">
+              <Input v-model="from.name"></Input>
+            </FormItem>
+            <FormItem prop="alias" label="别名">
+              <Input v-model="from.alias"></Input>
+            </FormItem>
+            <FormItem prop="ethnic" label="民族">
+              <Input v-model="from.ethnic"></Input>
+            </FormItem>
+            <FormItem prop="idcard" label="身份证号">
+              <Input v-model="from.idcard"></Input>
+            </FormItem>
+            <div class="faceimg">
+              <span class="txt">人像背景图</span>
+              <div class="files">
+                <span class="pic" v-show="picsrc.src1">
+                  <img :src="picsrc.src1" alt="">
+                </span>
+                <span class="img">
+                  <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
+                  <input type="file" ref="BJfile" size="40" @change="xcp01" />
+                </span>
+              </div>
+            </div>
+            <div class="faceimg">
+              <span class="txt">身份证照片</span>
+              <div class="files">
+                <span class="pic" v-show="picsrc.src2">
+                  <img :src="picsrc.src2" alt="">
+                </span>
+                <span class="img">
+                  <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
+                  <input class="img" type="file" ref="IDfile" size="40" @change="xcp02" />
+                </span>
+              </div>
+
+            </div>
+            <FormItem>
+              <Button @click="addSubmit" type="primary" :loading="loading" long>
+                <span v-if="!loading">保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
+        </template>
+        <template v-else-if="type == 2">
+          <div class="delete">
+            <p>确认删除该人像吗?</p>
+            <p>{{ currentFace.name }}</p>
+            <p class="dels">
+              <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
+              <Button @click="closeSub" type="warning">取消</Button>
+            </p>
           </div>
-          <div class="pic">
-            身份证照片<input type="file" ref="IDfile" size="40" />
-          </div>
-          <FormItem>
-            <Button @click="addSubmit" type="primary" :loading="loading" long>
-              <span v-if="!loading">保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </FormItem>
-        </Form>
-      </template>
-      <template v-else-if="type == 2">
-        <div class="delete">
-          <p>确认删除该人像吗?</p>
-          <p>{{ currentFace.name }}</p>
-          <p class="dels">
-            <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
-            <Button @click="closeSub" type="warning">取消</Button>
-          </p>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -119,6 +122,7 @@
 <script>
 import "./index.less";
 import imgsrc from "@/assets/images/1.jpg";
+import Loading from '_c/loading';
 import { getFaceList, addFace, delFace } from "@/api/resources";
 const Imgbase = "https://118.24.53.165/";
 export default {
@@ -139,6 +143,11 @@ export default {
   },
   data() {
     return {
+      picsrc: {
+        src1: '',
+        src2: ''
+      },
+      isloading: false,
       imgsrc,
       totalCount: 1,
       closesub: true,
@@ -166,6 +175,22 @@ export default {
     this.renderList();
   },
   methods: {
+    xcp02() {
+      let fil = this.$refs.IDfile.files[0];
+      let reader = new FileReader();
+      reader.readAsDataURL(fil);
+      reader.onload = () => {
+        this.picsrc.src2 = reader.result;
+      }
+    },
+    xcp01(e) {
+      let fil = this.$refs.BJfile.files[0];
+      let reader = new FileReader();
+      reader.readAsDataURL(fil);
+      reader.onload = () => {
+        this.picsrc.src1 = reader.result;
+      }
+    },
     closeBtn() {
       this.cacheLidId = this.libId; //缓存库id
       this.dataList = [];
@@ -174,6 +199,8 @@ export default {
     },
     closeSub() {
       this.closesub = true;
+      this.picsrc.src1 = '';
+      this.picsrc.src2 = '';
     },
     closePopup() {
       this.ispop = false;
@@ -191,6 +218,8 @@ export default {
       };
     },
     changePage(pageNo) {
+      const len = this.dataList.length;
+      this.dataList.splice(0, len);
       this.pageNo = pageNo;
       this.renderList();
     },
@@ -206,11 +235,13 @@ export default {
         pageNo: this.pageNo,
         pageSize: 10
       };
+      this.isloading = true;
       getFaceList(param).then(res => {
         let r = res.data;
-        // console.log(res.data, '库图片列表');
+        this.isloading = false;
         if (r.code == 200) {
           const page = r.data.pageContent;
+          console.log(page, 'xcp');
           const len = this.dataList.length;
           if (page) {
             this.dataList.splice(0, len);
@@ -326,6 +357,9 @@ export default {
     ischange(c) {
       if (c) this.renderList();
     }
+  },
+  components: {
+    Loading
   }
 };
 </script>
