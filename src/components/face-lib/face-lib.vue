@@ -57,59 +57,61 @@
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub">
         </Icon>
         <template v-if="type == 1">
-          <p class="subtitle">添加人像</p>
-          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
-            <FormItem prop="name" label="姓名">
-              <Input v-model="from.name"></Input>
-            </FormItem>
-            <FormItem prop="alias" label="别名">
-              <Input v-model="from.alias"></Input>
-            </FormItem>
-            <FormItem prop="ethnic" label="民族">
-              <Input v-model="from.ethnic"></Input>
-            </FormItem>
-            <FormItem prop="idcard" label="身份证号">
-              <Input v-model="from.idcard"></Input>
-            </FormItem>
-            <div class="faceimg">
-              <span class="txt">人像背景图</span>
-              <div class="files">
-                <span class="pic" v-show="picsrc.src1">
-                  <img :src="picsrc.src1" alt="">
-                </span>
-                <span class="img">
-                  <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
-                  <input type="file" ref="BJfile" size="40" @change="xcp01" />
-                </span>
+          <div class="addFaceitem">
+            <p class="subtitle">添加人像</p>
+            <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+              <FormItem prop="name" label="姓名">
+                <Input v-model="from.name"></Input>
+              </FormItem>
+              <FormItem prop="alias" label="别名">
+                <Input v-model="from.alias"></Input>
+              </FormItem>
+              <FormItem prop="ethnic" label="民族">
+                <Input v-model="from.ethnic"></Input>
+              </FormItem>
+              <FormItem prop="idcard" label="身份证号">
+                <Input v-model="from.idcard"></Input>
+              </FormItem>
+              <div class="faceimg">
+                <span class="txt">人像背景图</span>
+                <div class="files">
+                  <span class="pic" v-show="picsrc.src1">
+                    <img :src="picsrc.src1" alt="">
+                  </span>
+                  <span class="img">
+                    <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
+                    <input type="file" ref="BJfile" size="40" @change="xcp01" />
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="faceimg">
-              <span class="txt">身份证照片</span>
-              <div class="files">
-                <span class="pic" v-show="picsrc.src2">
-                  <img :src="picsrc.src2" alt="">
-                </span>
-                <span class="img">
-                  <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
-                  <input class="img" type="file" ref="IDfile" size="40" @change="xcp02" />
-                </span>
-              </div>
+              <div class="faceimg">
+                <span class="txt">身份证照片</span>
+                <div class="files">
+                  <span class="pic" v-show="picsrc.src2">
+                    <img :src="picsrc.src2" alt="">
+                  </span>
+                  <span class="img">
+                    <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
+                    <input class="img" type="file" ref="IDfile" size="40" @change="xcp02" />
+                  </span>
+                </div>
 
-            </div>
-            <FormItem>
-              <Button @click="addSubmit" type="primary" :loading="loading" long>
-                <span v-if="!loading">保存</span>
-                <span v-else>保存中...</span>
-              </Button>
-            </FormItem>
-          </Form>
+              </div>
+              <FormItem>
+                <Button @click="addSubmit" type="primary" :loading="loading" long>
+                  <span v-if="!loading">保存</span>
+                  <span v-else>保存中...</span>
+                </Button>
+              </FormItem>
+            </Form>
+          </div>
         </template>
         <template v-else-if="type == 2">
           <div class="delete">
-            <p>确认删除该人像吗?</p>
+            <p class="subtitle">是否删除所选人像?</p>
             <p>{{ currentFace.name }}</p>
             <p class="dels">
-              <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
+              <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
               <Button @click="closeSub" type="warning">取消</Button>
             </p>
           </div>

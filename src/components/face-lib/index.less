@@ -121,16 +121,48 @@
     }
     .submiddle {
       position: absolute;
-      width: 410px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #dcdee2;
       background-color: #fff;
       z-index: 13;
+      .addFaceitem {
+        width: 410px;
+        .subtitle {
+          background-color: #084868;
+          line-height: 35px;
+          text-align: center;
+          color: #fff;
+        }
+        .ivu-form {
+          padding: 0 15px;
+        }
+        .ivu-btn {
+          background-color: #5cb85c;
+          border: none;
+        }
+      }
+      .delete {
+        width: 300px;
+        font-size: 18px;
+        .subtitle {
+          background-color: #084868;
+          line-height: 35px;
+          text-align: center;
+          color: #fff;
+          font-size: 16px;
+        }
+        .ivu-btn {
+          background-color: #5cb85c;
+          border: none;
+          padding: 5px 20px 6px 20px;
+          text-align: center;
+          &.ivu-btn-warning {
+            background-color: #ff9900;
+          }
+        }
+      }
     }
     .subtitle {
       margin-bottom: 20px;

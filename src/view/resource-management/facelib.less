@@ -20,38 +20,80 @@
     }
     .facemiddle {
       position: absolute;
-      width: 440px;
+      // width: 440px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      margin-left: 180px;
+      // margin-left: 180px;
       z-index: 10;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #dcdee2;
+      // padding: 10px;
+      // border-radius: 5px;
+      // border: 1px solid #dcdee2;
       background-color: #fff;
       z-index: 15;
     }
     .subtitle {
-      padding: 10px 0;
-      position: relative;
+      // padding: 10px 0;
+      // position: relative;
+      // text-align: center;
+      // font-size: 18px;
+      // width: 350px;
+      background-color: #084868;
+      line-height: 35px;
       text-align: center;
-      font-size: 18px;
-    }
-    .delete {
+      color: #fff;
       font-size: 16px;
     }
+    .addFacelib {
+      width: 400px;
+      .ivu-form {
+        padding: 25px 15px 10px 10px;
+      }
+      .ivu-form-item {
+        margin-bottom: 35px;
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+      }
+    }
+    .delete {
+      width: 300px;
+      font-size: 18px;
+      .subtitle {
+        background-color: #084868;
+        line-height: 35px;
+        text-align: center;
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+        padding: 5px 20px 6px 20px;
+        text-align: center;
+        &.ivu-btn-warning {
+          background-color: #ff9900;
+        }
+      }
+    }
     .editorFaceLib {
+      width: 350px;
       text-align: left;
-      padding: 10px;
       font-size: 14px;
       .ivu-form-item {
         margin-bottom: 40px;
       }
       .ivu-form {
+        padding: 10px 15px;
         .ivu-btn-primary {
           margin-top: 0;
         }
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
       }
       .ivu-tree {
         ul {
@@ -99,6 +141,7 @@
       top: 5px;
       cursor: pointer;
       z-index: 10;
+      color: #fff;
     }
     .dels {
       padding: 20px 0;

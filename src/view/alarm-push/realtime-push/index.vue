@@ -3,17 +3,12 @@
     <div class="container">
       <Loading v-if="!dataList.length"></Loading>
       <div class="hitBackPic" v-if="dataList.length">
-        <Carousel
-          v-model="value"
-          :autoplay="setting.autoplay"
-          :dots="setting.dots"
-          :height="setting.height"
-        >
+        <Carousel v-model="value" :autoplay="setting.autoplay" :dots="setting.dots" :height="setting.height">
           <CarouselItem v-for="item in dataList">
             <div style="width:678px;height:507px;">
               <p class="sub">
-                <span class="ms" @click="renderDetails(item)"
-                  ><Icon class="iconfont icon-ai14"></Icon> 查看详情
+                <span class="ms" @click="renderDetails(item)">
+                  <Icon class="iconfont icon-ai14"></Icon> 查看详情
                 </span>
                 <span class="pos">定位：{{ item.address }}</span>
               </p>
@@ -30,7 +25,8 @@
         <p class="sub">
           <span>抓拍模式</span>
           <span class="seeAll" @click="seeAll">
-            查看全部<Icon custom="icon iconfont icon-youce" size="16" />
+            查看全部
+            <Icon custom="icon iconfont icon-youce" size="16" />
           </span>
         </p>
         <div class="listContainer">
@@ -41,11 +37,7 @@
             <Icon custom="icon iconfont icon-youce" size="30" />
           </span>
           <ul class="faceListPic">
-            <li
-              v-for="(item, i) in dataList"
-              :class="value == i ? 'cur' : ''"
-              @click="renderDetails(item)"
-            >
+            <li v-for="(item, i) in dataList" :class="value == i ? 'cur' : ''" @click="renderDetails(item)">
               <div class="pic">
                 <img :src="item.facePicPath" alt="" />
               </div>
@@ -55,11 +47,7 @@
         </div>
       </div>
     </div>
-    <HitDetails
-      :item="currentFace"
-      :viewHitDetails="viewHitDetails"
-      @closeFace="closeFaceDetails"
-    ></HitDetails>
+    <HitDetails :item="currentFace" :viewHitDetails="viewHitDetails" @closeFace="closeFaceDetails"></HitDetails>
   </div>
 </template>
 
@@ -92,10 +80,10 @@ export default {
     };
   },
   mounted() {
-    this.initwebsocket();
+    // this.initwebsocket();
   },
   beforeDestroy() {
-    this.disconnect();
+    // this.disconnect();
   },
   methods: {
     //开启长链
@@ -179,7 +167,7 @@ export default {
       });
     },
     //刷新实时人像列表
-    renderList() {},
+    renderList() { },
     //展示人像详情页
     renderDetails(em) {
       this.currentFace = {

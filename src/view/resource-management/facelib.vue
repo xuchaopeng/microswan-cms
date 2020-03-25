@@ -2,51 +2,39 @@
   <div class="facelib">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />人像列表库
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />人像列表库
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <div class="addbtn">
-            <Button class="mr20" type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
-            <Select class="mr10" v-model="libType" style="width:200px;" placeholder="请选择库类型">
-              <Option v-for="item in faceLibType" :value="item.value">{{ item.name }}</Option>
-            </Select>
-            <Button class="ml10" type="primary" icon="ios-search" @click="searchLib">搜索</Button>
-          </div>
-          <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="mr10" type="success" size="small" @click="enterFace(row)">查看</Button>
-              <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">编辑</Button>
-              <Button class="mr10" type="error" size="small" @click="removeFaceLib(row)">删除</Button>
-              <Button
-                v-if="!row.subscribed"
-                type="success"
-                ghost
-                size="small"
-                @click="changeSubscribe(row)"
-              >订阅</Button>
-              <Button
-                v-if="row.subscribed"
-                type="warning"
-                ghost
-                size="small"
-                @click="changeSubscribe(row)"
-              >取消订阅</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <div class="addbtn">
+          <Button class="mr20" type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
+          <Select class="mr10" v-model="libType" style="width:200px;" placeholder="请选择库类型">
+            <Option v-for="item in faceLibType" :value="item.value">{{ item.name }}</Option>
+          </Select>
+          <Button class="ml10" type="primary" icon="ios-search" @click="searchLib">搜索</Button>
         </div>
+        <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="success" size="small" @click="enterFace(row)">查看</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">编辑</Button>
+            <Button class="mr10" type="error" size="small" @click="removeFaceLib(row)">删除</Button>
+            <Button v-if="!row.subscribed" type="success" ghost size="small" @click="changeSubscribe(row)">订阅</Button>
+            <Button v-if="row.subscribed" type="warning" ghost size="small" @click="changeSubscribe(row)">取消订阅</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        </div>
+      </div>
       </Col>
     </Row>
     <div class="subtable" v-if="type">
@@ -54,30 +42,28 @@
       <div class="facemiddle">
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
         <template v-if="type == 1">
-          <p class="subtitle">添加人像库</p>
-          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
-            <FormItem prop="libName" label="库名">
-              <Input v-model="from.libName"></Input>
-            </FormItem>
-            <FormItem prop="type" label="类型">
-              <Select v-model="from.type" style="width:200px" placeholder="选择人像库类型">
-                <Option
-                  v-for="item in faceLibType"
-                  :value="item.value"
-                  :key="item.value"
-                >{{ item.name }}</Option>
-              </Select>
-            </FormItem>
-            <FormItem prop="description" label="备注">
-              <Input v-model="from.description"></Input>
-            </FormItem>
-            <FormItem>
-              <Button @click="addSubmit" type="primary" :loading="loading" long>
-                <span v-if="!loading">立即保存</span>
-                <span v-else>保存中...</span>
-              </Button>
-            </FormItem>
-          </Form>
+          <div class="addFacelib">
+            <p class="subtitle">添加人像库</p>
+            <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+              <FormItem prop="libName" label="库名">
+                <Input v-model="from.libName"></Input>
+              </FormItem>
+              <FormItem prop="type" label="类型">
+                <Select v-model="from.type" style="width:200px" placeholder="选择人像库类型">
+                  <Option v-for="item in faceLibType" :value="item.value" :key="item.value">{{ item.name }}</Option>
+                </Select>
+              </FormItem>
+              <FormItem prop="description" label="备注">
+                <Input v-model="from.description"></Input>
+              </FormItem>
+              <FormItem>
+                <Button @click="addSubmit" type="primary" :loading="loading" long>
+                  <span v-if="!loading">立即保存</span>
+                  <span v-else>保存中...</span>
+                </Button>
+              </FormItem>
+            </Form>
+          </div>
         </template>
 
         <template v-else-if="type == 2">
@@ -85,7 +71,7 @@
             <p class="subtitle">确认删除人像库吗?</p>
             <p>{{currentLib.libName}}</p>
             <p class="dels">
-              <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+              <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
               <Button @click="closeBtn" type="warning">取消</Button>
             </p>
           </div>
@@ -94,12 +80,7 @@
         <template v-else-if="type == 3">
           <div class="editorFaceLib">
             <p class="subtitle">修改人像库</p>
-            <Form
-              ref="editorFrom"
-              :model="editorFrom"
-              :rules="rule"
-              @keydown.enter.native="updateSubmit"
-            >
+            <Form ref="editorFrom" :model="editorFrom" :rules="rule" @keydown.enter.native="updateSubmit">
               <div class="clearfix mrb20">
                 <span class="fl alislf">库名：</span>
                 <span class="fl alisrg">{{currentLib.libName}}</span>
@@ -125,13 +106,7 @@
         </template>
       </div>
     </div>
-    <FaceLib
-      :item="currentLib"
-      :libId="Number(currentLib.id)"
-      @closeFaceLib="closeFaceLib"
-      v-show="viewFaceDetails"
-      :ischange="viewFaceDetails"
-    ></FaceLib>
+    <FaceLib :item="currentLib" :libId="Number(currentLib.id)" @closeFaceLib="closeFaceLib" v-show="viewFaceDetails" :ischange="viewFaceDetails"></FaceLib>
   </div>
 </template>
 
@@ -142,7 +117,7 @@ import { getDepartmentTree } from '@/api/system'
 import { getLibTypes, addFaceLib, getFaceLibList, deleteFaceLib, updateFaceLib, subscribe, unsubscribe } from '@/api/resources'
 import { mapMutations, mapGetters } from 'vuex'
 export default {
-  data () {
+  data() {
     // 角色验证
     const setlibtype = (rule, value, callback) => {
       if (typeof value === 'string' && !value) {
@@ -214,7 +189,7 @@ export default {
       viewFaceDetails: false
     }
   },
-  mounted () {
+  mounted() {
     this.getLibList()
     this.getTreeData()
   },
@@ -224,22 +199,22 @@ export default {
   methods: {
     ...mapMutations(['setDepartmentList']),
     // 关闭编辑弹框
-    closeBtn () {
+    closeBtn() {
       this.type = ''
     },
     // 当前部门被选择
-    selectDepartment (item) {
+    selectDepartment(item) {
       if (!item || !item[0]) return
       this.currentDm.id = item[0].id
       this.currentDm.name = item[0].title
       this.renderList()
     },
     // 更新部门树数据
-    updateDepartmentList (a) {
+    updateDepartmentList(a) {
       // 如果用户当前未选中任何部门，这里默认为最高级部门
       if (!this.currentDm.id) this.currentDm.id = a.id
       let index = 1
-      function getTree (tree = []) {
+      function getTree(tree = []) {
         let arr = []
         if (!!tree && tree.length !== 0) {
           tree.forEach(item => {
@@ -260,7 +235,7 @@ export default {
       this.dmlist.push(b[0])
     },
     // 展现右侧人像库列表
-    renderList (type = '') {
+    renderList(type = '') {
       if (!this.currentDm.name || !this.currentDm.id) return
       let param = {
         departmentId: this.currentDm.id,
@@ -284,7 +259,7 @@ export default {
       })
     },
     // 获取部门树数据
-    getTreeData () {
+    getTreeData() {
       if (this.departmentList && this.departmentList.length) {
         this.updateDepartmentList(this.departmentList)
         return
@@ -301,7 +276,7 @@ export default {
       }).catch(res => { })
     },
     // 获取人像库列表
-    getLibList () {
+    getLibList() {
       if (this.faceLibType.length) return
       getLibTypes().then(res => {
         let r = res.data
@@ -316,12 +291,12 @@ export default {
       }).catch(err => { })
     },
     // 切换页面
-    changePage (pageNo) {
+    changePage(pageNo) {
       this.pageNo = pageNo
       this.renderList()
     },
     // 添加人像库
-    addNewFaceLib () {
+    addNewFaceLib() {
       if (!this.currentDm.name) {
         this.$Message.success({
           content: '请选择一个部门',
@@ -334,7 +309,7 @@ export default {
       this.getLibList()
     },
     // 成功状态提示
-    upSuccess (v) {
+    upSuccess(v) {
       this.loading = false
       this.type = ''
       switch (v) {
@@ -366,7 +341,7 @@ export default {
       this.renderList()
     },
     // 失败状态提示
-    upError (v) {
+    upError(v) {
       this.loading = false
       this.type = ''
       switch (v) {
@@ -400,21 +375,21 @@ export default {
           break
       }
     },
-    setCurrentLib (row) {
+    setCurrentLib(row) {
       this.currentLib.id = row.id
       this.currentLib.subscribed = row.subscribed
       this.currentLib.libName = row.libName
       this.currentLib.description = row.description
     },
     // 删除人像库
-    removeFaceLib (row) {
+    removeFaceLib(row) {
       if (!row) return
       this.setCurrentLib(row)
       // 弹框提示操作
       this.type = 2
     },
     // 编辑提交
-    editorFaceLib (row) {
+    editorFaceLib(row) {
       if (!row) return
       this.setCurrentLib(row)
       // 初始化修改框
@@ -423,7 +398,7 @@ export default {
       this.type = 3
     },
     // 订阅与取消订阅
-    changeSubscribe (row) {
+    changeSubscribe(row) {
       if (!row) return
       this.setCurrentLib(row)
       // 订阅发送
@@ -441,17 +416,17 @@ export default {
       }
     },
     // 进入人像库详情
-    enterFace (row) {
+    enterFace(row) {
       if (!row) return
       this.setCurrentLib(row)
       this.viewFaceDetails = true
     },
     // 关闭人像详情页
-    closeFaceLib () {
+    closeFaceLib() {
       this.viewFaceDetails = false
     },
     // 添加提交
-    addSubmit () {
+    addSubmit() {
       this.$refs['saveFrom'].validate(valid => {
         if (valid) {
           this.loading = true
@@ -469,7 +444,7 @@ export default {
       })
     },
     // 删除提交
-    delSubmit () {
+    delSubmit() {
       if (!this.currentLib.id) return
       deleteFaceLib(this.currentLib.id).then(res => {
         if (res.data.code == 200) this.upSuccess(2)
@@ -477,7 +452,7 @@ export default {
       }).catch(err => { this.upError(2) })
     },
     // 修改编辑提交
-    updateSubmit () {
+    updateSubmit() {
       console.log('1')
       this.$refs['editorFrom'].validate(valid => {
         console.log('2')
@@ -498,7 +473,7 @@ export default {
       })
     },
     // 按类型刷选库
-    searchLib () {
+    searchLib() {
       this.renderList(this.libType)
     }
   },
