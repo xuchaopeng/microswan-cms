@@ -1,0 +1,203 @@
+.facelib {
+  text-align: center;
+  position: relative;
+}
+.facelib .subtable {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 20;
+}
+.facelib .subtable .facepop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: 12;
+}
+.facelib .subtable .facemiddle {
+  position: absolute;
+  width: 440px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-left: 180px;
+  z-index: 10;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #dcdee2;
+  background-color: #fff;
+  z-index: 15;
+}
+.facelib .subtable .subtitle {
+  padding: 10px 0;
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+}
+.facelib .subtable .delete {
+  font-size: 16px;
+}
+.facelib .subtable .editorFaceLib {
+  text-align: left;
+  padding: 10px;
+  font-size: 14px;
+}
+.facelib .subtable .editorFaceLib .ivu-form-item {
+  margin-bottom: 40px;
+}
+.facelib .subtable .editorFaceLib .ivu-form .ivu-btn-primary {
+  margin-top: 0;
+}
+.facelib .subtable .editorFaceLib .ivu-tree ul {
+  font-size: 16px;
+  text-align: left;
+}
+.facelib .subtable .editorFaceLib .alislf {
+  padding: 5px;
+  box-sizing: border-box;
+  width: 20%;
+  text-align: right;
+}
+.facelib .subtable .editorFaceLib .alisrg {
+  padding: 5px;
+  box-sizing: border-box;
+  width: 80%;
+}
+.facelib .subtable .editorFaceLib .pmist {
+  width: 300px;
+  height: 220px;
+  overflow-y: scroll;
+  background: #f4f4f4;
+  border: 1px solid #dfdfdfcc;
+}
+.facelib .subtable .editorFaceLib .savepms {
+  padding: 10px 0 10px 50px;
+}
+.facelib .subtable .discnt {
+  padding: 10px;
+  text-align: left;
+}
+.facelib .subtable .discnt .ivu-form .ivu-form-item-label {
+  width: auto;
+  font-size: 18px;
+  padding-right: 5px;
+}
+.facelib .subtable .discnt .ivu-form .ivu-form-item-content {
+  float: left;
+}
+.facelib .subtable .close {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  cursor: pointer;
+  z-index: 10;
+}
+.facelib .subtable .dels {
+  padding: 20px 0;
+}
+.facelib .subtable .dels .ivu-btn-warning {
+  width: 80px;
+}
+.facelib .ivu-form .ivu-form-item-label {
+  width: 20%;
+  float: left;
+  font-size: 14px;
+}
+.facelib .ivu-form .ivu-form-item-content {
+  width: 80%;
+  float: right;
+  text-align: left;
+}
+.facelib .ivu-form .ivu-btn-primary {
+  margin-top: 20px;
+  width: 50%;
+  float: left;
+}
+.facelib .comcss {
+  min-height: 300px;
+  background-color: #fff;
+}
+.facelib .actions {
+  font-size: 16px;
+  overflow: hidden;
+  line-height: 33px;
+}
+.facelib .ivu-icon {
+  margin-right: 5px;
+}
+.facelib .iconfont {
+  font-size: 20px !important;
+}
+.facelib .iconfont.icon-icon_huabanfuben {
+  font-size: 24px !important;
+}
+.facelib .tbs .ivu-tree ul {
+  font-size: 16px;
+  text-align: left;
+}
+.facelib .iconfont {
+  font-size: 20px !important;
+}
+.facelib .iconfont.icon-icon_huabanfuben {
+  font-size: 24px !important;
+}
+.facelib .addbtn {
+  text-align: left;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+.facelib .addbtn .ivu-btn-large {
+  font-size: 16px;
+}
+.facelib .addbtn .ivu-select {
+  height: 35px;
+  width: 160px;
+}
+.facelib .addbtn .ivu-select .ivu-select-selection .ivu-select-selected-value {
+  line-height: 35px;
+}
+.facelib .addbtn .ivu-select .ivu-select-selection .ivu-select-placeholder {
+  line-height: 35px;
+}
+.facelib .dmcons {
+  padding: 10px;
+}
+.facelib .pages {
+  padding: 15px;
+  font-size: 14px;
+  overflow: hidden;
+  background-color: #fff;
+}
+.facelib .pages .ivu-page {
+  float: right;
+}
+.facelib .clearfix {
+  overflow: hidden;
+}
+.facelib .mr10 {
+  margin-right: 10px;
+}
+.facelib .mr5 {
+  margin-right: 5px;
+}
+.facelib .mr20 {
+  margin-right: 20px;
+}
+.facelib .w20 {
+  width: 20%;
+}
+.facelib .mrb20 {
+  margin-bottom: 20px;
+}
+.facelib .fl {
+  float: left;
+}
+.facelib .fr {
+  float: right;
+}
