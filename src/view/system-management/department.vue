@@ -9,12 +9,7 @@
             </span>
             <span class="fr">
               <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
-              <Icon
-                class="p5"
-                custom="icon iconfont icon-xinzengliebiao"
-                @click="addDm"
-                size="24"
-              />
+              <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
               <Icon
                 class="p5"
                 custom="icon iconfont icon-icon_huabanfuben"
@@ -30,64 +25,40 @@
       </Col>
       <Col span="18">
         <div class="dmcons comcss">
-          <Table
-            :columns="column"
-            :data="tabdata"
-            no-data-text="该部门下暂无数据"
-          ></Table>
+          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
           <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
           </div>
         </div>
       </Col>
     </Row>
-    <div class="subtable" v-if="tk.sv">
-      <Icon
-        class="close"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closeBtn"
-      />
-      <div v-show="tk.add">
-        <p class="subtitle">添加部门</p>
-        <Form
-          ref="saveFrom"
-          :model="from"
-          :rules="rule"
-          @keydown.enter.native="saveSubmit"
-        >
-          <FormItem prop="name" label="部门名称">
-            <Input v-model="from.name"></Input>
-          </FormItem>
-          <FormItem>
-            <Button
-              @click="saveSubmit"
-              type="primary"
-              :loading="tk.loading"
-              long
-            >
-              <span v-if="!tk.loading">立即保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </FormItem>
-        </Form>
+    <Layer v-if="tk.sv">
+      <div class="subtable">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+        <div class="add-department" v-show="tk.add">
+          <p class="subtitle">添加部门</p>
+          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="saveSubmit">
+            <FormItem prop="name" label="部门名称">
+              <Input v-model="from.name"></Input>
+            </FormItem>
+            <FormItem>
+              <Button @click="saveSubmit" type="primary" :loading="tk.loading" long>
+                <span v-if="!tk.loading">立即保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
+        </div>
+        <div class="del-department" v-show="tk.del">
+          <p class="subtitle">确认删除该部门吗?</p>
+          <p>{{ currentDm.name }}</p>
+          <p class="dels">
+            <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
+        </div>
       </div>
-      <div v-show="tk.del">
-        <p class="subtitle">确认删除该部门吗?</p>
-        <p>{{ currentDm.name }}</p>
-        <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary"
-            >确认删除</Button
-          >
-          <Button @click="closeBtn" type="warning">取消</Button>
-        </p>
-      </div>
-    </div>
+    </Layer>
   </div>
 </template>
 
@@ -99,6 +70,7 @@ import {
   getDepartmentList
 } from "@/api/system";
 import { mapMutations, mapGetters } from "vuex";
+import Layer from '_c/layer';
 //树形节点 设置disabled
 export default {
   data() {
@@ -348,6 +320,9 @@ export default {
         }
       });
     }
+  },
+  components:{
+    Layer
   }
 };
 </script>
@@ -358,21 +333,39 @@ export default {
   text-align: center;
   position: relative;
   .subtable {
-    position: fixed;
-    width: 440px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    margin-left: 180px;
-    z-index: 10;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dcdee2;
     background-color: #fff;
+    .icon-close {
+      color:#fff;
+    }
+    .add-department {
+      width: 440px;
+      .ivu-form {
+        padding:20px 15px;
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+      }
+    }
+    .del-department {
+      width:400px;
+      .mr10 {
+        margin-right:10px;
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+        padding: 5px 25px 6px 25px;
+        text-align: center;
+        &.ivu-btn-warning {
+          background-color: #ff9900;
+        }
+      }
+    }
     .subtitle {
-      padding: 10px 0;
       position: relative;
       text-align: center;
+      color:#fff;
     }
     .close {
       position: absolute;

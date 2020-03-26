@@ -16,143 +16,98 @@
       <Col span="18">
         <div class="dmcons comcss">
           <p class="addbtn">
-            <Button type="success" size="large" @click="addNewRole"
-              >+添加新角色</Button
-            >
+            <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
           </p>
-          <Table
-            :columns="column"
-            :data="tabdata"
-            no-data-text="该部门下暂无角色"
-          >
+          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
             <template slot-scope="{ row, index }" slot="action">
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorDis(row)"
-                >编辑描述</Button
-              >
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorRole(row)"
-                >修改权限</Button
-              >
-              <Button type="error" size="small" @click="removeRole(row)"
-                >删除</Button
-              >
+              <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
+              <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
+              <Button type="error" size="small" @click="removeRole(row)">删除</Button>
             </template>
           </Table>
           <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
           </div>
         </div>
       </Col>
     </Row>
-    <div class="subtable" v-if="tk.sv">
-      <Icon
-        class="close"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closeBtn"
-      />
-      <div v-show="tk.add">
-        <p class="subtitle">添加角色</p>
-        <Form
-          ref="saveFrom"
-          :model="from"
-          :rules="rule"
-          @keydown.enter.native="addSubmit"
-        >
-          <FormItem prop="name" label="角色名称">
-            <Input v-model="from.name"></Input>
-          </FormItem>
-          <FormItem prop="description" label="角色描述">
-            <Input v-model="from.description"></Input>
-          </FormItem>
-          <FormItem>
-            <Button
-              @click="addSubmit"
-              type="primary"
-              :loading="tk.loading"
-              long
-            >
-              <span v-if="!tk.loading">立即保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </FormItem>
-        </Form>
-      </div>
-      <div v-show="tk.del">
-        <p class="subtitle">确认删除该角色吗?</p>
-        <p>{{ currentRole.name }}</p>
-        <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary"
-            >确认删除</Button
+    <Layer v-if="tk.sv">
+      <div class="subtable">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+        <div class="add-role" v-show="tk.add">
+          <p class="subtitle">添加角色</p>
+          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+            <FormItem prop="name" label="角色名称">
+              <Input v-model="from.name"></Input>
+            </FormItem>
+            <FormItem prop="description" label="角色描述">
+              <Input v-model="from.description"></Input>
+            </FormItem>
+            <FormItem>
+              <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
+                <span v-if="!tk.loading">立即保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
+        </div>
+        <div class="del-role" v-show="tk.del">
+          <p class="subtitle">确认删除该角色吗?</p>
+          <p>{{ currentRole.name }}</p>
+          <p class="dels">
+            <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
+        </div>
+        <div class="discnt" v-show="tk.dis">
+          <p class="subtitle">编辑描述</p>
+          <Form
+            ref="editorFrom"
+            :model="editorFrom"
+            :rules="editorRule"
+            @keydown.enter.native="editorSubmit"
           >
-          <Button @click="closeBtn" type="warning">取消</Button>
-        </p>
-      </div>
-      <div class="discnt" v-show="tk.dis">
-        <p class="subtitle">编辑描述</p>
-        <Form
-          ref="editorFrom"
-          :model="editorFrom"
-          :rules="editorRule"
-          @keydown.enter.native="editorSubmit"
-        >
+            <div class="clearfix mrb20">
+              <span class="fl mr5">名称：</span>
+              <span class="fl">{{ currentRole.name }}</span>
+            </div>
+            <FormItem prop="name" label="描述：">
+              <Input v-model="editorFrom.description" type="textarea"></Input>
+            </FormItem>
+            <FormItem>
+              <Button @click="editorSubmit" type="primary" :loading="tk.loading" long>
+                <span v-if="!tk.loading">立即保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
+        </div>
+        <div class="pmscnt" v-show="tk.pms">
+          <p class="subtitle">修改权限</p>
           <div class="clearfix mrb10">
-            <span class="fl mr5">名称：</span
-            ><span class="fl">{{ currentRole.name }}</span>
+            <span class="fl mr5">名称：</span>
+            <span class="fl">{{ currentRole.name }}</span>
           </div>
-          <FormItem prop="name" label="描述：">
-            <Input v-model="editorFrom.description" type="textarea"></Input>
-          </FormItem>
-          <FormItem>
-            <Button
-              @click="editorSubmit"
-              type="primary"
-              :loading="tk.loading"
-              long
-            >
-              <span v-if="!tk.loading">立即保存</span>
+          <div class="clearfix">
+            <span class="fl">权限：</span>
+            <div class="pmist fl">
+              <Tree
+                class="fl"
+                :data="permissionsList"
+                @on-check-change="checkPermission"
+                show-checkbox
+              ></Tree>
+            </div>
+          </div>
+          <p class="savepms">
+            <Button @click="pmsSubmit" type="primary" :loading="tk.loading">
+              <span v-if="!tk.loading">保存</span>
               <span v-else>保存中...</span>
             </Button>
-          </FormItem>
-        </Form>
-      </div>
-      <div class="pmscnt" v-show="tk.pms">
-        <p class="subtitle">修改权限</p>
-        <div class="clearfix mrb10">
-          <span class="fl mr5">名称：</span
-          ><span class="fl">{{ currentRole.name }}</span>
+          </p>
         </div>
-        <div class="clearfix">
-          <span class="fl">权限：</span>
-          <div class="pmist fl">
-            <Tree
-              class="fl"
-              :data="permissionsList"
-              @on-check-change="checkPermission"
-              show-checkbox
-            ></Tree>
-          </div>
-        </div>
-        <p class="savepms">
-          <Button @click="pmsSubmit" type="primary" :loading="tk.loading">
-            <span v-if="!tk.loading">保存</span>
-            <span v-else>保存中...</span>
-          </Button>
-        </p>
       </div>
-    </div>
+    </Layer>
   </div>
 </template>
 
@@ -166,6 +121,7 @@ import {
   assignRole,
   updateRole
 } from "@/api/system";
+import Layer from '_c/layer';
 import { mapMutations, mapGetters } from "vuex";
 //树形节点 设置disabled
 export default {
@@ -588,6 +544,9 @@ export default {
           this.upError(4);
         });
     }
+  },
+  components:{
+    Layer
   }
 };
 </script>
@@ -598,21 +557,18 @@ export default {
   text-align: center;
   position: relative;
   .subtable {
-    position: fixed;
-    width: 440px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    margin-left: 180px;
-    z-index: 10;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dcdee2;
     background-color: #fff;
-
+    .add-role {
+      width:440px;
+      .ivu-form {
+        padding:20px 15px;
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+      }
+    }
     .subtitle {
-      padding: 10px 0;
-      position: relative;
       text-align: center;
     }
     .pmscnt {
@@ -636,12 +592,21 @@ export default {
       }
     }
     .discnt {
-      padding: 10px;
+      width:410px;
       text-align: left;
-      .ivu-form .ivu-form-item-label {
-        width: auto;
-        font-size: 18px;
-        padding-right: 5px;
+      font-size:16px;
+      .ivu-form {
+        padding:20px 10px 20px 20px;
+        .ivu-form-item-label {
+          width: auto;
+          font-size: 16px;
+          padding-right: 5px;
+        }
+      }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+        margin-left:50px;
       }
       .ivu-form .ivu-form-item-content {
         float: left;
@@ -653,6 +618,7 @@ export default {
       top: 5px;
       cursor: pointer;
       z-index: 10;
+      color:#fff;
     }
     .dels {
       padding: 20px 0;
@@ -721,6 +687,9 @@ export default {
   }
   .mrb10 {
     margin-bottom: 10px;
+  }
+  .mrb20 {
+    margin-bottom: 20px;
   }
   .fl {
     float: left;

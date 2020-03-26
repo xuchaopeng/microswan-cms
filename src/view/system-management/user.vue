@@ -16,138 +16,94 @@
       <Col span="18">
         <div class="dmcons comcss">
           <p class="addbtn">
-            <Button type="success" size="large" @click="addNewUser"
-              >+添加新用户</Button
-            >
+            <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
           </p>
-          <Table
-            :columns="column"
-            :data="tabdata"
-            no-data-text="该部门下暂无用户"
-          >
+          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无用户">
             <template slot-scope="{ row, index }" slot="action">
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorUser(row)"
-                >更新</Button
-              >
-              <Button type="error" size="small" @click="removeRole(row)"
-                >删除</Button
-              >
+              <Button class="mr10" type="primary" size="small" @click="editorUser(row)">更新</Button>
+              <Button type="error" size="small" @click="removeRole(row)">删除</Button>
             </template>
           </Table>
           <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
           </div>
         </div>
       </Col>
     </Row>
-    <div class="subtable" v-if="tk.sv">
-      <Icon
-        class="close"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closeBtn"
-      />
-      <div class="pr10 adduser" v-show="tk.add">
-        <p class="subtitle">添加用户</p>
-        <Form
-          ref="saveFrom"
-          :model="from"
-          :rules="rule"
-          @keydown.enter.native="addSubmit"
-        >
-          <FormItem prop="username" label="用户名">
-            <Input v-model="from.username"></Input>
-          </FormItem>
-          <FormItem prop="pwd" label="密码">
-            <Input v-model="from.pwd" type="password"></Input>
-          </FormItem>
-          <FormItem prop="pwdCheck" label="确认密码">
-            <Input v-model="from.pwdCheck" type="password"></Input>
-          </FormItem>
-          <FormItem prop="policeNum" label="编号">
-            <Input v-model="from.policeNum"></Input>
-          </FormItem>
-          <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
-            <Select
-              v-model="from.roleId"
-              style="width:200px"
-              placeholder="请设置角色"
-            >
-              <Option
-                v-for="item in roleListOptions"
-                :value="item.id"
-                :key="item.id"
-              >
-                {{ item.name }}
-              </Option>
-            </Select>
-          </FormItem>
-          <FormItem>
-            <Button
-              @click="addSubmit"
-              type="primary"
-              :loading="tk.loading"
-              long
-            >
-              <span v-if="!tk.loading">立即保存</span>
-              <span v-else>保存中...</span>
-            </Button>
-          </FormItem>
-        </Form>
-      </div>
-      <div v-show="tk.del">
-        <p class="subtitle">确认删除该用户吗?</p>
-        <p>{{ currentUser.username }}</p>
-        <p class="dels">
-          <Button class="mr5" @click="delSubmit" type="primary"
-            >确认删除</Button
-          >
-          <Button @click="closeBtn" type="warning">取消</Button>
-        </p>
-      </div>
-      <div class="pmscnt" v-show="tk.pms">
-        <p class="subtitle">用户角色更新</p>
-        <div class="clearfix mrb20">
-          <span class="fl mr5">名称：</span
-          ><span class="fl">{{ currentUser.username }}</span>
+    <Layer v-if="tk.sv">
+      <div class="subtable">
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
+        <div class="adduser" v-show="tk.add">
+          <p class="subtitle">添加用户</p>
+          <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
+            <FormItem prop="username" label="用户名">
+              <Input v-model="from.username"></Input>
+            </FormItem>
+            <FormItem prop="pwd" label="密码">
+              <Input v-model="from.pwd" type="password"></Input>
+            </FormItem>
+            <FormItem prop="pwdCheck" label="确认密码">
+              <Input v-model="from.pwdCheck" type="password"></Input>
+            </FormItem>
+            <FormItem prop="policeNum" label="编号">
+              <Input v-model="from.policeNum"></Input>
+            </FormItem>
+            <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
+              <Select v-model="from.roleId" style="width:200px" placeholder="请设置角色">
+                <Option
+                  v-for="item in roleListOptions"
+                  :value="item.id"
+                  :key="item.id"
+                >{{ item.name }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem>
+              <Button @click="addSubmit" type="primary" :loading="tk.loading" long>
+                <span v-if="!tk.loading">立即保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </FormItem>
+          </Form>
         </div>
-        <div class="clearfix mrb20">
-          <span class="fl mr5">编号：</span
-          ><span class="fl">{{ currentUser.policeNum }}</span>
+        <div class="del-user" v-show="tk.del">
+          <p class="subtitle">确认删除该用户吗?</p>
+          <p>{{ currentUser.username }}</p>
+          <p class="dels">
+            <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
         </div>
-        <div class="clearfix mrb20">
-          <span class="fl mr5">角色：</span>
-          <Select v-model="from.roleId" style="width:200px;float:left;">
-            <Option
-              v-for="item in roleListOptions"
-              :value="item.id"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </Option>
-          </Select>
+        <div class="pmscnt" v-show="tk.pms">
+          <p class="subtitle">用户角色更新</p>
+          <div class="cnt">
+            <div class="clearfix mrb20">
+              <span class="fl mr5">名称：</span>
+              <span class="fl">{{ currentUser.username }}</span>
+            </div>
+            <div class="clearfix mrb20">
+              <span class="fl mr5">编号：</span>
+              <span class="fl">{{ currentUser.policeNum }}</span>
+            </div>
+            <div class="clearfix mrb20">
+              <span class="fl mr5">角色：</span>
+              <Select v-model="from.roleId" style="width:200px;float:left;">
+                <Option
+                  v-for="item in roleListOptions"
+                  :value="item.id"
+                  :key="item.id"
+                >{{ item.name }}</Option>
+              </Select>
+            </div>
+            <p class="savepms">
+              <Button @click="userUpdateSubmit" type="primary" :loading="tk.loading">
+                <span v-if="!tk.loading">保存</span>
+                <span v-else>保存中...</span>
+              </Button>
+            </p>
+          </div>
         </div>
-        <p class="savepms">
-          <Button
-            @click="userUpdateSubmit"
-            type="primary"
-            :loading="tk.loading"
-          >
-            <span v-if="!tk.loading">保存</span>
-            <span v-else>保存中...</span>
-          </Button>
-        </p>
       </div>
-    </div>
+    </Layer>
   </div>
 </template>
 
@@ -160,7 +116,9 @@ import {
   getListRoleOptions,
   updateUser
 } from "@/api/system";
+import Layer from '_c/layer';
 import { mapMutations, mapGetters } from "vuex";
+
 //树形节点 设置disabled
 export default {
   data() {
@@ -536,7 +494,6 @@ export default {
     },
     //用户更新提交
     userUpdateSubmit() {
-      // console.log(this.from.roleId, this.currentUser.id);
       if (!this.from.roleId) return;
       let param = {
         id: this.currentUser.id,
@@ -552,6 +509,9 @@ export default {
           this.upError(3);
         });
     }
+  },
+  components:{
+    Layer
   }
 };
 </script>
@@ -562,53 +522,67 @@ export default {
   text-align: center;
   position: relative;
   .subtable {
-    position: fixed;
-    width: 440px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    margin-left: 180px;
-    z-index: 10;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dcdee2;
     background-color: #fff;
     .ivu-select {
       display: block;
     }
     .subtitle {
-      padding: 10px 0;
-      position: relative;
       text-align: center;
     }
     .adduser {
+      width:440px;
       .ivu-form-item {
         margin-bottom: 40px;
       }
+      .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+      }
       .ivu-form {
+        padding:15px 15px 15px 10px;
         .ivu-btn-primary {
           margin-top: 0;
         }
       }
     }
+    .del-user {
+      width:400px;
+      .dels {
+        padding: 20px 0;
+         .ivu-btn {
+        background-color: #5cb85c;
+        border: none;
+        padding: 5px 25px 6px 25px;
+        text-align: center;
+        &.ivu-btn-warning {
+          background-color: #ff9900;
+        }
+      }
+     }
+    }
     .pmscnt {
+      width:410px;
       text-align: left;
-      padding: 10px;
+      font-size:16px;
+      text-align: center;
+      .cnt {
+        padding-left:45px;
+      }
       .ivu-tree {
         ul {
           font-size: 16px;
           text-align: left;
         }
       }
-      .pmist {
-        width: 300px;
-        height: 220px;
-        overflow-y: scroll;
-        background: #f4f4f4;
-        border: 1px solid #dfdfdfcc;
-      }
       .savepms {
+        text-align: left;
         padding: 10px 0 10px 50px;
+        .ivu-btn {
+           background-color: #5cb85c;
+          border: none;
+          padding: 5px 30px 6px 30px;
+          text-align: center;
+        }
       }
     }
     .close {
@@ -617,13 +591,9 @@ export default {
       top: 5px;
       cursor: pointer;
       z-index: 10;
+      color:#fff;
     }
-    .dels {
-      padding: 20px 0;
-      .ivu-btn-warning {
-        width: 80px;
-      }
-    }
+
   }
   .addbtn {
     text-align: left;
