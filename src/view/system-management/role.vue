@@ -55,7 +55,7 @@
           <p class="subtitle">确认删除该角色吗?</p>
           <p>{{ currentRole.name }}</p>
           <p class="dels">
-            <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+            <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
             <Button @click="closeBtn" type="warning">取消</Button>
           </p>
         </div>
@@ -84,11 +84,11 @@
         </div>
         <div class="pmscnt" v-show="tk.pms">
           <p class="subtitle">修改权限</p>
-          <div class="clearfix mrb10">
+          <div class="clearfix pd10 mrb10">
             <span class="fl mr5">名称：</span>
             <span class="fl">{{ currentRole.name }}</span>
           </div>
-          <div class="clearfix">
+          <div class="clearfix pd10">
             <span class="fl">权限：</span>
             <div class="pmist fl">
               <Tree
@@ -573,22 +573,30 @@ export default {
     }
     .pmscnt {
       text-align: left;
-      padding: 10px;
+      font-size:16px;
       .ivu-tree {
         ul {
           font-size: 16px;
           text-align: left;
         }
       }
+      .pd10 {
+        padding:0 15px;
+      }
       .pmist {
         width: 300px;
-        height: 220px;
+        min-height:235px;
         overflow-y: scroll;
         background: #f4f4f4;
         border: 1px solid #dfdfdfcc;
       }
       .savepms {
-        padding: 10px 0 10px 50px;
+        padding: 20px 0px 10px 65px;
+        .ivu-btn {
+          padding:5px 25px 6px  25px;
+          background-color: #5cb85c;
+          border: none;
+        }
       }
     }
     .discnt {
@@ -620,12 +628,22 @@ export default {
       z-index: 10;
       color:#fff;
     }
-    .dels {
-      padding: 20px 0;
-      .ivu-btn-warning {
-        width: 80px;
+    .del-role {
+      width:350px;
+      .dels {
+        padding:20px 0;
+        .ivu-btn {
+          background-color: #5cb85c;
+          border: none;
+          padding: 5px 25px 6px 25px;
+          text-align: center;
+          &.ivu-btn-warning {
+            background-color: #ff9900;
+          }
+        }
       }
     }
+
   }
   .addbtn {
     text-align: left;
