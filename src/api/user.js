@@ -14,10 +14,9 @@ export const login = ({ userName, password }) => {
 };
 
 export const getUserInfo = (token, user_name) => {
-  console.log(token, user_name, "FFFFFFFFFFFFFFFFFFFFF");
   const data = {
-    username: "admin",
-    pwd: "12345678"
+    username: "",
+    pwd: ""
   };
   return axios.request({
     url: "/api/user/login",

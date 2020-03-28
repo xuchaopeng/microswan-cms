@@ -182,7 +182,6 @@ export default {
   },
   mounted() {
     this.getTreeData();
-    console.log(this.permissions, 'xcpppp');
   },
   computed: {
     ...mapGetters(["departmentId", "departmentList", 'permissions'])

@@ -157,8 +157,6 @@ export default {
           });
         }
       }
-
-      console.log(this.dataList, "xcppppppppppp");
     },
     //查看全部推送消息
     seeAll() {

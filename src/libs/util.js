@@ -516,7 +516,6 @@ export const getAddress = item => {
   var gc = new BMap.Geocoder();
   gc.getLocation(point, function(rs) {
     item.address = rs.address;
-    // console.log(rs, "HAHAH");
     // var mapAddress = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
   });
 };
