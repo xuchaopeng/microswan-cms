@@ -2,33 +2,33 @@
   <div class="role">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <p class="addbtn">
-            <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
-          </p>
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-              <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
-              <Button type="error" size="small" @click="removeRole(row)">删除</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
+        </p>
+        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
+            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -55,18 +55,13 @@
           <p class="subtitle">确认删除该角色吗?</p>
           <p>{{ currentRole.name }}</p>
           <p class="dels">
-            <Button class="mr5" @click="delSubmit" type="primary">确认删除</Button>
+            <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
             <Button @click="closeBtn" type="warning">取消</Button>
           </p>
         </div>
         <div class="discnt" v-show="tk.dis">
           <p class="subtitle">编辑描述</p>
-          <Form
-            ref="editorFrom"
-            :model="editorFrom"
-            :rules="editorRule"
-            @keydown.enter.native="editorSubmit"
-          >
+          <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
             <div class="clearfix mrb20">
               <span class="fl mr5">名称：</span>
               <span class="fl">{{ currentRole.name }}</span>
@@ -84,19 +79,14 @@
         </div>
         <div class="pmscnt" v-show="tk.pms">
           <p class="subtitle">修改权限</p>
-          <div class="clearfix mrb10">
+          <div class="clearfix pd10 mrb10">
             <span class="fl mr5">名称：</span>
             <span class="fl">{{ currentRole.name }}</span>
           </div>
-          <div class="clearfix">
+          <div class="clearfix pd10">
             <span class="fl">权限：</span>
             <div class="pmist fl">
-              <Tree
-                class="fl"
-                :data="permissionsList"
-                @on-check-change="checkPermission"
-                show-checkbox
-              ></Tree>
+              <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
             </div>
           </div>
           <p class="savepms">
@@ -192,9 +182,10 @@ export default {
   },
   mounted() {
     this.getTreeData();
+    console.log(this.permissions, 'xcpppp');
   },
   computed: {
-    ...mapGetters(["departmentId", "departmentList"])
+    ...mapGetters(["departmentId", "departmentList", 'permissions'])
   },
   methods: {
     ...mapMutations(["setDepartmentList"]),
@@ -274,7 +265,7 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     //切换页面
     changePage(pageNo) {
@@ -545,7 +536,7 @@ export default {
         });
     }
   },
-  components:{
+  components: {
     Layer
   }
 };
@@ -559,9 +550,9 @@ export default {
   .subtable {
     background-color: #fff;
     .add-role {
-      width:440px;
+      width: 440px;
       .ivu-form {
-        padding:20px 15px;
+        padding: 20px 15px;
       }
       .ivu-btn {
         background-color: #5cb85c;
@@ -573,30 +564,38 @@ export default {
     }
     .pmscnt {
       text-align: left;
-      padding: 10px;
+      font-size: 16px;
       .ivu-tree {
         ul {
           font-size: 16px;
           text-align: left;
         }
       }
+      .pd10 {
+        padding: 0 15px;
+      }
       .pmist {
         width: 300px;
-        height: 220px;
+        min-height: 235px;
         overflow-y: scroll;
         background: #f4f4f4;
         border: 1px solid #dfdfdfcc;
       }
       .savepms {
-        padding: 10px 0 10px 50px;
+        padding: 20px 0px 10px 65px;
+        .ivu-btn {
+          padding: 5px 25px 6px 25px;
+          background-color: #5cb85c;
+          border: none;
+        }
       }
     }
     .discnt {
-      width:410px;
+      width: 410px;
       text-align: left;
-      font-size:16px;
+      font-size: 16px;
       .ivu-form {
-        padding:20px 10px 20px 20px;
+        padding: 20px 10px 20px 20px;
         .ivu-form-item-label {
           width: auto;
           font-size: 16px;
@@ -606,7 +605,7 @@ export default {
       .ivu-btn {
         background-color: #5cb85c;
         border: none;
-        margin-left:50px;
+        margin-left: 50px;
       }
       .ivu-form .ivu-form-item-content {
         float: left;
@@ -618,12 +617,21 @@ export default {
       top: 5px;
       cursor: pointer;
       z-index: 10;
-      color:#fff;
+      color: #fff;
     }
-    .dels {
-      padding: 20px 0;
-      .ivu-btn-warning {
-        width: 80px;
+    .del-role {
+      width: 350px;
+      .dels {
+        padding: 20px 0;
+        .ivu-btn {
+          background-color: #5cb85c;
+          border: none;
+          padding: 5px 25px 6px 25px;
+          text-align: center;
+          &.ivu-btn-warning {
+            background-color: #ff9900;
+          }
+        }
       }
     }
   }
