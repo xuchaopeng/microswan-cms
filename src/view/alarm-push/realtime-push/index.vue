@@ -80,10 +80,10 @@ export default {
     };
   },
   mounted() {
-    // this.initwebsocket();
+    this.initwebsocket();
   },
   beforeDestroy() {
-    // this.disconnect();
+    this.disconnect();
   },
   methods: {
     //开启长链
@@ -100,7 +100,6 @@ export default {
         frame => {
           this.stompclient.subscribe("/user/queue/hitInfo", msg => {
             let data = JSON.parse(msg.body);
-            // console.log(data, "连接成功");
             this.resetData(data);
           });
         },
