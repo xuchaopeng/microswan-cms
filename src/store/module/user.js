@@ -1,13 +1,13 @@
 import {
   login,
-  logout,
-  getUserInfo,
-  getMessage,
-  getContentByMsgId,
-  hasRead,
-  removeReaded,
-  restoreTrash,
-  getUnreadCount
+  logout
+  // getUserInfo,
+  // getMessage,
+  // getContentByMsgId,
+  // hasRead,
+  // removeReaded,
+  // restoreTrash,
+  // getUnreadCount
 } from "@/api/user";
 import { setToken, getToken } from "@/libs/util";
 
@@ -97,7 +97,6 @@ export default {
             const s = res.data;
             if (s && s.code == 200) {
               const data = s.data ? s.data : {};
-              console.log(data, "bbbbbbbbb");
               commit("setToken", data.username);
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
@@ -138,151 +137,157 @@ export default {
     // 获取用户相关信息
     getUserInfo({ state, commit }) {
       return new Promise((resolve, reject) => {
-        try {
-          getUserInfo(state.token, state.userName)
-            .then(res => {
-              const s = res.data;
-              console.log(data, "abc");
-              if (s.code !== 200) {
-                reject(s);
-                return;
-              }
-              const data = s.data;
-              commit("setUserName", data.username);
-              commit("setPoliceNum", data.policeNum);
-              commit("setDepartmentId", data.departmentId);
-              commit(
-                "setPermissions",
-                data.permissions ? data.permissions : []
-              );
-              commit("setHasGetInfo", true);
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
-        } catch (error) {
-          reject(error);
+        let user = {};
+        if (state.token && state.userName) {
+          user.permissions = state.permissions;
+          resolve(user);
+        } else {
+          reject();
         }
+        // try {
+        //   getUserInfo(state.token, state.userName)
+        //     .then(res => {
+        //       const s = res.data;
+        //       if (s.code !== 200) {
+        //         reject(s);
+        //         return;
+        //       }
+        //       const data = s.data;
+        //       commit("setUserName", data.username);
+        //       commit("setPoliceNum", data.policeNum);
+        //       commit("setDepartmentId", data.departmentId);
+        //       commit(
+        //         "setPermissions",
+        //         data.permissions ? data.permissions : []
+        //       );
+        //       commit("setHasGetInfo", true);
+        //       resolve(data);
+        //     })
+        //     .catch(err => {
+        //       reject(err);
+        //     });
+        // } catch (error) {
+        //   reject(error);
+        // }
       });
     },
     // 此方法用来获取未读消息条数，接口只返回数值，不返回消息列表
     getUnreadMessageCount({ state, commit }) {
-      getUnreadCount().then(res => {
-        const { data } = res;
-        commit("setMessageCount", data);
-      });
+      // getUnreadCount().then(res => {
+      //   const { data } = res;
+      //   commit("setMessageCount", data);
+      // });
     },
     // 获取消息列表，其中包含未读、已读、回收站三个列表
     getMessageList({ state, commit }) {
-      return new Promise((resolve, reject) => {
-        getMessage()
-          .then(res => {
-            const { unread, readed, trash } = res.data;
-            commit(
-              "setMessageUnreadList",
-              unread.sort(
-                (a, b) => new Date(b.create_time) - new Date(a.create_time)
-              )
-            );
-            commit(
-              "setMessageReadedList",
-              readed
-                .map(_ => {
-                  _.loading = false;
-                  return _;
-                })
-                .sort(
-                  (a, b) => new Date(b.create_time) - new Date(a.create_time)
-                )
-            );
-            commit(
-              "setMessageTrashList",
-              trash
-                .map(_ => {
-                  _.loading = false;
-                  return _;
-                })
-                .sort(
-                  (a, b) => new Date(b.create_time) - new Date(a.create_time)
-                )
-            );
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+      // return new Promise((resolve, reject) => {
+      //   getMessage()
+      //     .then(res => {
+      //       const { unread, readed, trash } = res.data;
+      //       commit(
+      //         "setMessageUnreadList",
+      //         unread.sort(
+      //           (a, b) => new Date(b.create_time) - new Date(a.create_time)
+      //         )
+      //       );
+      //       commit(
+      //         "setMessageReadedList",
+      //         readed
+      //           .map(_ => {
+      //             _.loading = false;
+      //             return _;
+      //           })
+      //           .sort(
+      //             (a, b) => new Date(b.create_time) - new Date(a.create_time)
+      //           )
+      //       );
+      //       commit(
+      //         "setMessageTrashList",
+      //         trash
+      //           .map(_ => {
+      //             _.loading = false;
+      //             return _;
+      //           })
+      //           .sort(
+      //             (a, b) => new Date(b.create_time) - new Date(a.create_time)
+      //           )
+      //       );
+      //       resolve();
+      //     })
+      //     .catch(error => {
+      //       reject(error);
+      //     });
+      // });
     },
     // 根据当前点击的消息的id获取内容
     getContentByMsgId({ state, commit }, { msg_id }) {
-      return new Promise((resolve, reject) => {
-        let contentItem = state.messageContentStore[msg_id];
-        if (contentItem) {
-          resolve(contentItem);
-        } else {
-          getContentByMsgId(msg_id).then(res => {
-            const content = res.data;
-            commit("updateMessageContentStore", {
-              msg_id,
-              content
-            });
-            resolve(content);
-          });
-        }
-      });
+      // return new Promise((resolve, reject) => {
+      //   let contentItem = state.messageContentStore[msg_id];
+      //   if (contentItem) {
+      //     resolve(contentItem);
+      //   } else {
+      //     getContentByMsgId(msg_id).then(res => {
+      //       const content = res.data;
+      //       commit("updateMessageContentStore", {
+      //         msg_id,
+      //         content
+      //       });
+      //       resolve(content);
+      //     });
+      //   }
+      // });
     },
     // 把一个未读消息标记为已读
     hasRead({ state, commit }, { msg_id }) {
-      return new Promise((resolve, reject) => {
-        hasRead(msg_id)
-          .then(() => {
-            commit("moveMsg", {
-              from: "messageUnreadList",
-              to: "messageReadedList",
-              msg_id
-            });
-            commit("setMessageCount", state.unreadCount - 1);
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+      // return new Promise((resolve, reject) => {
+      //   hasRead(msg_id)
+      //     .then(() => {
+      //       commit("moveMsg", {
+      //         from: "messageUnreadList",
+      //         to: "messageReadedList",
+      //         msg_id
+      //       });
+      //       commit("setMessageCount", state.unreadCount - 1);
+      //       resolve();
+      //     })
+      //     .catch(error => {
+      //       reject(error);
+      //     });
+      // });
     },
     // 删除一个已读消息到回收站
     removeReaded({ commit }, { msg_id }) {
-      return new Promise((resolve, reject) => {
-        removeReaded(msg_id)
-          .then(() => {
-            commit("moveMsg", {
-              from: "messageReadedList",
-              to: "messageTrashList",
-              msg_id
-            });
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+      // return new Promise((resolve, reject) => {
+      //   removeReaded(msg_id)
+      //     .then(() => {
+      //       commit("moveMsg", {
+      //         from: "messageReadedList",
+      //         to: "messageTrashList",
+      //         msg_id
+      //       });
+      //       resolve();
+      //     })
+      //     .catch(error => {
+      //       reject(error);
+      //     });
+      // });
     },
     // 还原一个已删除消息到已读消息
     restoreTrash({ commit }, { msg_id }) {
-      return new Promise((resolve, reject) => {
-        restoreTrash(msg_id)
-          .then(() => {
-            commit("moveMsg", {
-              from: "messageTrashList",
-              to: "messageReadedList",
-              msg_id
-            });
-            resolve();
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+      // return new Promise((resolve, reject) => {
+      //   restoreTrash(msg_id)
+      //     .then(() => {
+      //       commit("moveMsg", {
+      //         from: "messageTrashList",
+      //         to: "messageReadedList",
+      //         msg_id
+      //       });
+      //       resolve();
+      //     })
+      //     .catch(error => {
+      //       reject(error);
+      //     });
+      // });
     }
   }
 };

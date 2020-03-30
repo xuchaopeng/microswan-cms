@@ -84,7 +84,8 @@ export default [
     name: "deviceManagement",
     meta: {
       icon: "_guanli",
-      title: "设备管理"
+      title: "设备管理",
+      access: ["device:read", "device:write"]
     },
     component: Main,
     children: [
@@ -93,7 +94,8 @@ export default [
         name: "device",
         meta: {
           icon: "_guanli",
-          title: "设备管理"
+          title: "设备管理",
+          access: ["device:read", "device:write"]
         },
         component: () => import("@/view/device-management/index.vue")
       }
@@ -104,7 +106,8 @@ export default [
     name: "resourceManagement",
     meta: {
       icon: "md-albums",
-      title: "资源管理"
+      title: "资源管理",
+      access: ["db:write", "db:read"]
     },
     component: Main,
     children: [
@@ -113,7 +116,8 @@ export default [
         name: "likeLibrary",
         meta: {
           icon: "_guanli1",
-          title: "人像库管理"
+          title: "人像库管理",
+          access: ["db:write", "db:read"]
         },
         component: () => import("@/view/resource-management/facelib.vue")
       }
@@ -124,7 +128,16 @@ export default [
     name: "systemManagement",
     meta: {
       icon: "md-albums",
-      title: "系统管理"
+      title: "系统管理",
+      access: [
+        "role:write",
+        "role:read",
+        "user:write",
+        "user:read",
+        "department:write",
+        "department:read",
+        "log:read"
+      ]
     },
     component: Main,
     children: [
@@ -133,7 +146,8 @@ export default [
         name: "bdManagement",
         meta: {
           icon: "_bumen",
-          title: "部门管理"
+          title: "部门管理",
+          access: ["department:write", "department:read"]
         },
         component: () => import("@/view/system-management/department.vue")
       },
@@ -142,7 +156,8 @@ export default [
         name: "userManagement",
         meta: {
           icon: "_iconrenxiang",
-          title: "用户管理"
+          title: "用户管理",
+          access: ["user:write", "user:read"]
         },
         component: () => import("@/view/system-management/user.vue")
       },
@@ -151,7 +166,8 @@ export default [
         name: "roleManagement",
         meta: {
           icon: "_jiaose",
-          title: "角色管理"
+          title: "角色管理",
+          access: ["role:write", "role:read"]
         },
         component: () => import("@/view/system-management/role.vue")
       },
@@ -160,10 +176,35 @@ export default [
         name: "logManagement",
         meta: {
           icon: "_rizhi",
-          title: "系统日志"
+          title: "系统日志",
+          access: ["log:read"]
         },
         component: () => import("@/view/system-management/log.vue")
       }
     ]
+  },
+  {
+    path: "/401",
+    name: "error_401",
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import("@/view/error-page/401.vue")
+  },
+  {
+    path: "/500",
+    name: "error_500",
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import("@/view/error-page/500.vue")
+  },
+  {
+    path: "*",
+    name: "error_404",
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import("@/view/error-page/404.vue")
   }
 ];

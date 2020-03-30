@@ -2,32 +2,32 @@
   <div class="user">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <p class="addbtn">
-            <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
-          </p>
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无用户">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="mr10" type="primary" size="small" @click="editorUser(row)">更新</Button>
-              <Button type="error" size="small" @click="removeRole(row)">删除</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
+        </p>
+        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无用户">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorUser(row)">更新</Button>
+            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -50,11 +50,7 @@
             </FormItem>
             <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
               <Select v-model="from.roleId" style="width:200px" placeholder="请设置角色">
-                <Option
-                  v-for="item in roleListOptions"
-                  :value="item.id"
-                  :key="item.id"
-                >{{ item.name }}</Option>
+                <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </FormItem>
             <FormItem>
@@ -87,11 +83,7 @@
             <div class="clearfix mrb20">
               <span class="fl mr5">角色：</span>
               <Select v-model="from.roleId" style="width:200px;float:left;">
-                <Option
-                  v-for="item in roleListOptions"
-                  :value="item.id"
-                  :key="item.id"
-                >{{ item.name }}</Option>
+                <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <p class="savepms">
@@ -256,7 +248,7 @@ export default {
           } else {
           }
         })
-        .catch(err => {});
+        .catch(err => { });
     },
     //更新部门树数据
     upDmList(a) {
@@ -301,7 +293,7 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     //切换页面
     changePage(pageNo) {
@@ -333,7 +325,6 @@ export default {
     },
     //当前部门被选择
     selectDepartment(item) {
-      // console.log(item, '部门数据')
       if (!item || !item[0]) return;
       this.currentDm.id = item[0].id;
       this.currentDm.name = item[0].title;
@@ -510,7 +501,7 @@ export default {
         });
     }
   },
-  components:{
+  components: {
     Layer
   }
 };
@@ -530,7 +521,7 @@ export default {
       text-align: center;
     }
     .adduser {
-      width:440px;
+      width: 440px;
       .ivu-form-item {
         margin-bottom: 40px;
       }
@@ -539,34 +530,34 @@ export default {
         border: none;
       }
       .ivu-form {
-        padding:15px 15px 15px 10px;
+        padding: 15px 15px 15px 10px;
         .ivu-btn-primary {
           margin-top: 0;
         }
       }
     }
     .del-user {
-      width:400px;
+      width: 400px;
       .dels {
         padding: 20px 0;
-         .ivu-btn {
-        background-color: #5cb85c;
-        border: none;
-        padding: 5px 25px 6px 25px;
-        text-align: center;
-        &.ivu-btn-warning {
-          background-color: #ff9900;
+        .ivu-btn {
+          background-color: #5cb85c;
+          border: none;
+          padding: 5px 25px 6px 25px;
+          text-align: center;
+          &.ivu-btn-warning {
+            background-color: #ff9900;
+          }
         }
       }
-     }
     }
     .pmscnt {
-      width:410px;
+      width: 410px;
       text-align: left;
-      font-size:16px;
+      font-size: 16px;
       text-align: center;
       .cnt {
-        padding-left:45px;
+        padding-left: 45px;
       }
       .ivu-tree {
         ul {
@@ -578,7 +569,7 @@ export default {
         text-align: left;
         padding: 10px 0 10px 50px;
         .ivu-btn {
-           background-color: #5cb85c;
+          background-color: #5cb85c;
           border: none;
           padding: 5px 30px 6px 30px;
           text-align: center;
@@ -591,9 +582,8 @@ export default {
       top: 5px;
       cursor: pointer;
       z-index: 10;
-      color:#fff;
+      color: #fff;
     }
-
   }
   .addbtn {
     text-align: left;

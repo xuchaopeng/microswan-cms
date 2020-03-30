@@ -165,9 +165,11 @@ export const getNewTagList = (list, newRoute) => {
  * @param {*} route 路由列表
  */
 const hasAccess = (access, route) => {
-  if (route.meta && route.meta.access)
+  if (route.meta && route.meta.access) {
     return hasOneOf(access, route.meta.access);
-  else return true;
+  } else {
+    return true;
+  }
 };
 
 /**
@@ -514,7 +516,6 @@ export const getAddress = item => {
   var gc = new BMap.Geocoder();
   gc.getLocation(point, function(rs) {
     item.address = rs.address;
-    // console.log(rs, "HAHAH");
     // var mapAddress = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
   });
 };

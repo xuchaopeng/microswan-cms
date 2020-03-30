@@ -243,7 +243,6 @@ export default {
         this.isloading = false;
         if (r.code == 200) {
           const page = r.data.pageContent;
-          console.log(page, 'xcp');
           const len = this.dataList.length;
           if (page) {
             this.dataList.splice(0, len);

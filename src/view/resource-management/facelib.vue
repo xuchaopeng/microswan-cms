@@ -244,7 +244,6 @@ export default {
       }
       getFaceLibList(param).then(res => {
         let r = res.data
-        console.log(r, 'facelist')
         if (r.code == 200) {
           const page = r.data.pageContent
           const len = this.tabdata.length
@@ -286,7 +285,6 @@ export default {
           r.data.forEach(m => {
             this.faceLibType.push(m)
           })
-          console.log(this.faceLibType, 'HA')
         } else { }
       }).catch(err => { })
     },
@@ -453,11 +451,8 @@ export default {
     },
     // 修改编辑提交
     updateSubmit() {
-      console.log('1')
       this.$refs['editorFrom'].validate(valid => {
-        console.log('2')
         if (!valid) return
-        console.log('3')
         let param = {
           description: this.editorFrom.description,
           libName: this.editorFrom.libName,
@@ -465,11 +460,9 @@ export default {
         }
         this.loading = true
         updateFaceLib(param).then(res => {
-          console.log('4')
-          console.log(res, 'xcpppp')
           if (res.data.code == 200) this.upSuccess(3)
           else this.upError(3)
-        }).catch(err => { this.upError(3); console.log('5') })
+        }).catch(err => { this.upError(3); })
       })
     },
     // 按类型刷选库

@@ -2,12 +2,7 @@
   <div class="facetracks" v-show="viewTrack">
     <div class="popTrack"></div>
     <div class="conTrack">
-      <Icon
-        class="closeTrack"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closePopup"
-      ></Icon>
+      <Icon class="closeTrack" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
       <p class="nav">
         共{{ totalCount }}条结果，当前显示1至{{
           totalCount < 7 ? totalCount : 7
@@ -21,8 +16,7 @@
             </div>
             <div class="dis">
               <p class="score">
-                <Icon class="iconfont icon-renxiangcaiji"></Icon
-                >{{ em.score.replace("%", "") }}
+                <Icon class="iconfont icon-renxiangcaiji"></Icon>{{ em.score.replace("%", "") }}
               </p>
               <p class="time">
                 <Icon class="iconfont icon-shijian"></Icon>
@@ -36,12 +30,7 @@
           </li>
         </ul>
         <div class="trackPage" v-if="totalCount > 7">
-          <Page
-            :total="totalCount"
-            show-elevator
-            show-total
-            @on-change="changePage"
-          />
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
       </div>
     </div>
@@ -105,7 +94,6 @@ export default {
       };
       getFaceTrack(param).then(res => {
         let r = res.data ? res.data : {};
-        console.log(r, "人像轨迹列表");
         if (r.code == 200 && r.data) {
           const page = r.data.pageContent;
           const len = this.dataList.length;
@@ -126,10 +114,9 @@ export default {
       this.renderList();
     }
   },
-  mounted() {},
+  mounted() { },
   watch: {
     viewTrack(view) {
-      console.log(this.itemData, "DATAFFFFF");
       if (view) this.renderList();
       else {
         this.dataList.splice(0, this.dataList.length);

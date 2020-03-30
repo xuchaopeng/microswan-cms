@@ -1,9 +1,11 @@
 <template>
   <div class="user-avator-dropdown">
+    <!-- <Icon class="iconfont icon-tuichu" @click="handleClick('logout')"></Icon> -->
     <Dropdown @on-click="handleClick">
-      <Badge :dot="!!messageUnreadCount">
+      <!-- <Badge :dot="!!messageUnreadCount">
         <Avatar :src="userAvator" />
-      </Badge>
+      </Badge> -->
+      <Icon class="iconfont icon-tuichu"></Icon>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
         <!-- <DropdownItem name="message">
@@ -34,19 +36,19 @@ export default {
     ...mapActions([
       'handleLogOut'
     ]),
-    logout () {
+    logout() {
       this.handleLogOut().then(() => {
         this.$router.push({
           name: 'login'
         })
       })
     },
-    message () {
+    message() {
       this.$router.push({
         name: 'message_page'
       })
     },
-    handleClick (name) {
+    handleClick(name) {
       switch (name) {
         case 'logout': this.logout()
           break

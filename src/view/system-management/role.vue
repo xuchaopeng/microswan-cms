@@ -194,7 +194,7 @@ export default {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(["departmentId", "departmentList"])
+    ...mapGetters(["departmentId", "departmentList", 'permissions'])
   },
   methods: {
     ...mapMutations(["setDepartmentList"]),
@@ -274,7 +274,7 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     //切换页面
     changePage(pageNo) {
@@ -545,7 +545,7 @@ export default {
         });
     }
   },
-  components:{
+  components: {
     Layer
   }
 };
@@ -559,9 +559,9 @@ export default {
   .subtable {
     background-color: #fff;
     .add-role {
-      width:440px;
+      width: 440px;
       .ivu-form {
-        padding:20px 15px;
+        padding: 20px 15px;
       }
       .ivu-btn {
         background-color: #5cb85c;
@@ -573,7 +573,7 @@ export default {
     }
     .pmscnt {
       text-align: left;
-      font-size:16px;
+      font-size: 16px;
       .ivu-tree {
         ul {
           font-size: 16px;
@@ -581,11 +581,11 @@ export default {
         }
       }
       .pd10 {
-        padding:0 15px;
+        padding: 0 15px;
       }
       .pmist {
         width: 300px;
-        min-height:235px;
+        min-height: 235px;
         overflow-y: scroll;
         background: #f4f4f4;
         border: 1px solid #dfdfdfcc;
@@ -593,18 +593,18 @@ export default {
       .savepms {
         padding: 20px 0px 10px 65px;
         .ivu-btn {
-          padding:5px 25px 6px  25px;
+          padding: 5px 25px 6px 25px;
           background-color: #5cb85c;
           border: none;
         }
       }
     }
     .discnt {
-      width:410px;
+      width: 410px;
       text-align: left;
-      font-size:16px;
+      font-size: 16px;
       .ivu-form {
-        padding:20px 10px 20px 20px;
+        padding: 20px 10px 20px 20px;
         .ivu-form-item-label {
           width: auto;
           font-size: 16px;
@@ -614,7 +614,7 @@ export default {
       .ivu-btn {
         background-color: #5cb85c;
         border: none;
-        margin-left:50px;
+        margin-left: 50px;
       }
       .ivu-form .ivu-form-item-content {
         float: left;
@@ -626,12 +626,12 @@ export default {
       top: 5px;
       cursor: pointer;
       z-index: 10;
-      color:#fff;
+      color: #fff;
     }
     .del-role {
-      width:350px;
+      width: 350px;
       .dels {
-        padding:20px 0;
+        padding: 20px 0;
         .ivu-btn {
           background-color: #5cb85c;
           border: none;

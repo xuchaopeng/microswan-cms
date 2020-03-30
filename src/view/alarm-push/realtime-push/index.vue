@@ -3,12 +3,17 @@
     <div class="container">
       <Loading v-if="!dataList.length"></Loading>
       <div class="hitBackPic" v-if="dataList.length">
-        <Carousel v-model="value" :autoplay="setting.autoplay" :dots="setting.dots" :height="setting.height">
+        <Carousel
+          v-model="value"
+          :autoplay="setting.autoplay"
+          :dots="setting.dots"
+          :height="setting.height"
+        >
           <CarouselItem v-for="item in dataList">
             <div style="width:678px;height:507px;">
               <p class="sub">
                 <span class="ms" @click="renderDetails(item)">
-                  <Icon class="iconfont icon-ai14"></Icon> 查看详情
+                  <Icon class="iconfont icon-ai14"></Icon>查看详情
                 </span>
                 <span class="pos">定位：{{ item.address }}</span>
               </p>
@@ -37,9 +42,13 @@
             <Icon custom="icon iconfont icon-youce" size="30" />
           </span>
           <ul class="faceListPic">
-            <li v-for="(item, i) in dataList" :class="value == i ? 'cur' : ''" @click="renderDetails(item)">
+            <li
+              v-for="(item, i) in dataList"
+              :class="value == i ? 'cur' : ''"
+              @click="renderDetails(item)"
+            >
               <div class="pic">
-                <img :src="item.facePicPath" alt="" />
+                <img :src="item.facePicPath" alt />
               </div>
               <p class="dis">{{ item.reportTime }}</p>
             </li>
@@ -80,10 +89,10 @@ export default {
     };
   },
   mounted() {
-    // this.initwebsocket();
+    this.initwebsocket();
   },
   beforeDestroy() {
-    // this.disconnect();
+    this.disconnect();
   },
   methods: {
     //开启长链
@@ -93,14 +102,13 @@ export default {
     //连接长链
     connection() {
       var scope = this;
-      this.socket = new SockJs("http://118.24.53.165:8080/ws");
+      this.socket = new SockJs("https://118.24.53.165/ws");
       this.stompclient = Stomp.over(this.socket);
       this.stompclient.connect(
         {},
         frame => {
           this.stompclient.subscribe("/user/queue/hitInfo", msg => {
             let data = JSON.parse(msg.body);
-            // console.log(data, "连接成功");
             this.resetData(data);
           });
         },
@@ -157,8 +165,6 @@ export default {
           });
         }
       }
-
-      console.log(this.dataList, "xcppppppppppp");
     },
     //查看全部推送消息
     seeAll() {

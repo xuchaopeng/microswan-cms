@@ -2,34 +2,29 @@
   <div class="department">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-            <span class="fr">
-              <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
-              <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
-              <Icon
-                class="p5"
-                custom="icon iconfont icon-icon_huabanfuben"
-                @click="deleteDm"
-                size="24"
-              />
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+          <span class="fr">
+            <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
+            <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
+            <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -167,7 +162,7 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     /**
      * v  1为部门更新成功  2为删除成功 3为编辑成功
@@ -257,9 +252,7 @@ export default {
       this.renderList();
     },
     //编辑部门
-    editorDm() {
-      console.log("编辑部门");
-    },
+    editorDm() { },
     //添加部门
     addDm() {
       if (!this.currentDm.name) {
@@ -321,7 +314,7 @@ export default {
       });
     }
   },
-  components:{
+  components: {
     Layer
   }
 };
@@ -335,12 +328,12 @@ export default {
   .subtable {
     background-color: #fff;
     .icon-close {
-      color:#fff;
+      color: #fff;
     }
     .add-department {
       width: 440px;
       .ivu-form {
-        padding:20px 15px;
+        padding: 20px 15px;
       }
       .ivu-btn {
         background-color: #5cb85c;
@@ -348,9 +341,9 @@ export default {
       }
     }
     .del-department {
-      width:400px;
+      width: 400px;
       .mr10 {
-        margin-right:10px;
+        margin-right: 10px;
       }
       .ivu-btn {
         background-color: #5cb85c;
@@ -365,7 +358,7 @@ export default {
     .subtitle {
       position: relative;
       text-align: center;
-      color:#fff;
+      color: #fff;
     }
     .close {
       position: absolute;

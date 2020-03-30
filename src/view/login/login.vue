@@ -23,12 +23,10 @@ export default {
     LoginForm
   },
   methods: {
-    ...mapActions(['handleLogin', 'getUserInfo']),
+    ...mapActions(['handleLogin']), //getUserInfo
     handleSubmit({ userName, password }) {
-      console.log(this.$config.homeName, 'login 路由');
       this.handleLogin({ userName, password })
         .then(res => {
-          console.log(this.$config.homeName, 'login 路由');
           // this.getUserInfo().then(res => {
           this.$router.push({
             name: this.$config.homeName
