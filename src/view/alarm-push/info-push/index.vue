@@ -17,9 +17,7 @@
       <Col span="18">
         <div class="dmcons comcss">
           <Loading v-if="isloading"></Loading>
-          <div class="nohasHitInfo" v-show="nohasHitInfo">
-            该部门暂无推送消息
-          </div>
+          <div class="nohasHitInfo" v-show="nohasHitInfo">该部门暂无推送消息</div>
           <ul class="hitInfoList">
             <li class="item" v-for="em in dataList" @click="renderDetails(em)">
               <div class="img">
@@ -27,31 +25,23 @@
               </div>
               <div class="dis">
                 <p class="score">
-                  <Icon class="iconfont icon-renxiangcaiji"></Icon
-                  >{{ em.score }}
+                  <Icon class="iconfont icon-renxiangcaiji"></Icon>
+                  {{ em.score }}
                 </p>
                 <p class="time">
-                  <Icon class="iconfont icon-shijian"></Icon>{{ em.reportTime }}
+                  <Icon class="iconfont icon-shijian"></Icon>
+                  {{ em.reportTime }}
                 </p>
               </div>
             </li>
           </ul>
           <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
           </div>
         </div>
       </Col>
     </Row>
-    <HitDetails
-      :item="currentFace"
-      :viewHitDetails="viewHitDetails"
-      @closeFace="closeFaceDetails"
-    ></HitDetails>
+    <HitDetails :item="currentFace" :viewHitDetails="viewHitDetails" @closeFace="closeFaceDetails"></HitDetails>
   </div>
 </template>
 
@@ -176,10 +166,12 @@ export default {
       };
       this.nohasHitInfo = false;
       this.isloading = true;
+      console.log('BBBBBBBBBB');
       getListHitInfo(param)
         .then(res => {
           this.isloading = false;
           let r = res.data;
+          console.log(res,'HAHAHAHAHHAHA');
           if (r.code == 200) {
             const page = r.data.pageContent;
             const len = this.dataList.length;

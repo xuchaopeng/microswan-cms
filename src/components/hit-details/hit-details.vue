@@ -2,29 +2,28 @@
   <div class="hitdetails" v-show="viewHitDetails">
     <div class="pop"></div>
     <div class="con">
-      <Icon
-        class="close"
-        custom="icon iconfont icon-close"
-        size="24"
-        @click="closePopup(false)"
-      ></Icon>
+      <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup(false)"></Icon>
       <div class="facepic fl">
         <div class="pic">
           <!-- <span class="cirs" @click="viewTrack">
             <Icon class="iconfont icon-icon_huabanfuben"></Icon>
-          </span> -->
-          <img :src="item.facePicPath" alt="" />
+          </span>-->
+          <img :src="item.facePicPath" alt />
         </div>
         <div class="dis">
           <p class="seeTrack" @click="seeTrack">
-            查看人像轨迹 <Icon class="iconfont icon-youce"></Icon>
+            查看人像轨迹
+            <Icon class="iconfont icon-youce"></Icon>
           </p>
-          <p><Icon class="iconfont icon-ai14"></Icon>{{ item.address }}</p>
+          <p>
+            <Icon class="iconfont icon-ai14"></Icon>
+            {{ item.address }}
+          </p>
         </div>
       </div>
       <div class="passpic fl">
         <div class="pic">
-          <img :src="currentFace.facePicPath" alt="" />
+          <img :src="currentFace.facePicPath" alt />
         </div>
         <div class="dis">
           <p>姓名：{{ currentFace.name }}</p>
@@ -36,7 +35,7 @@
       </div>
       <div class="backpic fl">
         <div class="pic">
-          <img :src="item.backPicPath" alt="" />
+          <img :src="item.backPicPath" alt />
         </div>
         <div class="dis">
           <p class="score">
@@ -45,26 +44,19 @@
           </p>
           <p class="needsure" v-if="item.status == 0">
             <span class="btns" @click="infoAck(1)">
-              <Icon class="iconfont icon-butongyi"></Icon>
-              不同
+              <Icon class="iconfont icon-butongyi"></Icon>不同
             </span>
             <span class="btns" @click="infoAck(2)">
-              <Icon class="iconfont icon-dui"></Icon>
-              相同
+              <Icon class="iconfont icon-dui"></Icon>相同
             </span>
             <span class="btns">
-              <Icon class="iconfont icon-yiwen"></Icon>
-              待确认
+              <Icon class="iconfont icon-yiwen"></Icon>待确认
             </span>
           </p>
         </div>
       </div>
     </div>
-    <FaceTracks
-      :itemData="currentFace"
-      :viewTrack="viewFaceTrack"
-      @closeTrack="closeTrack"
-    ></FaceTracks>
+    <FaceTracks :itemData="currentFace" :viewTrack="viewFaceTrack" @closeTrack="closeTrack"></FaceTracks>
   </div>
 </template>
 
@@ -141,7 +133,7 @@ export default {
   watch: {
     viewHitDetails(view) {
       if (view) {
-        getFaceDetails(this.item.id).then(res => {
+        getFaceDetails(this.item.faceId).then(res => {
           let r = res.data ? res.data : {};
           if (r.code == 200 && r.data) {
             this.currentFace.name = r.data.name;

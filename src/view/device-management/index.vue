@@ -2,36 +2,48 @@
   <div class="device-management">
     <Row :gutter="15">
       <Col span="6">
-      <div class="actions">
-        <div class="navs">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />设备管理
-          </span>
+        <div class="actions">
+          <div class="navs">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />设备管理
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
         </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </div>
       </Col>
       <Col span="18">
-      <div class="list">
-        <div class="search">
-          <Select class="mr15" v-model="deviceType" style="width:200px;" placeholder="">
-            <Option value="0">未激活</Option>
-            <Option value="1">激活</Option>
-          </Select>
-          <Button class="ml10" type="primary" icon="ios-search" @click="searchList" :loading="loading">搜索</Button>
+        <div class="list">
+          <div class="search">
+            <Select class="mr15" v-model="deviceType" style="width:200px;" placeholder>
+              <Option value="0">未激活</Option>
+              <Option value="1">激活</Option>
+            </Select>
+            <Button
+              class="ml10"
+              type="primary"
+              icon="ios-search"
+              @click="searchList"
+              :loading="loading"
+            >搜索</Button>
+          </div>
+          <Table border :columns="column" :data="tabdata" no-data-text="暂无设备数据">
+            <template slot-scope="{ row, index }" slot="status">
+              <span>{{row.status == 1 ? '已激活':'未激活'}}</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="action">
+              <Button class="mr10" type="error" size="small" @click="removeDevice(row)">删除</Button>
+              <Button
+                v-if="!row.status"
+                type="success"
+                ghost
+                size="small"
+                @click="activatedDevice(row)"
+              >激活</Button>
+            </template>
+          </Table>
         </div>
-        <Table border :columns="column" :data="tabdata" no-data-text="暂无设备数据">
-          <template slot-scope="{ row, index }" slot="status">
-            <span>{{row.status == 1 ? '已激活':'未激活'}}</span>
-          </template>
-          <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="error" size="small" @click="removeDevice(row)">删除</Button>
-            <Button v-if="!row.status" type="success" ghost size="small" @click="activatedDevice(row)">激活</Button>
-          </template>
-        </Table>
-      </div>
       </Col>
     </Row>
     <Layer v-if="type">
@@ -39,7 +51,7 @@
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
         <div class="del-device" v-if="type == 1">
           <p class="subtitle">确认删除该设备吗?</p>
-          <p>{{ currentdevice.deviceName }}</p>
+          <p>{{ currentdevice.deviceName }}-{{currentdevice.deviceNo}}</p>
           <p class="dels">
             <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
             <Button @click="closeBtn" type="warning">取消</Button>
@@ -48,7 +60,7 @@
         <div class="activated-device" v-if="type == 2">
           <p class="subtitle">激活该设备?</p>
           <p>设备名称：{{ currentdevice.deviceName }}</p>
-          <p>设备编号：{{ currentdevice.deviceName }}</p>
+          <p>设备编号：{{ currentdevice.deviceNo }}</p>
           <p>部门：{{currentDm.name}}</p>
           <p class="dels">
             <Button class="mr10" @click="activatedSubmit" type="primary" :loading="loading">确认</Button>

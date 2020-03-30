@@ -4,8 +4,7 @@
     <div class="cons">
       <p class="title">
         <Button class="addface" ghost @click="addNewFace">
-          <Icon class="iconfont icon-icon-test"></Icon>
-          添加人像
+          <Icon class="iconfont icon-icon-test"></Icon>添加人像
         </Button>
         {{ item.libName }}
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
@@ -19,9 +18,7 @@
           <div class="img">
             <img :src="em.facePicPath" alt="/" />
           </div>
-          <div class="dis">
-            {{ em.name }}
-          </div>
+          <div class="dis">{{ em.name }}</div>
         </li>
       </ul>
       <div class="pages1" v-if="totalCount > 10">
@@ -37,10 +34,10 @@
             <span class="cirs" @click="deleteFace">
               <Icon class="iconfont icon-icon_huabanfuben"></Icon>
             </span>
-            <img :src="currentFace.facePicPath" alt="" />
+            <img :src="currentFace.facePicPath" alt />
           </p>
           <p class="backpic">
-            <img :src="currentFace.backPicPath" alt="" />
+            <img :src="currentFace.backPicPath" alt />
           </p>
         </div>
         <div class="dis">
@@ -54,8 +51,7 @@
     <div class="sub" v-show="!closesub">
       <div class="subpop"></div>
       <div class="submiddle">
-        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub">
-        </Icon>
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub"></Icon>
         <template v-if="type == 1">
           <div class="addFaceitem">
             <p class="subtitle">添加人像</p>
@@ -76,7 +72,7 @@
                 <span class="txt">人像背景图</span>
                 <div class="files">
                   <span class="pic" v-show="picsrc.src1">
-                    <img :src="picsrc.src1" alt="">
+                    <img :src="picsrc.src1" alt />
                   </span>
                   <span class="img">
                     <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
@@ -88,14 +84,13 @@
                 <span class="txt">身份证照片</span>
                 <div class="files">
                   <span class="pic" v-show="picsrc.src2">
-                    <img :src="picsrc.src2" alt="">
+                    <img :src="picsrc.src2" alt />
                   </span>
                   <span class="img">
                     <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
                     <input class="img" type="file" ref="IDfile" size="40" @change="xcp02" />
                   </span>
                 </div>
-
               </div>
               <FormItem>
                 <Button @click="addSubmit" type="primary" :loading="loading" long>
@@ -201,6 +196,8 @@ export default {
     },
     closeSub() {
       this.closesub = true;
+      this.$refs.BJfile.value = '';
+      this.$refs.IDfile.value = '';
       this.picsrc.src1 = '';
       this.picsrc.src2 = '';
     },
@@ -272,6 +269,8 @@ export default {
           for (var k in this.from) {
             this.from[k] = "";
           }
+          this.$refs.BJfile.value = '';
+          this.$refs.IDfile.value = '';
           this.$Message.success({
             content: "人像添加成功",
             duration: 1.5,
@@ -295,6 +294,11 @@ export default {
       this.type = "";
       switch (v) {
         case 1:
+          for (var k in this.from) {
+            this.from[k] = "";
+          }
+          this.$refs.BJfile.value = '';
+          this.$refs.IDfile.value = '';
           this.$Message.error({
             content: "人像添加失败",
             duration: 1.5,

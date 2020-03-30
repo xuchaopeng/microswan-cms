@@ -17,7 +17,7 @@ export default {
    * @description api请求基础路径
    */
   baseUrl: {
-    dev: "https://118.24.53.165:8080", //http://xcpeng.cn http://118.24.53.165:8080
+    dev: "", //http://xcpeng.cn https://118.24.53.165
     pro: ""
   },
   /**
