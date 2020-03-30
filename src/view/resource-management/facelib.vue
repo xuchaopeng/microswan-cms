@@ -18,11 +18,14 @@
           <div class="addbtn">
             <Button class="mr20" type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
             <Select class="mr10" v-model="libType" style="width:200px;" placeholder="请选择库类型">
-              <Option v-for="item in faceLibType" :value="item.value">{{ item.name }}</Option>
+              <Option v-for="item in searchFaceType" :value="item.value">{{ item.name }}</Option>
             </Select>
             <Button class="ml10" type="primary" icon="ios-search" @click="searchLib">搜索</Button>
           </div>
           <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
+            <template slot-scope="{ row, index }" slot="type">
+              <span>{{row.type == 0 ? '底库':'白名单库'}}</span>
+            </template>
             <template slot-scope="{ row, index }" slot="action">
               <Button class="mr10" type="success" size="small" @click="enterFace(row)">查看</Button>
               <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">编辑</Button>
@@ -174,12 +177,17 @@ export default {
       tabdata: [],
       column: [
         {
-          title: '名称',
+          title: '库名称',
           key: 'libName'
         },
         {
-          title: '描述',
+          title: '备注',
           key: 'description'
+        },
+        {
+          title: '库类型',
+          slot:'type',
+          key: 'type'
         },
         {
           title: '操作',
@@ -211,6 +219,7 @@ export default {
       },
       // 部门可选角色列表
       faceLibType: [],
+      searchFaceType:[],
       libType: '',
       // 查看该人像库详情
       viewFaceDetails: false
@@ -263,7 +272,14 @@ export default {
     },
     // 展现右侧人像库列表
     renderList(type = '') {
-      if (!this.currentDm.name || !this.currentDm.id) return
+      if (!this.currentDm.name || !this.currentDm.id) {
+         this.$Message.success({
+            content: '请选择一个部门',
+            duration: 1.5,
+            closable: true
+          });
+        return;
+      }
       let param = {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo,
@@ -279,6 +295,7 @@ export default {
             page.forEach(em => {
               this.tabdata.push(em)
             })
+            console.log(this.tabdata,'库类型的字段');
             this.totalCount = r.data.totalCount
           }
         }
@@ -307,11 +324,15 @@ export default {
       getLibTypes().then(res => {
         let r = res.data
         if (r.code == 200) {
-          const len = this.faceLibType.length
-          this.faceLibType.splice(0, len)
+          const slen = this.searchFaceType.length;
+          const len = this.faceLibType.length;
+          this.faceLibType.splice(0, len);
+          this.searchFaceType.splice(0,slen);
           r.data.forEach(m => {
-            this.faceLibType.push(m)
-          })
+            this.faceLibType.push(m);
+            this.searchFaceType.push(m);
+          });
+          this.searchFaceType.push({value:'all',name:'全部'});
         } else { }
       }).catch(err => { })
     },
@@ -494,7 +515,12 @@ export default {
     },
     // 按类型刷选库
     searchLib() {
-      this.renderList(this.libType)
+      console.log(this.libType,'HAHAH');
+      if(this.libType == 'all') {
+        this.renderList();
+      } else {
+        this.renderList(this.libType);
+      }
     }
   },
   components: {

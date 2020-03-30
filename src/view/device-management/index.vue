@@ -285,7 +285,7 @@ export default {
       }
     },
     //删除提交
-    delSubmit() { },
+    delSubmit() {},
     //激活提交
     activatedSubmit() {
       if (this.currentdevice.id == '' || this.currentDm.id == '') return;
