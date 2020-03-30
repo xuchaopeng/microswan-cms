@@ -515,7 +515,6 @@ export default {
     },
     // 按类型刷选库
     searchLib() {
-      console.log(this.libType,'HAHAH');
       if(this.libType == 'all') {
         this.renderList();
       } else {

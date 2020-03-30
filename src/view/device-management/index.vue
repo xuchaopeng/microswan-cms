@@ -285,7 +285,14 @@ export default {
       }
     },
     //删除提交
-    delSubmit() {},
+    delSubmit() {
+      delDevice(this.currentdevice.id).then(res => {
+        if (res.data.code == 200) this.upSuccess(2);
+        else this.upError(1);
+      }).catch(err => {
+        this.upError(1);
+      });
+    },
     //激活提交
     activatedSubmit() {
       if (this.currentdevice.id == '' || this.currentDm.id == '') return;

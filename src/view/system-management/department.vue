@@ -2,29 +2,34 @@
   <div class="department">
     <Row :gutter="15">
       <Col span="6">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-          <span class="fr">
-            <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
-            <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
-            <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
-          </span>
-        </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+            <span class="fr">
+              <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
+              <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
+              <Icon
+                class="p5"
+                custom="icon iconfont icon-icon_huabanfuben"
+                @click="deleteDm"
+                size="24"
+              />
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
       <Col span="18">
-      <div class="dmcons comcss">
-        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        <div class="dmcons comcss">
+          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -193,14 +198,14 @@ export default {
     /**
      * v  1为部门更新失败  2为删除失败 3为编辑失败
      */
-    upError(v) {
+    upError(v,errtext) {
       if (v == 1) {
         this.tk.loading = false;
         this.tk.sv = false;
         this.tk.add = false;
         this.from.name = "";
         this.$Message.error({
-          content: "部门保存失败",
+          content: errtext || "部门保存失败",
           duration: 1.5,
           closable: true
         });
@@ -210,7 +215,7 @@ export default {
         this.tk.sv = false;
         this.tk.del = false;
         this.$Message.error({
-          content: "部门删除失败",
+          content: errtext || "部门删除失败",
           duration: 1.5,
           closable: true
         });
@@ -287,7 +292,10 @@ export default {
       delDepartment(this.currentDm.id)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(2);
-          else this.upError(2);
+          else {
+            const errtext = res.data.msg || '';
+            this.upError(2,errtext);
+          }
         })
         .catch(err => {
           this.upError(2);
