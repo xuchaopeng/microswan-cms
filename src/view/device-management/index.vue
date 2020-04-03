@@ -2,48 +2,36 @@
   <div class="device-management">
     <Row :gutter="15">
       <Col span="6">
-        <div class="actions">
-          <div class="navs">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />设备管理
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
+      <div class="actions">
+        <div class="navs">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />设备管理
+          </span>
         </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </div>
       </Col>
       <Col span="18">
-        <div class="list">
-          <div class="search">
-            <Select class="mr15" v-model="deviceType" style="width:200px;" placeholder>
-              <Option value="0">未激活</Option>
-              <Option value="1">激活</Option>
-            </Select>
-            <Button
-              class="ml10"
-              type="primary"
-              icon="ios-search"
-              @click="searchList"
-              :loading="loading"
-            >搜索</Button>
-          </div>
-          <Table border :columns="column" :data="tabdata" no-data-text="暂无设备数据">
-            <template slot-scope="{ row, index }" slot="status">
-              <span>{{row.status == 1 ? '已激活':'未激活'}}</span>
-            </template>
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="mr10" type="error" size="small" @click="removeDevice(row)">删除</Button>
-              <Button
-                v-if="!row.status"
-                type="success"
-                ghost
-                size="small"
-                @click="activatedDevice(row)"
-              >激活</Button>
-            </template>
-          </Table>
+      <div class="list">
+        <div class="search">
+          <Select class="mr15" v-model="deviceType" style="width:200px;" placeholder>
+            <Option value="0">未激活</Option>
+            <Option value="1">激活</Option>
+          </Select>
+          <Button class="ml10" type="primary" icon="ios-search" @click="searchList" :loading="loading">搜索</Button>
         </div>
+        <Table border :columns="column" :data="tabdata" no-data-text="暂无设备数据">
+          <template slot-scope="{ row, index }" slot="status">
+            <span>{{row.status == 1 ? '已激活':'未激活'}}</span>
+          </template>
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="error" size="small" @click="removeDevice(row)">删除</Button>
+            <Button v-if="!row.status" type="success" ghost size="small" @click="activatedDevice(row)">激活</Button>
+          </template>
+        </Table>
+      </div>
       </Col>
     </Row>
     <Layer v-if="type">
@@ -266,19 +254,19 @@ export default {
       this.renderList();
     },
     //失败提示弹框
-    upError(v) {
+    upError(v, text) {
       this.loading = false;
       this.type = 0;
       if (v == 1) {
         this.$Message.error({
-          content: "设备删除失败",
+          content: text || "设备删除失败",
           duration: 1.5,
           closable: true
         });
       }
       if (v == 2) {
         this.$Message.error({
-          content: "设备激活失败",
+          content: text || "设备激活失败",
           duration: 1.5,
           closable: true
         });
@@ -288,7 +276,7 @@ export default {
     delSubmit() {
       delDevice(this.currentdevice.id).then(res => {
         if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(1);
+        else this.upError(1, res.data.msg);
       }).catch(err => {
         this.upError(1);
       });
@@ -303,7 +291,7 @@ export default {
       this.loading = true;
       getDevice(param).then(res => {
         if (res.data.code == 200) this.upSuccess(2);
-        else this.upError(2);
+        else this.upError(2, res.data.msg);
       }).catch(err => {
         this.upError(2);
       })

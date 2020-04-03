@@ -17,8 +17,8 @@ export default {
    * @description api请求基础路径
    */
   baseUrl: {
-    dev: "https://118.24.53.165", //http://xcpeng.cn https://118.24.53.165
-    pro: "https://118.24.53.165"
+    dev: "", //http://xcpeng.cn https://118.24.53.165
+    pro: ""
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home

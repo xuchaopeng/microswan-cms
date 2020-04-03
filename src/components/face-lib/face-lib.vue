@@ -288,7 +288,7 @@ export default {
       }
       this.renderList();
     },
-    upError(v) {
+    upError(v, text) {
       this.loading = false;
       this.closesub = true;
       this.type = "";
@@ -300,14 +300,14 @@ export default {
           this.$refs.BJfile.value = '';
           this.$refs.IDfile.value = '';
           this.$Message.error({
-            content: "人像添加失败",
+            content: text || "人像添加失败",
             duration: 1.5,
             closable: true
           });
           break;
         case 2:
           this.$Message.error({
-            content: "人像删除失败",
+            content: text || "人像添加失败",
             duration: 1.5,
             closable: true
           });
@@ -333,12 +333,14 @@ export default {
             type: "application/json"
           });
           formData.append("addVO", blod);
+          // formData.append('addVO', JSON.stringify(v));
           formData.append("file", file1.files[0]);
           formData.append("idFile", file2.files[0]);
           addFace(formData)
             .then(res => {
+              console.log(res, 'SSSSSSSSS');
               if (res.data.code == 200) this.upSuccess(1);
-              else this.upError(4);
+              else this.upError(1, res.data.msg);
             })
             .catch(err => {
               this.upError(1);
@@ -351,7 +353,7 @@ export default {
       delFace(this.currentFace.id)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(2);
-          else this.upError(2);
+          else this.upError(2, res.data.msg);
         })
         .catch(err => {
           this.upError(2);

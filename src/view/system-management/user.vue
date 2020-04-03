@@ -371,7 +371,7 @@ export default {
     /**
      * v  1为用户增加失败  2为用户删除失败 3用户更新角色失败
      * */
-    upError(v) {
+    upError(v, text) {
       this.tk.loading = false;
       this.tk.sv = false;
       switch (v) {
@@ -381,7 +381,7 @@ export default {
             this.from[k] = "";
           }
           this.$Message.error({
-            content: "用户保存失败",
+            content: text || "用户保存失败",
             duration: 1.5,
             closable: true
           });
@@ -389,7 +389,7 @@ export default {
         case 2:
           this.tk.del = false;
           this.$Message.error({
-            content: "用户删除失败",
+            content: text || "用户删除失败",
             duration: 1.5,
             closable: true
           });
@@ -397,7 +397,7 @@ export default {
         case 3:
           this.tk.pms = false;
           this.$Message.error({
-            content: "用户角色更新失败",
+            content: text || "用户角色更新失败",
             duration: 1.5,
             closable: true
           });
@@ -454,7 +454,7 @@ export default {
       deleteUser(this.currentUser.id)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(2);
-          else this.upError(2);
+          else this.upError(2, res.data.msg);
         })
         .catch(err => {
           this.upError(2);
@@ -475,7 +475,7 @@ export default {
           addUser(param)
             .then(res => {
               if (res.data.code == 200) this.upSuccess(1);
-              else this.upError(1);
+              else this.upError(1, res.data.msg);
             })
             .catch(err => {
               this.upError(1);
@@ -494,7 +494,7 @@ export default {
       updateUser(param)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(3);
-          else this.upError(3);
+          else this.upError(3, res.data.msg);
         })
         .catch(err => {
           this.upError(3);

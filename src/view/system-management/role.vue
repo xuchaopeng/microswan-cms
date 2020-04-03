@@ -2,33 +2,33 @@
   <div class="role">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <p class="addbtn">
-            <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
-          </p>
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-              <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
-              <Button type="error" size="small" @click="removeRole(row)">删除</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
+        </p>
+        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
+            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -61,12 +61,7 @@
         </div>
         <div class="discnt" v-show="tk.dis">
           <p class="subtitle">编辑描述</p>
-          <Form
-            ref="editorFrom"
-            :model="editorFrom"
-            :rules="editorRule"
-            @keydown.enter.native="editorSubmit"
-          >
+          <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
             <div class="clearfix mrb20">
               <span class="fl mr5">名称：</span>
               <span class="fl">{{ currentRole.name }}</span>
@@ -91,12 +86,7 @@
           <div class="clearfix pd10">
             <span class="fl">权限：</span>
             <div class="pmist fl">
-              <Tree
-                class="fl"
-                :data="permissionsList"
-                @on-check-change="checkPermission"
-                show-checkbox
-              ></Tree>
+              <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
             </div>
           </div>
           <p class="savepms">
@@ -377,7 +367,7 @@ export default {
     /**
      * v  1为角色增加失败  2为角色删除失败 3为角色编辑失败 4权限设置失败
      */
-    upError(v) {
+    upError(v, text) {
       this.tk.loading = false;
       this.tk.sv = false;
       switch (v) {
@@ -484,7 +474,7 @@ export default {
       deleteRole(this.currentRole.id)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(2);
-          else this.upError(2);
+          else this.upError(2, res.data.msg);
         })
         .catch(err => {
           this.upError(2);
@@ -503,7 +493,7 @@ export default {
           addRole(param)
             .then(res => {
               if (res.data.code == 200) this.upSuccess(1);
-              else this.upError(1);
+              else this.upError(1, res.data.msg);
             })
             .catch(err => {
               this.upError(1);
@@ -521,7 +511,7 @@ export default {
       updateRole(param)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(3);
-          else this.upError(3);
+          else this.upError(3, res.data.msg);
         })
         .catch(er => {
           this.upError(3);
@@ -538,7 +528,7 @@ export default {
       assignRole(param)
         .then(res => {
           if (res.data.code == 200) this.upSuccess(4);
-          else this.upError(4);
+          else this.upError(4, res.data.msg);
         })
         .catch(err => {
           this.upError(4);
@@ -643,7 +633,6 @@ export default {
         }
       }
     }
-
   }
   .addbtn {
     text-align: left;

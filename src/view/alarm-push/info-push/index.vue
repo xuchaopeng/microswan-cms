@@ -2,43 +2,43 @@
   <div class="infopush">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />消息列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Loading color="#504C4C" :size="25" v-if="isloading2"></Loading>
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />消息列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Loading color="#504C4C" :size="25" v-if="isloading2"></Loading>
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <Loading v-if="isloading"></Loading>
-          <div class="nohasHitInfo" v-show="nohasHitInfo">该部门暂无推送消息</div>
-          <ul class="hitInfoList">
-            <li class="item" v-for="em in dataList" @click="renderDetails(em)">
-              <div class="img">
-                <img :src="em.facePicPath" alt="/" />
-              </div>
-              <div class="dis">
-                <p class="score">
-                  <Icon class="iconfont icon-renxiangcaiji"></Icon>
-                  {{ em.score }}
-                </p>
-                <p class="time">
-                  <Icon class="iconfont icon-shijian"></Icon>
-                  {{ em.reportTime }}
-                </p>
-              </div>
-            </li>
-          </ul>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <Loading v-if="isloading"></Loading>
+        <div class="nohasHitInfo" v-show="nohasHitInfo">该部门暂无推送消息</div>
+        <ul class="hitInfoList">
+          <li class="item" v-for="em in dataList" @click="renderDetails(em)">
+            <div class="img">
+              <img :src="em.facePicPath" alt="/" />
+            </div>
+            <div class="dis">
+              <p class="score">
+                <Icon class="iconfont icon-renxiangcaiji"></Icon>
+                {{ em.score }}
+              </p>
+              <p class="time">
+                <Icon class="iconfont icon-shijian"></Icon>
+                {{ em.reportTime }}
+              </p>
+            </div>
+          </li>
+        </ul>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <HitDetails :item="currentFace" :viewHitDetails="viewHitDetails" @closeFace="closeFaceDetails"></HitDetails>
@@ -136,7 +136,7 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     //数据字段序列化
     filterData(em) {
@@ -166,12 +166,10 @@ export default {
       };
       this.nohasHitInfo = false;
       this.isloading = true;
-      console.log('BBBBBBBBBB');
       getListHitInfo(param)
         .then(res => {
           this.isloading = false;
           let r = res.data;
-          console.log(res,'HAHAHAHAHHAHA');
           if (r.code == 200) {
             const page = r.data.pageContent;
             const len = this.dataList.length;
