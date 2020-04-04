@@ -13,10 +13,10 @@ export const login = ({ userName, password }) => {
   });
 };
 
-export const getUserInfo = (token, user_name) => {
+export const getUserInfo = ({ name, pass }) => {
   const data = {
-    username: "",
-    pwd: ""
+    username: name,
+    pwd: pass
   };
   return axios.request({
     url: "/api/user/login",

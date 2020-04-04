@@ -27,8 +27,8 @@
             <span>{{row.status == 1 ? '已激活':'未激活'}}</span>
           </template>
           <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="error" size="small" @click="removeDevice(row)">删除</Button>
-            <Button v-if="!row.status" type="success" ghost size="small" @click="activatedDevice(row)">激活</Button>
+            <Button class="mr10" type="error" :disabled="!viewaccesswrite" size="small" @click="removeDevice(row)">删除</Button>
+            <Button v-if="!row.status" type="success" :disabled="!viewaccesswrite" ghost size="small" @click="activatedDevice(row)">激活</Button>
           </template>
         </Table>
       </div>
@@ -66,6 +66,7 @@ import { getDepartmentTree } from '@/api/system';
 import { getActivatedList, getInactiveList, delDevice, getDevice } from '@/api/device';
 import { mapMutations, mapGetters } from 'vuex'
 import { objectToFormData, makeFormData } from "@/libs/util";
+import { hasOneOf } from "@/libs/tools";
 export default {
   data() {
     return {
@@ -113,7 +114,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(['departmentId', 'departmentList']),
+    access() {
+      return this.$store.state.user.permissions
+    },
+    viewaccessread() {
+      return hasOneOf(['device:read'], this.access)
+    },
+    viewaccesswrite() {
+      return hasOneOf(['device:write'], this.access)
+    }
   },
   methods: {
     ...mapMutations(['setDepartmentList']),

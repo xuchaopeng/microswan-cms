@@ -30,7 +30,7 @@ export default {
           // this.getUserInfo().then(res => {
           this.$router.push({
             name: this.$config.homeName
-          })
+          });
           // })
         })
         .catch(err => {

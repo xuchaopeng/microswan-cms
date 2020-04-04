@@ -28,10 +28,10 @@
           </template>
           <template slot-scope="{ row, index }" slot="action">
             <Button class="mr10" type="success" size="small" @click="enterFace(row)">查看</Button>
-            <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)">编辑</Button>
-            <Button class="mr10" type="error" size="small" @click="removeFaceLib(row)">删除</Button>
-            <Button v-if="!row.subscribed" type="success" ghost size="small" @click="changeSubscribe(row)">订阅</Button>
-            <Button v-if="row.subscribed" type="warning" ghost size="small" @click="changeSubscribe(row)">取消订阅</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorFaceLib(row)" :disabled="!viewaccesswrite">编辑</Button>
+            <Button class="mr10" type="error" size="small" @click="removeFaceLib(row)" :disabled="!viewaccesswrite">删除</Button>
+            <Button v-if="!row.subscribed" type="success" ghost size="small" @click="changeSubscribe(row)" :disabled="!viewaccesswrite">订阅</Button>
+            <Button v-if="row.subscribed" type="warning" ghost size="small" @click="changeSubscribe(row)" :disabled="!viewaccesswrite">取消订阅</Button>
           </template>
         </Table>
         <div class="pages" v-if="totalCount > 10">
@@ -118,7 +118,8 @@ import FaceLib from '_c/face-lib'
 import './facelib.less'
 import { getDepartmentTree } from '@/api/system'
 import { getLibTypes, addFaceLib, getFaceLibList, deleteFaceLib, updateFaceLib, subscribe, unsubscribe } from '@/api/resources'
-import { mapMutations, mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex';
+import { hasOneOf } from "@/libs/tools";
 export default {
   data() {
     // 角色验证
@@ -203,7 +204,16 @@ export default {
     this.getTreeData()
   },
   computed: {
-    ...mapGetters(['departmentId', 'departmentList'])
+    ...mapGetters(['departmentId', 'departmentList']),
+    access() {
+      return this.$store.state.user.permissions
+    },
+    viewaccessread() {
+      return hasOneOf(['db:read'], this.access)
+    },
+    viewaccesswrite() {
+      return hasOneOf(['db:write'], this.access)
+    }
   },
   methods: {
     ...mapMutations(['setDepartmentList']),

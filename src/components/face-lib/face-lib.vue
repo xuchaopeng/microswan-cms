@@ -338,7 +338,6 @@ export default {
           formData.append("idFile", file2.files[0]);
           addFace(formData)
             .then(res => {
-              console.log(res, 'SSSSSSSSS');
               if (res.data.code == 200) this.upSuccess(1);
               else this.upError(1, res.data.msg);
             })

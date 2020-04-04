@@ -4,7 +4,7 @@ import config from "@/config";
 import { forEach, hasOneOf, objEqual } from "@/libs/tools";
 const { title, cookieExpires, useI18n } = config;
 
-export const TOKEN_KEY = "token";
+export const TOKEN_KEY = "TOKENS";
 
 export const setToken = token => {
   Cookies.set(TOKEN_KEY, token, { expires: cookieExpires || 1 });
@@ -14,6 +14,21 @@ export const getToken = () => {
   const token = Cookies.get(TOKEN_KEY);
   if (token) return token;
   else return false;
+};
+
+export const creatToken = (k, v) => {
+  return encodeURIComponent("&%*%&" + k + "&%*%&" + v + "&%*%&");
+};
+
+export const dealToken = token => {
+  let a = {};
+  if (!token) return a;
+  try {
+    token = decodeURIComponent(token).split("&%*%&");
+    a.name = token[1];
+    a.pass = token[2];
+  } catch (e) {}
+  return a;
 };
 
 export const hasChild = item => {

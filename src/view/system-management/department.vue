@@ -7,8 +7,7 @@
           <span class="fl">
             <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
           </span>
-          <span class="fr">
-            <!-- <Icon class="p5" custom="icon iconfont icon-bianji" @click="editorDm" size="24" /> -->
+          <span class="fr" v-if="viewaccesswrite">
             <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
             <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
           </span>
@@ -66,6 +65,7 @@ import {
 } from "@/api/system";
 import { mapMutations, mapGetters } from "vuex";
 import Layer from '_c/layer';
+import { hasOneOf } from "@/libs/tools";
 //树形节点 设置disabled
 export default {
   data() {
@@ -115,7 +115,16 @@ export default {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(["departmentId", "departmentList"])
+    ...mapGetters(["departmentId", "departmentList"]),
+    access() {
+      return this.$store.state.user.permissions
+    },
+    viewaccessread() {
+      return hasOneOf(['department:read'], this.access)
+    },
+    viewaccesswrite() {
+      return hasOneOf(['department:write'], this.access)
+    }
   },
   methods: {
     ...mapMutations(["setDepartmentList"]),

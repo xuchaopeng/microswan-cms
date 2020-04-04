@@ -20,9 +20,9 @@
         </p>
         <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
           <template slot-scope="{ row, index }" slot="action">
-            <Button class="mr10" type="primary" size="small" @click="editorDis(row)">编辑描述</Button>
-            <Button class="mr10" type="primary" size="small" @click="editorRole(row)">修改权限</Button>
-            <Button type="error" size="small" @click="removeRole(row)">删除</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorDis(row)" :disabled="!viewaccesswrite">编辑描述</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)" :disabled="!viewaccesswrite">修改权限</Button>
+            <Button type="error" size="small" @click="removeRole(row)" :disabled="!viewaccesswrite">删除</Button>
           </template>
         </Table>
         <div class="pages" v-if="totalCount > 10">
@@ -113,6 +113,7 @@ import {
 } from "@/api/system";
 import Layer from '_c/layer';
 import { mapMutations, mapGetters } from "vuex";
+import { hasOneOf } from "@/libs/tools";
 //树形节点 设置disabled
 export default {
   data() {
@@ -184,7 +185,16 @@ export default {
     this.getTreeData();
   },
   computed: {
-    ...mapGetters(["departmentId", "departmentList", 'permissions'])
+    ...mapGetters(["departmentId", "departmentList", 'permissions']),
+    access() {
+      return this.$store.state.user.permissions
+    },
+    viewaccessread() {
+      return hasOneOf(['role:read'], this.access)
+    },
+    viewaccesswrite() {
+      return hasOneOf(['role:write'], this.access)
+    }
   },
   methods: {
     ...mapMutations(["setDepartmentList"]),

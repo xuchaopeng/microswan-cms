@@ -1,7 +1,7 @@
 import {
   login,
-  logout
-  // getUserInfo,
+  logout,
+  getUserInfo
   // getMessage,
   // getContentByMsgId,
   // hasRead,
@@ -9,7 +9,7 @@ import {
   // restoreTrash,
   // getUnreadCount
 } from "@/api/user";
-import { setToken, getToken } from "@/libs/util";
+import { setToken, getToken, creatToken, dealToken } from "@/libs/util";
 
 export default {
   state: {
@@ -97,7 +97,8 @@ export default {
             const s = res.data;
             if (s && s.code == 200) {
               const data = s.data ? s.data : {};
-              commit("setToken", data.username);
+              const token = creatToken(data.username, password);
+              commit("setToken", token);
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
               commit("setDepartmentId", data.departmentId);
@@ -137,38 +138,37 @@ export default {
     // 获取用户相关信息
     getUserInfo({ state, commit }) {
       return new Promise((resolve, reject) => {
-        let user = {};
-        if (state.token && state.userName) {
-          user.permissions = state.permissions;
-          resolve(user);
-        } else {
-          reject();
+        try {
+          let u = dealToken(state.token);
+          const name = u.name;
+          const pass = u.pass;
+          getUserInfo({ name, pass })
+            .then(res => {
+              const s = res.data;
+              // console.log(res, "用户信息HAHAHAHAHAH");
+              if (s.code !== 200) {
+                reject(s);
+                return;
+              }
+              const data = s.data;
+              const token = creatToken(data.username, pass);
+              commit("setToken", token);
+              commit("setUserName", data.username);
+              commit("setPoliceNum", data.policeNum);
+              commit("setDepartmentId", data.departmentId);
+              commit(
+                "setPermissions",
+                data.permissions ? data.permissions : []
+              );
+              commit("setHasGetInfo", true);
+              resolve(data);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        } catch (error) {
+          reject(error);
         }
-        // try {
-        //   getUserInfo(state.token, state.userName)
-        //     .then(res => {
-        //       const s = res.data;
-        //       if (s.code !== 200) {
-        //         reject(s);
-        //         return;
-        //       }
-        //       const data = s.data;
-        //       commit("setUserName", data.username);
-        //       commit("setPoliceNum", data.policeNum);
-        //       commit("setDepartmentId", data.departmentId);
-        //       commit(
-        //         "setPermissions",
-        //         data.permissions ? data.permissions : []
-        //       );
-        //       commit("setHasGetInfo", true);
-        //       resolve(data);
-        //     })
-        //     .catch(err => {
-        //       reject(err);
-        //     });
-        // } catch (error) {
-        //   reject(error);
-        // }
       });
     },
     // 此方法用来获取未读消息条数，接口只返回数值，不返回消息列表
