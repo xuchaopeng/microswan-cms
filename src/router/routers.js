@@ -25,7 +25,7 @@ export default [
       title: "Login - 登录",
       hideInMenu: true
     },
-    component: () => import("@/view/login/login.vue")
+    component: resolve => require(["@/view/login/login.vue"], resolve)
   },
   {
     path: "/",
@@ -66,7 +66,8 @@ export default [
           icon: "_tuisong",
           title: "实时推送"
         },
-        component: () => import("@/view/alarm-push/realtime-push/index.vue")
+        component: resolve =>
+          require(["@/view/alarm-push/realtime-push/index.vue"], resolve)
       },
       {
         path: "/infopush",
@@ -75,7 +76,8 @@ export default [
           icon: "ios-paper",
           title: "消息推送"
         },
-        component: () => import("@/view/alarm-push/info-push/index.vue")
+        component: resolve =>
+          require(["@/view/alarm-push/info-push/index.vue"], resolve)
       }
     ]
   },
@@ -97,7 +99,8 @@ export default [
           title: "设备管理",
           access: ["device:read", "device:write"]
         },
-        component: () => import("@/view/device-management/index.vue")
+        component: resolve =>
+          require(["@/view/device-management/index.vue"], resolve)
       }
     ]
   },
@@ -119,7 +122,8 @@ export default [
           title: "人像库管理",
           access: ["db:write", "db:read"]
         },
-        component: () => import("@/view/resource-management/facelib.vue")
+        component: resolve =>
+          require(["@/view/resource-management/facelib.vue"], resolve)
       }
     ]
   },
@@ -149,7 +153,8 @@ export default [
           title: "部门管理",
           access: ["department:write", "department:read"]
         },
-        component: () => import("@/view/system-management/department.vue")
+        component: resolve =>
+          require(["@/view/system-management/department.vue"], resolve)
       },
       {
         path: "/user",
@@ -159,7 +164,8 @@ export default [
           title: "用户管理",
           access: ["user:write", "user:read"]
         },
-        component: () => import("@/view/system-management/user.vue")
+        component: resolve =>
+          require(["@/view/system-management/user.vue"], resolve)
       },
       {
         path: "/role",
@@ -169,7 +175,8 @@ export default [
           title: "角色管理",
           access: ["role:write", "role:read"]
         },
-        component: () => import("@/view/system-management/role.vue")
+        component: resolve =>
+          require(["@/view/system-management/role.vue"], resolve)
       },
       {
         path: "/log",
@@ -179,7 +186,8 @@ export default [
           title: "系统日志",
           access: ["log:read"]
         },
-        component: () => import("@/view/system-management/log.vue")
+        component: resolve =>
+          require(["@/view/system-management/log.vue"], resolve)
       }
     ]
   },
@@ -189,7 +197,7 @@ export default [
     meta: {
       hideInMenu: true
     },
-    component: () => import("@/view/error-page/401.vue")
+    component: resolve => require(["@/view/error-page/401.vue"], resolve)
   },
   {
     path: "/500",
@@ -197,7 +205,7 @@ export default [
     meta: {
       hideInMenu: true
     },
-    component: () => import("@/view/error-page/500.vue")
+    component: resolve => require(["@/view/error-page/500.vue"], resolve)
   },
   {
     path: "*",
@@ -205,6 +213,6 @@ export default [
     meta: {
       hideInMenu: true
     },
-    component: () => import("@/view/error-page/404.vue")
+    component: resolve => require(["@/view/error-page/404.vue"], resolve)
   }
 ];
