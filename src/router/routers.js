@@ -55,7 +55,8 @@ export default [
     name: "alarmPush",
     meta: {
       icon: "_tuisong1",
-      title: "报警推送"
+      title: "报警推送",
+      access: ["db:read"]
     },
     component: Main,
     children: [
@@ -64,7 +65,8 @@ export default [
         name: "realTimePush",
         meta: {
           icon: "_tuisong",
-          title: "实时推送"
+          title: "实时推送",
+          access: ["db:read"]
         },
         component: resolve =>
           require(["@/view/alarm-push/realtime-push/index.vue"], resolve)
@@ -74,7 +76,8 @@ export default [
         name: "infopush",
         meta: {
           icon: "ios-paper",
-          title: "消息推送"
+          title: "消息推送",
+          access: ["db:read"]
         },
         component: resolve =>
           require(["@/view/alarm-push/info-push/index.vue"], resolve)

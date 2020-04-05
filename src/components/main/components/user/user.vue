@@ -12,20 +12,80 @@
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
         </DropdownItem>-->
         <DropdownItem name="logout">退出登录</DropdownItem>
+        <DropdownItem name="changepassword">修改密码</DropdownItem>
       </DropdownMenu>
     </Dropdown>
+    <Layer v-if="view">
+      <div class="sub">
+        <Icon
+          class="close"
+          custom="icon iconfont icon-close"
+          size="24"
+          @click="close"
+        />
+        <div class="changepassword">
+          <p class="title">修改密码</p>
+          <div class="change">
+            <Form
+              ref="passForm"
+              :model="form"
+              :rules="rule"
+              @keydown.enter.native="changeSubmit"
+            >
+              <FormItem prop="passward" label="输入新密码">
+                <Input v-model="form.passward" type="password"></Input>
+              </FormItem>
+              <FormItem>
+                <Button
+                  @click="changeSubmit"
+                  type="primary"
+                  :loading="loading"
+                  long
+                >
+                  保存
+                </Button>
+              </FormItem>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </Layer>
   </div>
 </template>
 
 <script>
-import './user.less'
-import { mapActions } from 'vuex'
+import "./user.less";
+import Layer from "_c/layer";
+import { resetPwd } from "@/api/user";
+import { mapActions } from "vuex";
 export default {
-  name: 'User',
+  name: "User",
+  data() {
+    const checkpass = (rule, value, callback) => {
+      const reg = /^\w{8,17}$/;
+      if (value == "") {
+        callback(new Error("请输入密码"));
+      } else if (!reg.test(value)) {
+        callback(new Error("只能包含字母、数字和下划线，至少8位"));
+      } else {
+        callback();
+      }
+    };
+    return {
+      loading: false,
+      view: false,
+      form: {
+        passward: ""
+      },
+      rule: {
+        passward: [{ required: true, validator: checkpass, trigger: "blur" }]
+      }
+    };
+  },
   props: {
     userAvator: {
       type: String,
-      default: ''
+      default: ""
     },
     messageUnreadCount: {
       type: Number,
@@ -33,29 +93,76 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'handleLogOut'
-    ]),
+    ...mapActions(["handleLogOut"]),
     logout() {
       this.handleLogOut().then(() => {
         this.$router.push({
-          name: 'login'
-        })
-      })
+          name: "login"
+        });
+      });
     },
     message() {
       this.$router.push({
-        name: 'message_page'
-      })
+        name: "message_page"
+      });
     },
     handleClick(name) {
       switch (name) {
-        case 'logout': this.logout()
-          break
-        case 'message': this.message()
-          break
+        case "logout":
+          this.logout();
+          break;
+        case "message":
+          this.message();
+          break;
+        case "changepassword":
+          this.changepassword();
+          break;
       }
+    },
+    changepassword() {
+      this.view = true;
+    },
+    close() {
+      this.view = false;
+    },
+    //密码修改成功
+    changesuccess() {
+      this.view = false;
+      for (var k in this.form) {
+        this.form[k] = "";
+      }
+      this.$Message.success({
+        content: "密码修改成功",
+        duration: 1.5,
+        closable: true
+      });
+    },
+    //密码修改失败
+    changeerror(text) {
+      this.view = false;
+      this.$Message.error({
+        content: text || "密码修改失败",
+        duration: 1.5,
+        closable: true
+      });
+    },
+    changeSubmit() {
+      this.$refs["passForm"].validate(valid => {
+        if (valid) {
+          resetPwd(this.form.passward)
+            .then(res => {
+              if (res.data.code == 200) this.changesuccess();
+              else this.changeerror(res.data.msg);
+            })
+            .catch(err => {
+              this.changeerror();
+            });
+        }
+      });
     }
+  },
+  components: {
+    Layer
   }
-}
+};
 </script>

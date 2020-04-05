@@ -2,46 +2,66 @@
   <div class="infopush">
     <Row :gutter="15">
       <Col span="6">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />消息列表
-          </span>
-        </div>
-        <div class="tbs">
-          <Loading color="#504C4C" :size="25" v-if="isloading2"></Loading>
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />消息列表
+            </span>
+          </div>
+          <div class="tbs">
+            <Loading color="#504C4C" :size="25" v-if="isloading2"></Loading>
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
       <Col span="18">
-      <div class="dmcons comcss">
-        <Loading v-if="isloading"></Loading>
-        <div class="nohasHitInfo" v-show="nohasHitInfo">该部门暂无推送消息</div>
-        <ul class="hitInfoList">
-          <li class="item" v-for="em in dataList" @click="renderDetails(em)">
-            <div class="img">
-              <img :src="em.facePicPath" alt="/" />
-            </div>
-            <div class="dis">
-              <p class="score">
-                <Icon class="iconfont icon-renxiangcaiji"></Icon>
-                {{ em.score }}
-              </p>
-              <p class="time">
-                <Icon class="iconfont icon-shijian"></Icon>
-                {{ em.reportTime }}
-              </p>
-            </div>
-          </li>
-        </ul>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        <div class="dmcons comcss">
+          <Loading v-if="isloading"></Loading>
+          <div class="nohasHitInfo" v-show="nohasHitInfo">
+            该部门暂无推送消息
+          </div>
+          <ul class="hitInfoList">
+            <li class="item" v-for="em in dataList" @click="renderDetails(em)">
+              <div class="img">
+                <img :src="em.facePicPath" alt="/" />
+              </div>
+              <div class="dis">
+                <p class="hassure">
+                  {{
+                    em.status == 0
+                      ? "等待确认"
+                      : em.status == 1
+                      ? "已确认：同一人"
+                      : "已确认：非同一人"
+                  }}
+                </p>
+                <p class="score">
+                  <Icon class="iconfont icon-renxiangcaiji"></Icon>
+                  {{ em.score }}
+                </p>
+                <p class="time">
+                  <Icon class="iconfont icon-shijian"></Icon>
+                  {{ em.reportTime }}
+                </p>
+              </div>
+            </li>
+          </ul>
+          <div class="pages" v-if="totalCount > 10">
+            <Page
+              :total="totalCount"
+              show-elevator
+              show-total
+              @on-change="changePage"
+            />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
-    <HitDetails :item="currentFace" :viewHitDetails="viewHitDetails" @closeFace="closeFaceDetails"></HitDetails>
+    <HitDetails
+      :item="currentFace"
+      :viewHitDetails="viewHitDetails"
+      @closeFace="closeFaceDetails"
+    ></HitDetails>
   </div>
 </template>
 
@@ -136,17 +156,24 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => { });
+        .catch(res => {});
     },
     //数据字段序列化
     filterData(em) {
       let nem = {
+        name: em.name,
+        alias: em.alias,
         departmentId: em.departmentId,
+        departmentName: em.departmentName,
+        ethnic: em.ethnic,
+        faceId: em.faceId,
         backPicPath: Imgbase + em.hitBackgroundPicturePath,
         facePicPath: Imgbase + em.hitFacePicturePath,
+        idcard: em.idcard,
         id: em.id,
         lat: em.lat,
         libId: em.libId,
+        libName: em.libName,
         lng: em.lng,
         passerBackPicPath: Imgbase + em.passerbyBackgroundPicturePath,
         passerFacePicPath: Imgbase + em.passerbyFacePicturePath,
@@ -155,7 +182,7 @@ export default {
         score: creatScore(em.score),
         status: em.status
       };
-      nem.address = getAddress(nem);
+      getAddress(nem);
       return nem;
     },
     //展现部门消息列表

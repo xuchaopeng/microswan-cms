@@ -48,3 +48,13 @@ export const userList = ({ departmentId, pageNo, pageSize }) => {
     method: "get"
   });
 };
+
+export const resetPwd = pass => {
+  const data = {
+    pwd: pass
+  };
+  return axios.request({
+    url: "/api/user/resetPwd" + resetParam(data),
+    method: "post"
+  });
+};

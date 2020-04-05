@@ -1,7 +1,11 @@
 <template>
   <div class="realtime">
     <div class="container">
-      <Loading v-if="!dataList.length"></Loading>
+      <Loading v-if="!dataList.length && !noHitData && !connecterr"></Loading>
+      <div class="noHitData" v-if="noHitData">暂无推送消息</div>
+      <div class="connecterr" v-if="connecterr">
+        连接异常，请试着重新登录或刷新页面 ！
+      </div>
       <div class="hitBackPic" v-if="dataList.length">
         <Carousel
           v-model="value"
@@ -15,7 +19,9 @@
                 <span class="ms" @click="renderDetails(item)">
                   <Icon class="iconfont icon-ai14"></Icon>查看详情
                 </span>
-                <span class="pos">定位：{{ item.address }}</span>
+                <span class="pos">{{
+                  item.address ? "定位：" + item.address : ""
+                }}</span>
               </p>
               <div class="demo-carousel">
                 <p class="pic">
@@ -50,13 +56,26 @@
               <div class="pic">
                 <img :src="item.facePicPath" alt />
               </div>
+              <p class="res">
+                {{
+                  item.status == 0
+                    ? "等待确认"
+                    : item.status == 1
+                    ? "已确认：同一人"
+                    : "已确认：非同一人"
+                }}
+              </p>
               <p class="dis">{{ item.reportTime }}</p>
             </li>
           </ul>
         </div>
       </div>
     </div>
-    <HitDetails :item="currentFace" :viewHitDetails="viewHitDetails" @closeFace="closeFaceDetails"></HitDetails>
+    <HitDetails
+      :item="currentFace"
+      :viewHitDetails="viewHitDetails"
+      @closeFace="closeFaceDetails"
+    ></HitDetails>
   </div>
 </template>
 
@@ -82,8 +101,9 @@ export default {
         arrow: "hover",
         height: 537
       },
-      xcp: [{ a: 1 }, { b: 2 }],
       viewHitDetails: false,
+      noHitData: false, //接口正常，且无推送数据
+      connecterr: false, //长链异常，且无推送数据
       currentFace: {},
       dataList: []
     };
@@ -108,12 +128,13 @@ export default {
         {},
         frame => {
           this.stompclient.subscribe("/user/queue/hitInfo", msg => {
+            this.connecterr = false;
             let data = JSON.parse(msg.body);
             this.resetData(data);
           });
         },
         err => {
-          console.log(err, "连接失败");
+          this.connecterr = true;
         }
       );
     },
@@ -126,6 +147,8 @@ export default {
     },
     //重新序列话数据
     filterData(data) {
+      let len = data.length;
+      let idx = 0;
       data.forEach(em => {
         em.backPicPath = Imgbase + em.hitBackgroundPicturePath;
         em.facePicPath = Imgbase + em.hitFacePicturePath;
@@ -133,14 +156,27 @@ export default {
         em.passerFacePicPath = Imgbase + em.passerbyFacePicturePath;
         em.reportTime = em.reportTime.replace(/-/g, "/");
         em.score = creatScore(em.score);
-        getAddress(em);
+        getAddress(em, () => {
+          ++idx;
+          if (idx == len) {
+            setTimeout(() => {
+              this.dataList.push({});
+              this.dataList.pop();
+            });
+          }
+        });
       });
     },
     //重新处理长链数据
     resetData(data) {
-      if (!data || !data.length) return;
       const len = this.dataList.length;
+      if (!data || !data.length) {
+        if (!len) this.noHitData = true;
+        else this.noHitData = false;
+        return;
+      }
       const n = data.length;
+      this.noHitData = false;
       this.filterData(data); //序列化data
       if (!len) {
         data.forEach(em => {
@@ -173,7 +209,13 @@ export default {
       });
     },
     //刷新实时人像列表
-    renderList() { },
+    renderList(o) {
+      this.dataList.forEach(res => {
+        if (res.id == o.id) {
+          res.status = o.status;
+        }
+      });
+    },
     //展示人像详情页
     renderDetails(em) {
       this.currentFace = {
@@ -182,10 +224,10 @@ export default {
       this.viewHitDetails = true;
     },
     //关闭人像详情
-    closeFaceDetails(needUpdateList) {
+    closeFaceDetails(needUpdateList, o) {
       this.currentFace = {};
       this.viewHitDetails = false;
-      if (needUpdateList) this.renderList();
+      if (needUpdateList) this.renderList(o);
     },
     //轮播点击切换
     clickButton(action) {

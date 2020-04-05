@@ -59,7 +59,7 @@
           <p>姓名：{{ currentFace.name }}</p>
           <p>民族：{{ currentFace.ethnic }}</p>
           <p>别名： {{ currentFace.alias }}</p>
-          <p>库名：{{ currentFace.name }}</p>
+          <p>库名：{{ item.libName }}</p>
         </div>
       </div>
     </div>

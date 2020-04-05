@@ -527,7 +527,7 @@ export const creatScore = score => {
  * 获取经纬度对应地址
  * @param {*} item
  */
-export const getAddress = item => {
+export const getAddress = (item, cb) => {
   if (!item) return;
   if (!item.lng || !item.lat) return;
   const lng = item.lng;
@@ -536,6 +536,7 @@ export const getAddress = item => {
   var gc = new BMap.Geocoder();
   gc.getLocation(point, function(rs) {
     item.address = rs.address;
+    typeof cb === "function" && cb(1);
     // var mapAddress = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
   });
 };
