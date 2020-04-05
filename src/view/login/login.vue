@@ -5,7 +5,7 @@
 <template>
   <div class="login">
     <div class="login-con">
-      <Card icon="log-in" title="欢迎登录" :bordered="false">
+      <Card icon="log-in" title="社区微卡口管理系统" :bordered="false">
         <div class="form-con">
           <login-form @on-success-valid="handleSubmit"></login-form>
           <p class="login-tip">输入用户名和密码</p>
@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import LoginForm from '_c/login-form'
-import { mapActions } from 'vuex'
+import LoginForm from "_c/login-form";
+import { mapActions } from "vuex";
 export default {
   components: {
     LoginForm
   },
   methods: {
-    ...mapActions(['handleLogin']), //getUserInfo
+    ...mapActions(["handleLogin"]), //getUserInfo
     handleSubmit({ userName, password }) {
       this.handleLogin({ userName, password })
         .then(res => {
@@ -36,14 +36,13 @@ export default {
         .catch(err => {
           this.$Message.warning({
             top: 250,
-            content: '用户名或密码不对',
+            content: "用户名或密码不对",
             duration: 2
-          })
-        })
+          });
+        });
     }
   }
-}
+};
 </script>
 
-<style>
-</style>
+<style></style>

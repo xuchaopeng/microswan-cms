@@ -231,3 +231,16 @@ export const objEqual = (obj1, obj2) => {
   /* eslint-disable-next-line */ else
     return !keysArr1.some(key => obj1[key] != obj2[key]);
 };
+/**
+ * 解析token
+ * @param {*} token
+ */
+export const dealToken = token => {
+  let a = null;
+  if (!token) return a;
+  try {
+    token = decodeURIComponent(token);
+    a = JSON.parse(token);
+  } catch (e) {}
+  return a;
+};

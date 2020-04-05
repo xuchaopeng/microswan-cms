@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 // cookie保存的天数
 import config from "@/config";
-import { forEach, hasOneOf, objEqual } from "@/libs/tools";
+import { forEach, hasOneOf, objEqual, dealToken } from "@/libs/tools";
 const { title, cookieExpires, useI18n } = config;
 
 export const TOKEN_KEY = "TOKENS";
@@ -16,19 +16,24 @@ export const getToken = () => {
   else return false;
 };
 
-export const creatToken = (k, v) => {
-  return encodeURIComponent("&%*%&" + k + "&%*%&" + v + "&%*%&");
+export const creatToken = data => {
+  let d = JSON.stringify(data);
+  return encodeURIComponent(d);
 };
 
-export const dealToken = token => {
-  let a = {};
-  if (!token) return a;
-  try {
-    token = decodeURIComponent(token).split("&%*%&");
-    a.name = token[1];
-    a.pass = token[2];
-  } catch (e) {}
-  return a;
+export const getUserInfo = token => {
+  return new Promise((resolve, reject) => {
+    if (!token) {
+      reject();
+    } else {
+      let o = dealToken(token);
+      if (o) {
+        resolve(o);
+      } else {
+        reject();
+      }
+    }
+  });
 };
 
 export const hasChild = item => {

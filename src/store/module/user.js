@@ -1,7 +1,6 @@
 import {
   login,
-  logout,
-  getUserInfo
+  logout
   // getMessage,
   // getContentByMsgId,
   // hasRead,
@@ -9,7 +8,7 @@ import {
   // restoreTrash,
   // getUnreadCount
 } from "@/api/user";
-import { setToken, getToken, creatToken, dealToken } from "@/libs/util";
+import { setToken, getToken, creatToken, getUserInfo } from "@/libs/util";
 
 export default {
   state: {
@@ -97,7 +96,7 @@ export default {
             const s = res.data;
             if (s && s.code == 200) {
               const data = s.data ? s.data : {};
-              const token = creatToken(data.username, password);
+              const token = creatToken(data);
               commit("setToken", token);
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
@@ -139,19 +138,14 @@ export default {
     getUserInfo({ state, commit }) {
       return new Promise((resolve, reject) => {
         try {
-          let u = dealToken(state.token);
-          const name = u.name;
-          const pass = u.pass;
-          getUserInfo({ name, pass })
-            .then(res => {
-              const s = res.data;
-              // console.log(res, "用户信息HAHAHAHAHAH");
-              if (s.code !== 200) {
-                reject(s);
+          getUserInfo(state.token)
+            .then(data => {
+              // console.log(data, "用户信息HAHAHAHAHAH");
+              if (!data) {
+                reject();
                 return;
               }
-              const data = s.data;
-              const token = creatToken(data.username, pass);
+              const token = creatToken(data);
               commit("setToken", token);
               commit("setUserName", data.username);
               commit("setPoliceNum", data.policeNum);
