@@ -212,6 +212,36 @@ export const canTurnTo = (name, access, routes) => {
 
   return routePermissionJudge(routes);
 };
+/**
+ * 用户访问401，优先过滤出一个可访问权限的路由
+ * @param {*} access 用户权限数组
+ */
+export const filterOne = access => {
+  let newaccess = access ? access : [];
+  let name = null;
+  if (newaccess.indexOf("db:read") > -1) return name;
+  let LuYous = {
+    "db:read": "realtimepush",
+    "db:write": "likelibrary",
+    "device:write": "device",
+    "device:read": "device",
+    "department:write": "department",
+    "department:read": "department",
+    "role:write": "role",
+    "role:read": "role",
+    "user:write": "user",
+    "user:read": "user",
+    "log:read": "log"
+  };
+
+  for (var k in LuYous) {
+    if (newaccess.indexOf(k) > -1) {
+      name = LuYous[k];
+      break;
+    }
+  }
+  return name;
+};
 
 /**
  * @param {String} url

@@ -18,7 +18,7 @@ export default {
    */
   baseUrl: {
     dev: "", //http://xcpeng.cn https://118.24.53.165
-    pro: ""
+    pro: "https://118.24.53.165"
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home
