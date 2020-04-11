@@ -23,7 +23,9 @@
               placeholder
             >
               <Option value="0">未激活</Option>
-              <Option value="1">激活</Option>
+              <Option value="1">正常</Option>
+              <Option value="2">维护</Option>
+              <Option value="3">报废</Option>
             </Select>
             <Button
               class="ml10"
@@ -41,11 +43,11 @@
             no-data-text="暂无设备数据"
           >
             <template slot-scope="{ row, index }" slot="status">
-              <span>{{ row.status == 1 ? "已激活" : "未激活" }}</span>
+              <span>{{ getDeviceStatus(row.status) }}</span>
             </template>
             <template slot-scope="{ row, index }" slot="action">
               <Button
-                class="mr10"
+                class="mro"
                 type="error"
                 :disabled="!viewaccesswrite"
                 size="small"
@@ -53,13 +55,59 @@
                 >删除</Button
               >
               <Button
-                v-if="!row.status"
+                v-if="row.status == 0"
+                class="mro"
                 type="success"
                 :disabled="!viewaccesswrite"
                 ghost
                 size="small"
                 @click="activatedDevice(row)"
                 >激活</Button
+              >
+
+              <Button
+                v-if="row.status !== 1 && row.status !== 0 && row.status !== 3"
+                class="mro"
+                type="success"
+                :disabled="!viewaccesswrite"
+                ghost
+                size="small"
+                @click="normalDevice(row)"
+                >正常</Button
+              >
+
+              <Button
+                v-if="row.status !== 2 && row.status !== 0 && row.status !== 3"
+                class="mro"
+                type="success"
+                :disabled="!viewaccesswrite"
+                ghost
+                size="small"
+                @click="maintainDevice(row)"
+                >维护</Button
+              >
+
+              <Button
+                v-if="row.status !== 3 && row.status !== 0"
+                class="mro"
+                type="success"
+                :disabled="!viewaccesswrite"
+                ghost
+                size="small"
+                @click="scrapDevice(row)"
+                >报废</Button
+              >
+
+              <Button
+                v-if="row.status"
+                class="mro"
+                type="success"
+                :disabled="!viewaccessread"
+                ghost
+                size="small"
+                @click="seelogs(row)"
+              >
+                查看日志</Button
               >
             </template>
           </Table>
@@ -84,8 +132,9 @@
         </div>
         <div class="activated-device" v-if="type == 2">
           <p class="subtitle">激活该设备?</p>
-          <p>设备名称：{{ currentdevice.deviceName }}</p>
-          <p>设备编号：{{ currentdevice.deviceNo }}</p>
+          <p>
+            设备：{{ currentdevice.deviceName }}-{{ currentdevice.deviceNo }}
+          </p>
           <p>部门：{{ currentDm.name }}</p>
           <p class="dels">
             <Button
@@ -98,19 +147,79 @@
             <Button @click="closeBtn" type="warning">取消</Button>
           </p>
         </div>
+        <div class="normal-device" v-if="type == 3">
+          <p class="subtitle">设备状态更新为“正常” ?</p>
+          <p>
+            设备：{{ currentdevice.deviceName }}-{{ currentdevice.deviceNo }}
+          </p>
+          <p>部门：{{ currentDm.name }}</p>
+          <p class="dels">
+            <Button
+              class="mr10"
+              @click="normalSubmit"
+              type="primary"
+              :loading="loading"
+              >确认</Button
+            >
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
+        </div>
+        <div class="maintain-device" v-if="type == 4">
+          <p class="subtitle">设备状态更新为“维修”?</p>
+          <p>
+            设备：{{ currentdevice.deviceName }}-{{ currentdevice.deviceNo }}
+          </p>
+          <p>部门：{{ currentDm.name }}</p>
+          <p class="dels">
+            <Button
+              class="mr10"
+              @click="maintainSubmit"
+              type="primary"
+              :loading="loading"
+              >确认</Button
+            >
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
+        </div>
+        <div class="scrap-device" v-if="type == 5">
+          <p class="subtitle">设备状态更新为“报废”?</p>
+          <p>
+            设备：{{ currentdevice.deviceName }}-{{ currentdevice.deviceNo }}
+          </p>
+          <p>部门：{{ currentDm.name }}</p>
+          <p class="dels">
+            <Button
+              class="mr10"
+              @click="scrapSubmit"
+              type="primary"
+              :loading="loading"
+              >确认</Button
+            >
+            <Button @click="closeBtn" type="warning">取消</Button>
+          </p>
+        </div>
       </div>
     </Layer>
+    <DeviceLogs
+      :currentdevice="currentdevice"
+      v-if="viewlogs"
+      @closeLogs="closeLogs"
+    ></DeviceLogs>
   </div>
 </template>
 <script>
-import "./device.less";
+import "./status.less";
 import Layer from "_c/layer";
+import DeviceLogs from "../log";
 import { getDepartmentTree } from "@/api/system";
 import {
   getActivatedList,
   getInactiveList,
   delDevice,
-  getDevice
+  getDevice,
+  deviceMaintain,
+  deviceNormal,
+  deviceScrap
 } from "@/api/device";
 import { mapMutations, mapGetters } from "vuex";
 import { objectToFormData, makeFormData } from "@/libs/util";
@@ -118,11 +227,12 @@ import { hasOneOf } from "@/libs/tools";
 export default {
   data() {
     return {
+      viewlogs: false,
       loading: false,
       type: 0,
       totalCount: 1,
       //设备类型
-      deviceType: "0",
+      deviceType: "1",
       // 当前选中部门
       currentDm: {
         name: "",
@@ -229,9 +339,10 @@ export default {
     //展示右侧列表
     renderList(type) {
       this.loading = true;
-      if (type == 1) {
+      if (type !== 0) {
         let param = {
-          departmentId: this.currentDm.id
+          departmentId: this.currentDm.id,
+          status: type
         };
         getActivatedList(param)
           .then(res => {
@@ -293,6 +404,34 @@ export default {
       this.setCurrentDevice(row);
       this.type = 2;
     },
+    //设备正常
+    normalDevice(row) {
+      if (!row) return;
+      this.setCurrentDevice(row);
+      this.type = 3;
+    },
+    //维修设备
+    maintainDevice(row) {
+      if (!row) return;
+      this.setCurrentDevice(row);
+      this.type = 4;
+    },
+    //报废设备
+    scrapDevice(row) {
+      if (!row) return;
+      this.setCurrentDevice(row);
+      this.type = 5;
+    },
+    //获取设备状态
+    getDeviceStatus(type) {
+      let name = "";
+      type = Number(type);
+      if (type === 0) name = "未激活";
+      else if (type === 1) name = "正常";
+      else if (type === 2) name = "维护";
+      else if (type === 3) name = "报废";
+      return name;
+    },
     //关闭弹框
     closeBtn() {
       this.type = 0;
@@ -315,6 +454,31 @@ export default {
           closable: true
         });
       }
+
+      if (v == 3) {
+        this.$Message.success({
+          content: "设备状态更新为'正常'",
+          duration: 1.5,
+          closable: true
+        });
+      }
+
+      if (v == 4) {
+        this.$Message.success({
+          content: "设备状态更新为'维护'",
+          duration: 1.5,
+          closable: true
+        });
+      }
+
+      if (v == 5) {
+        this.$Message.success({
+          content: "设备状态更新为'报废'",
+          duration: 1.5,
+          closable: true
+        });
+      }
+
       this.renderList(Number(this.deviceType));
     },
     //失败提示弹框
@@ -335,12 +499,35 @@ export default {
           closable: true
         });
       }
+      if (v == 3) {
+        this.$Message.error({
+          content: text || "设备状态改为正常，更新失败",
+          duration: 1.5,
+          closable: true
+        });
+      }
+
+      if (v == 4) {
+        this.$Message.error({
+          content: text || "设备状态改为维修，更新失败",
+          duration: 1.5,
+          closable: true
+        });
+      }
+
+      if (v == 5) {
+        this.$Message.error({
+          content: text || "设备状态改为报废，更新失败",
+          duration: 1.5,
+          closable: true
+        });
+      }
     },
     //删除提交
     delSubmit() {
       delDevice(this.currentdevice.id)
         .then(res => {
-          if (res.data.code == 200) this.upSuccess(2);
+          if (res.data.code == 200) this.upSuccess(1);
           else this.upError(1, res.data.msg);
         })
         .catch(err => {
@@ -364,6 +551,42 @@ export default {
           this.upError(2);
         });
     },
+    //正常化提交
+    normalSubmit() {
+      this.loading = true;
+      deviceNormal(this.currentdevice.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(3);
+          else this.upError(3, res.data.msg);
+        })
+        .catch(err => {
+          this.upError(3);
+        });
+    },
+    //维修提交
+    maintainSubmit() {
+      this.loading = true;
+      deviceMaintain(this.currentdevice.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(4);
+          else this.upError(4, res.data.msg);
+        })
+        .catch(err => {
+          this.upError(4);
+        });
+    },
+    //报废提交
+    scrapSubmit() {
+      this.loading = true;
+      deviceScrap(this.currentdevice.id)
+        .then(res => {
+          if (res.data.code == 200) this.upSuccess(5);
+          else this.upError(5, res.data.msg);
+        })
+        .catch(err => {
+          this.upError(5);
+        });
+    },
     //按状态查询设备列表
     searchList() {
       if (this.currentDm.id == "" || typeof this.currentDm.id == "undefined") {
@@ -376,13 +599,24 @@ export default {
       }
       if (this.deviceType == "") return;
       this.renderList(Number(this.deviceType));
+    },
+    //查看日志
+    seelogs(row) {
+      if (!row) return;
+      this.setCurrentDevice(row);
+      this.viewlogs = true;
+    },
+    //关闭日志
+    closeLogs() {
+      this.viewlogs = false;
     }
   },
   mounted() {
     this.getTreeData(); //部门树
   },
   components: {
-    Layer
+    Layer,
+    DeviceLogs
   }
 };
 </script>

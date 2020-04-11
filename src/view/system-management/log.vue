@@ -187,7 +187,6 @@ export default {
         .then(res => {
           if (res.data.code == 200) {
             this.operation = res.data.data;
-            console.log(this.operation, "RZHI OPTINOSN");
           }
         })
         .catch(err => {});

@@ -223,8 +223,8 @@ export const filterOne = access => {
   let LuYous = {
     "db:read": "realtimepush",
     "db:write": "likelibrary",
-    "device:write": "device",
-    "device:read": "device",
+    "device:write": "devicestatus",
+    "device:read": "devicelog",
     "department:write": "department",
     "department:read": "department",
     "role:write": "role",

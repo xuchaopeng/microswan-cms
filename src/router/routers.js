@@ -103,7 +103,7 @@ export default [
           access: ["device:read", "device:write"]
         },
         component: resolve =>
-          require(["@/view/device-management/index.vue"], resolve)
+          require(["@/view/device-management/status/status.vue"], resolve)
       }
     ]
   },

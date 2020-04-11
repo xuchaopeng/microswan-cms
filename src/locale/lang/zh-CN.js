@@ -17,5 +17,7 @@ export default {
   components: "组件",
   infopush: "消息推送",
   deviceManagement: "设备管理",
-  device: "设备管理"
+  device: "设备管理",
+  deviceLog: "设备日志",
+  deviceStatus: "设备状态"
 };
