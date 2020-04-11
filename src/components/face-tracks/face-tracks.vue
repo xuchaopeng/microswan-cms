@@ -10,7 +10,7 @@
       ></Icon>
       <p class="nav">
         共{{ totalCount }}条结果，当前显示1至{{
-          totalCount < 7 ? totalCount : 7
+          totalCount < 8 ? totalCount : 8
         }}条结果<span>轨迹</span>
       </p>
       <div class="list">
@@ -35,9 +35,10 @@
             </div>
           </li>
         </ul>
-        <div class="trackPage" v-if="totalCount > 7">
+        <div class="trackPage" v-if="totalCount > 6">
           <Page
             :total="totalCount"
+            :page-size="8"
             show-elevator
             show-total
             @on-change="changePage"
@@ -100,7 +101,7 @@ export default {
       let param = {
         faceId: this.itemData.id,
         pageNo: this.pageNo,
-        pageSize: 7
+        pageSize: 8
       };
       getFaceTrack(param).then(res => {
         let r = res.data ? res.data : {};

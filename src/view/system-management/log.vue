@@ -37,7 +37,7 @@
             :columns="column"
             :data="tabdata"
             class="comcss"
-            no-data-text="该部门下暂无数据"
+            no-data-text="暂无数据"
           ></Table>
           <div class="pages" v-if="totalCount > 10">
             <Page
@@ -67,7 +67,7 @@ export default {
       //左侧部门列表
       dmlist: [{}],
       operation: [],
-      selectOperation: "",
+      selectOperation: "全部",
       totalCount: 1,
       tabdata: [],
       column: [
@@ -187,6 +187,7 @@ export default {
         .then(res => {
           if (res.data.code == 200) {
             this.operation = res.data.data;
+            console.log(this.operation, "RZHI OPTINOSN");
           }
         })
         .catch(err => {});
