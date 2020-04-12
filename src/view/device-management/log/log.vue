@@ -2,52 +2,25 @@
   <div class="device-log">
     <Layer v-if="">
       <div class="device-log-cnts">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closeIcon"
-        />
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeIcon" />
         <div class="title">
           {{ currentdevice.deviceName }}-{{
             currentdevice.deviceNo
           }}设备日志查询
         </div>
         <div class="search">
-          <Select
-            v-model="selectOperation"
-            class="selectOperation"
-            placeholder="请选择操作"
-          >
+          <Select v-model="selectOperation" class="selectOperation" placeholder="请选择操作">
             <Option v-for="m in operation" :value="m">
               {{ m }}
             </Option>
           </Select>
-          <Button
-            class="search-btn"
-            type="primary"
-            icon="ios-search"
-            @click="searchLog"
-            >搜索</Button
-          >
+          <Button class="search-btn" type="primary" icon="ios-search" @click="searchLog">搜索</Button>
         </div>
         <div class="tables">
-          <Table
-            :loading="logloading"
-            height="360"
-            :columns="column"
-            :data="tableData"
-            class="table-log"
-            no-data-text="暂无数据"
-          ></Table>
+          <Table :loading="logloading" height="360" :columns="column" :data="tableData" class="table-log" no-data-text="暂无数据"></Table>
         </div>
         <div class="pages" v-if="totalCount > 10">
-          <Page
-            :total="totalCount"
-            show-elevator
-            show-total
-            @on-change="changePage"
-          />
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
       </div>
     </Layer>
@@ -74,16 +47,24 @@ export default {
       selectOperation: "",
       column: [
         {
-          title: "用户名",
-          key: "username"
+          title: "部门",
+          key: "departmentName"
         },
         {
-          title: "操作名称",
-          key: "operation"
+          title: "用户编号",
+          key: "policeNum"
         },
         {
-          title: "操作IP",
-          key: "ip"
+          title: "设备名称",
+          key: "deviceName"
+        },
+        {
+          title: "设备名编号",
+          key: "deviceNo"
+        },
+        {
+          title: "内容",
+          key: "content"
         }
       ],
       tableData: [],
@@ -106,30 +87,10 @@ export default {
         operation: this.selectOperation,
         pageNo: this.pageNo
       };
-
       this.logloading = true;
-      const len = this.tableData.length;
-      this.tableData.splice(0, len);
       getListLogs(param)
         .then(res => {
           const r = res.data;
-
-          //伪造假数据 start
-          setTimeout(() => {
-            for (var i = 0; i < 10; i++) {
-              this.tableData.push({
-                username: "A",
-                operation: "要做什么",
-                ip: Math.random()
-                  .toString(5)
-                  .slice(5)
-              });
-              this.totalCount = 30;
-            }
-            this.logloading = false;
-          }, 1500);
-
-          //伪造假数据  end
           if (r.code == 200 && r.data) {
             const page = r.data.pageContent;
             const len = this.tableData.length;
@@ -140,10 +101,10 @@ export default {
               });
               this.totalCount = r.data.totalCount;
             }
-          } else {
           }
+          this.logloading = false;
         })
-        .catch(err => {});
+        .catch(err => { });
     },
     getOptions() {
       getLogOptions()
@@ -153,7 +114,7 @@ export default {
             this.selectOperation = this.operation[0];
           }
         })
-        .catch(err => {});
+        .catch(err => { });
     },
     changePage(pageNo) {
       this.pageNo = pageNo;

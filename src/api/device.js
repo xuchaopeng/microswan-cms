@@ -96,10 +96,10 @@ export const getListLogs = ({
 }) => {
   let data = {
     deviceId,
-    operation,
     pageNo,
     pageSize
   };
+  if (operation) data.operation = operation;
   return axios.request({
     url: "/api/device/listLog" + resetParam(data),
     method: "post"
