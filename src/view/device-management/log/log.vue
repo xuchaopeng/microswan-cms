@@ -1,23 +1,32 @@
 <template>
   <div class="device-log">
-    <Layer v-if="">
+    <Layer v-if>
       <div class="device-log-cnts">
         <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeIcon" />
         <div class="title">
           {{ currentdevice.deviceName }}-{{
-            currentdevice.deviceNo
+          currentdevice.deviceNo
           }}设备日志查询
         </div>
         <div class="search">
           <Select v-model="selectOperation" class="selectOperation" placeholder="请选择操作">
-            <Option v-for="m in operation" :value="m">
-              {{ m }}
-            </Option>
+            <Option v-for="m in operation" :value="m.k">{{ m.v }}</Option>
           </Select>
           <Button class="search-btn" type="primary" icon="ios-search" @click="searchLog">搜索</Button>
         </div>
         <div class="tables">
-          <Table :loading="logloading" height="360" :columns="column" :data="tableData" class="table-log" no-data-text="暂无数据"></Table>
+          <Table
+            :loading="logloading"
+            height="360"
+            :columns="column"
+            :data="tableData"
+            class="table-log"
+            no-data-text="暂无数据"
+          >
+            <template slot-scope="{ row, index }" slot="operation">
+              <span>{{ getOptionsValue(row) }}</span>
+            </template>
+          </Table>
         </div>
         <div class="pages" v-if="totalCount > 10">
           <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
@@ -44,7 +53,7 @@ export default {
       logloading: false,
       pageNo: 1,
       totalCount: 1,
-      selectOperation: "",
+      selectOperation: "all",
       column: [
         {
           title: "部门",
@@ -62,13 +71,23 @@ export default {
           title: "设备名编号",
           key: "deviceNo"
         },
+         {
+          title: "操作",
+          key: "operation",
+          slot: "operation"
+        },
+        {
+          title: "创建时间",
+          key: "createTime"
+        },
         {
           title: "内容",
           key: "content"
         }
       ],
       tableData: [],
-      operation: []
+      operation: [],
+      curoperation:{}
     };
   },
   created() {
@@ -84,9 +103,9 @@ export default {
     searchLog() {
       let param = {
         deviceId: this.currentdevice.id,
-        operation: this.selectOperation,
         pageNo: this.pageNo
       };
+      if(this.selectOperation !== 'all') param.operation = this.selectOperation;
       this.logloading = true;
       getListLogs(param)
         .then(res => {
@@ -102,19 +121,37 @@ export default {
               this.totalCount = r.data.totalCount;
             }
           }
+          console.log(this.tableData);
           this.logloading = false;
         })
         .catch(err => { });
     },
     getOptions() {
+      if(this.operation.length)return;
       getLogOptions()
         .then(res => {
           if (res.data.code == 200) {
-            this.operation = res.data.data;
-            this.selectOperation = this.operation[0];
+            const options = res.data.data;
+            this.operation.push({k:'all',v:'全部'});
+            for(var k in options) {
+              this.curoperation[k] = options[k];//保留原始对象数据
+              this.operation.push({
+                k:k,
+                v:options[k]
+              });
+            }
+            console.log(this.operation,'Options');
           }
         })
         .catch(err => { });
+    },
+    getOptionsValue(row){
+      if(!row) return '';
+      else {
+        const cu = this.curoperation[String(row.operation)]
+        if(cu) return cu;
+        else return '';
+      }
     },
     changePage(pageNo) {
       this.pageNo = pageNo;
