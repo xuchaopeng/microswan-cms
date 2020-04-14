@@ -4,7 +4,7 @@
     <Dropdown @on-click="handleClick">
       <!-- <Badge :dot="!!messageUnreadCount">
         <Avatar :src="userAvator" />
-      </Badge> -->
+      </Badge>-->
       <Icon class="iconfont icon-tuichu"></Icon>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
       <DropdownMenu slot="list">
@@ -17,33 +17,19 @@
     </Dropdown>
     <Layer v-if="view">
       <div class="sub">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="close"
-        />
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="close" />
         <div class="changepassword">
           <p class="title">修改密码</p>
           <div class="change">
-            <Form
-              ref="passForm"
-              :model="form"
-              :rules="rule"
-              @keydown.enter.native="changeSubmit"
-            >
+            <Form ref="passForm" :model="form" :rules="rule" @keydown.enter.native="changeSubmit">
               <FormItem prop="passward" label="输入新密码">
                 <Input v-model="form.passward" type="password"></Input>
               </FormItem>
+              <FormItem prop="pwdCheck" label="确认密码">
+                <Input v-model="form.pwdCheck" type="password"></Input>
+              </FormItem>
               <FormItem>
-                <Button
-                  @click="changeSubmit"
-                  type="primary"
-                  :loading="loading"
-                  long
-                >
-                  保存
-                </Button>
+                <Button @click="changeSubmit" type="primary" :loading="loading" long>保存</Button>
               </FormItem>
             </Form>
           </div>
@@ -68,6 +54,21 @@ export default {
       } else if (!reg.test(value)) {
         callback(new Error("只能包含字母、数字和下划线，至少8位"));
       } else {
+        if (this.form.pwdCheck !== "") {
+          this.$refs.passForm.validateField("pwdCheck");
+        }
+        callback();
+      }
+    };
+    const checksame = (rule, value, callback) => {
+      const reg = /^\w{8,17}$/;
+      if (!value) {
+        callback(new Error("请确认密码"));
+      } else if (!reg.test(value)) {
+        callback(new Error("只能包含字母、数字和下划线，至少8位"));
+      } else if (value !== this.form.passward) {
+        callback(new Error("两次密码输入不一致"));
+      } else {
         callback();
       }
     };
@@ -75,10 +76,12 @@ export default {
       loading: false,
       view: false,
       form: {
-        passward: ""
+        passward: "",
+        pwdCheck:""
       },
       rule: {
-        passward: [{ required: true, validator: checkpass, trigger: "blur" }]
+        passward: [{ required: true, validator: checkpass, trigger: "blur" }],
+        pwdCheck: [{ required: true, validator: checksame, trigger: "blur" }]
       }
     };
   },
