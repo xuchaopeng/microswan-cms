@@ -124,6 +124,9 @@ export default {
     },
     changepassword() {
       this.view = true;
+      for(var k in this.form) {
+        this.form[k] = '';
+      }
     },
     close() {
       this.view = false;
