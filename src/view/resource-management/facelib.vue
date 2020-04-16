@@ -16,59 +16,36 @@
       <Col span="18">
         <div class="dmcons comcss">
           <div class="addbtn">
-            <Button
-              class="mr20"
-              type="success"
-              size="large"
-              @click="addNewFaceLib"
-              >+添加人像库</Button
-            >
-            <Select
-              class="mr10"
-              v-model="libType"
-              style="width:200px;"
-              placeholder="请选择库类型"
-            >
-              <Option v-for="item in searchFaceType" :value="item.value">{{
+            <Button class="mr20" type="success" size="large" @click="addNewFaceLib">+添加人像库</Button>
+            <Select class="mr10" v-model="libType" style="width:200px;" placeholder="请选择库类型">
+              <Option v-for="item in searchFaceType" :value="item.value">
+                {{
                 item.name
-              }}</Option>
+                }}
+              </Option>
             </Select>
-            <Button
-              class="ml10"
-              type="primary"
-              icon="ios-search"
-              @click="searchLib"
-              >搜索</Button
-            >
+            <Button class="ml10" type="primary" icon="ios-search" @click="searchLib">搜索</Button>
           </div>
           <Table :columns="column" :data="tabdata" no-data-text="暂无人像库">
             <template slot-scope="{ row, index }" slot="type">
               <span>{{ row.type == 0 ? "底库" : "白名单库" }}</span>
             </template>
             <template slot-scope="{ row, index }" slot="action">
-              <Button
-                class="mr10"
-                type="success"
-                size="small"
-                @click="enterFace(row)"
-                >查看</Button
-              >
+              <Button class="mr10" type="success" size="small" @click="enterFace(row)">查看</Button>
               <Button
                 class="mr10"
                 type="primary"
                 size="small"
                 @click="editorFaceLib(row)"
                 :disabled="!viewaccesswrite"
-                >编辑</Button
-              >
+              >编辑</Button>
               <Button
                 class="mr10"
                 type="error"
                 size="small"
                 @click="removeFaceLib(row)"
                 :disabled="!viewaccesswrite"
-                >删除</Button
-              >
+              >删除</Button>
               <Button
                 v-if="!row.subscribed"
                 type="success"
@@ -76,8 +53,7 @@
                 size="small"
                 @click="changeSubscribe(row)"
                 :disabled="!viewaccesswrite"
-                >订阅</Button
-              >
+              >订阅</Button>
               <Button
                 v-if="row.subscribed"
                 type="warning"
@@ -85,17 +61,11 @@
                 size="small"
                 @click="changeSubscribe(row)"
                 :disabled="!viewaccesswrite"
-                >取消订阅</Button
-              >
+              >取消订阅</Button>
             </template>
           </Table>
           <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
           </div>
         </div>
       </Col>
@@ -103,48 +73,28 @@
     <div class="subtable" v-if="type">
       <div class="facepop"></div>
       <div class="facemiddle">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closeBtn"
-        />
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
         <template v-if="type == 1">
           <div class="addFacelib">
             <p class="subtitle">添加人像库</p>
-            <Form
-              ref="saveFrom"
-              :model="from"
-              :rules="rule"
-              @keydown.enter.native="addSubmit"
-            >
+            <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
               <FormItem prop="libName" label="库名">
                 <Input v-model="from.libName"></Input>
               </FormItem>
               <FormItem prop="type" label="类型">
-                <Select
-                  v-model="from.type"
-                  style="width:200px"
-                  placeholder="选择人像库类型"
-                >
+                <Select v-model="from.type" style="width:200px" placeholder="选择人像库类型">
                   <Option
                     v-for="item in faceLibType"
                     :value="item.value"
                     :key="item.value"
-                    >{{ item.name }}</Option
-                  >
+                  >{{ item.name }}</Option>
                 </Select>
               </FormItem>
               <FormItem prop="description" label="备注">
                 <Input v-model="from.description"></Input>
               </FormItem>
               <FormItem>
-                <Button
-                  @click="addSubmit"
-                  type="primary"
-                  :loading="loading"
-                  long
-                >
+                <Button @click="addSubmit" type="primary" :loading="loading" long>
                   <span v-if="!loading">立即保存</span>
                   <span v-else>保存中...</span>
                 </Button>
@@ -158,9 +108,7 @@
             <p class="subtitle">确认删除人像库吗?</p>
             <p>{{ currentLib.libName }}</p>
             <p class="dels">
-              <Button class="mr5" @click="delSubmit" type="primary"
-                >确认</Button
-              >
+              <Button class="mr5" @click="delSubmit" type="primary">确认</Button>
               <Button @click="closeBtn" type="warning">取消</Button>
             </p>
           </div>
@@ -190,12 +138,7 @@
                 <Input v-model="editorFrom.description" type="textarea"></Input>
               </FormItem>
               <FormItem>
-                <Button
-                  @click="updateSubmit"
-                  type="primary"
-                  :loading="loading"
-                  long
-                >
+                <Button @click="updateSubmit" type="primary" :loading="loading" long>
                   <span v-if="!loading">立即保存</span>
                   <span v-else>保存中...</span>
                 </Button>
@@ -460,6 +403,10 @@ export default {
         return;
       }
       this.type = 1;
+      //初始化表单
+      for(var k in this.from) {
+        this.from[k] = '';
+      }
       this.getLibList();
     },
     // 成功状态提示

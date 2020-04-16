@@ -2,28 +2,33 @@
   <div class="department">
     <Row :gutter="15">
       <Col span="6">
-      <Card class="comcss">
-        <div class="actions">
-          <span class="fl">
-            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-          </span>
-          <span class="fr" v-if="viewaccesswrite">
-            <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
-            <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
-          </span>
-        </div>
-        <div class="tbs">
-          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-        </div>
-      </Card>
+        <Card class="comcss">
+          <div class="actions">
+            <span class="fl">
+              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+            </span>
+            <span class="fr" v-if="viewaccesswrite">
+              <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
+              <Icon
+                class="p5"
+                custom="icon iconfont icon-icon_huabanfuben"
+                @click="deleteDm"
+                size="24"
+              />
+            </span>
+          </div>
+          <div class="tbs">
+            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+          </div>
+        </Card>
       </Col>
       <Col span="18">
-      <div class="dmcons comcss">
-        <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
-        <div class="pages" v-if="totalCount > 10">
-          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        <div class="dmcons comcss">
+          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
+          <div class="pages" v-if="totalCount > 10">
+            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+          </div>
         </div>
-      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -271,6 +276,9 @@ export default {
           closable: true
         });
         return;
+      }
+      for(var k in this.from) {
+        this.from[k] = '';
       }
       this.tk.sv = true;
       this.tk.del = false;

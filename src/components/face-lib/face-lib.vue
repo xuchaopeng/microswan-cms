@@ -7,12 +7,7 @@
           <Icon class="iconfont icon-icon-test"></Icon>添加人像
         </Button>
         {{ item.libName }}
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closeBtn"
-        />
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeBtn" />
       </p>
       <p class="loading" v-if="isloading">
         <Loading color="#D9DCDE"></Loading>
@@ -27,23 +22,13 @@
         </li>
       </ul>
       <div class="pages1" v-if="totalCount > 10">
-        <Page
-          :total="totalCount"
-          show-elevator
-          show-total
-          @on-change="changePage"
-        />
+        <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
       </div>
     </div>
     <div class="popup" v-show="ispop">
       <div class="pop"></div>
       <div class="popcons">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closePopup"
-        ></Icon>
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closePopup"></Icon>
         <div class="xcp">
           <p class="facepic">
             <span class="cirs" @click="deleteFace">
@@ -66,21 +51,11 @@
     <div class="sub" v-show="!closesub">
       <div class="subpop"></div>
       <div class="submiddle">
-        <Icon
-          class="close"
-          custom="icon iconfont icon-close"
-          size="24"
-          @click="closeSub"
-        ></Icon>
+        <Icon class="close" custom="icon iconfont icon-close" size="24" @click="closeSub"></Icon>
         <template v-if="type == 1">
           <div class="addFaceitem">
             <p class="subtitle">添加人像</p>
-            <Form
-              ref="saveFrom"
-              :model="from"
-              :rules="rule"
-              @keydown.enter.native="addSubmit"
-            >
+            <Form ref="saveFrom" :model="from" :rules="rule" @keydown.enter.native="addSubmit">
               <FormItem prop="name" label="姓名">
                 <Input v-model="from.name"></Input>
               </FormItem>
@@ -100,9 +75,7 @@
                     <img :src="picsrc.src1" alt />
                   </span>
                   <span class="img">
-                    <Icon
-                      custom="icon iconfont icon-mn_shangchuantupian_fill"
-                    ></Icon>
+                    <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
                     <input type="file" ref="BJfile" size="40" @change="xcp01" />
                   </span>
                 </div>
@@ -114,26 +87,13 @@
                     <img :src="picsrc.src2" alt />
                   </span>
                   <span class="img">
-                    <Icon
-                      custom="icon iconfont icon-mn_shangchuantupian_fill"
-                    ></Icon>
-                    <input
-                      class="img"
-                      type="file"
-                      ref="IDfile"
-                      size="40"
-                      @change="xcp02"
-                    />
+                    <Icon custom="icon iconfont icon-mn_shangchuantupian_fill"></Icon>
+                    <input class="img" type="file" ref="IDfile" size="40" @change="xcp02" />
                   </span>
                 </div>
               </div>
               <FormItem>
-                <Button
-                  @click="addSubmit"
-                  type="primary"
-                  :loading="loading"
-                  long
-                >
+                <Button @click="addSubmit" type="primary" :loading="loading" long>
                   <span v-if="!loading">保存</span>
                   <span v-else>保存中...</span>
                 </Button>
@@ -146,9 +106,7 @@
             <p class="subtitle">是否删除所选人像?</p>
             <p>{{ currentFace.name }}</p>
             <p class="dels">
-              <Button class="mr10" @click="delSubmit" type="primary"
-                >确认</Button
-              >
+              <Button class="mr10" @click="delSubmit" type="primary">确认</Button>
               <Button @click="closeSub" type="warning">取消</Button>
             </p>
           </div>
@@ -294,6 +252,9 @@ export default {
     },
     addNewFace() {
       this.closesub = false;
+      for(var k in this.from) {
+        this.from[k] = '';
+      }
       this.type = 1;
     },
     deleteFace() {
