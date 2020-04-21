@@ -104,6 +104,17 @@ export default [
         },
         component: resolve =>
           require(["@/view/device-management/status/status.vue"], resolve)
+      },
+      {
+        path: "/deviceStatistical",
+        name: "deviceStatistical",
+        meta: {
+          icon: "_guanli",
+          title: "设备统计",
+          access: ["device:read", "device:write"]
+        },
+        component: resolve =>
+          require(["@/view/device-management/statistical/statistical.vue"], resolve)
       }
     ]
   },

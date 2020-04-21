@@ -1,0 +1,108 @@
+.device-management .actions {
+  min-height: 300px;
+  background-color: #fff;
+  padding: 16px;
+  border: 1px solid #e6e6e6;
+}
+.device-management .tbs .ivu-tree ul {
+  font-size: 16px;
+  text-align: left;
+}
+.device-management .navs {
+  font-size: 16px;
+  overflow: hidden;
+  line-height: 33px;
+}
+.device-management .navs .iconfont {
+  margin-right: 5px;
+}
+.device-management .list {
+  min-height: 300px;
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  padding: 15px;
+}
+.device-management .list .search {
+  padding: 10px 0 20px 0;
+}
+.device-management .list .search .ivu-btn {
+  padding: 3px 15px 4px;
+  background-color: #5cb85c;
+  border: none;
+}
+.device-management .list .ivu-table-wrapper {
+  border-right: 1px solid #dcdee2;
+}
+.device-management .list .ivu-table-body {
+  overflow-x: hidden;
+}
+.device-management .list .ivu-table-tip {
+  overflow-x: hidden;
+}
+.device-management .list .ivu-table {
+  border: none;
+}
+.device-management .subtable {
+  background-color: #fff;
+  text-align: center;
+  font-size: 16px;
+}
+.device-management .subtable .close {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  cursor: pointer;
+  z-index: 10;
+  color: #fff;
+}
+.device-management .subtable .del-device {
+  width: 400px;
+}
+.device-management .subtable .del-device .dels {
+  padding: 15px 0;
+}
+.device-management .subtable .del-device p {
+  line-height: 35px;
+}
+.device-management .subtable .activated-device {
+  width: 350px;
+}
+.device-management .subtable .activated-device .dels {
+  padding: 15px 0;
+}
+.device-management .subtable .activated-device p {
+  line-height: 35px;
+}
+.device-management .subtable .normal-device,
+.device-management .subtable .maintain-device,
+.device-management .subtable .scrap-device {
+  width: 400px;
+}
+.device-management .subtable .normal-device .dels,
+.device-management .subtable .maintain-device .dels,
+.device-management .subtable .scrap-device .dels {
+  padding: 15px 0;
+}
+.device-management .subtable .normal-device p,
+.device-management .subtable .maintain-device p,
+.device-management .subtable .scrap-device p {
+  line-height: 35px;
+}
+.device-management .subtable .ivu-btn {
+  background-color: #5cb85c;
+  border: none;
+  padding: 5px 25px 6px 25px;
+  text-align: center;
+}
+.device-management .subtable .ivu-btn.ivu-btn-warning {
+  background-color: #ff9900;
+}
+.device-management .mr10 {
+  margin-right: 10px;
+}
+.device-management .mr15 {
+  margin-right: 15px;
+}
+.device-management .mro {
+  margin: 5px 10px 5px 0;
+}

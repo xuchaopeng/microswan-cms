@@ -112,3 +112,20 @@ export const getLogOptions = () => {
     method: "post"
   });
 };
+//设备统计
+export const deviceStatistics = ({
+  departmentId,
+  pageNo = 1,
+  pageSize = 10
+}) => {
+  let param = {
+    departmentId,
+    pageNo,
+    pageSize
+  };
+  return axios.request({
+    url: "/api/device/statistics" + resetParam(param),
+    method: "get"
+  });
+};
+

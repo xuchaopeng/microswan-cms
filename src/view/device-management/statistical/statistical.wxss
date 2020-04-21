@@ -1,0 +1,32 @@
+.statistical .actions {
+  min-height: 300px;
+  background-color: #fff;
+  padding: 16px;
+  border: 1px solid #e6e6e6;
+}
+.statistical .tbs .ivu-tree ul {
+  font-size: 16px;
+  text-align: left;
+}
+.statistical .navs {
+  font-size: 16px;
+  overflow: hidden;
+  line-height: 33px;
+}
+.statistical .navs .iconfont {
+  margin-right: 5px;
+}
+.statistical .list {
+  min-height: 300px;
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  padding: 15px;
+}
+.statistical .download {
+  padding: 10px 0 20px 0;
+}
+.statistical .download .ivu-btn {
+  padding: 5px 15px 6px;
+  background-color: #5cb85c;
+  border: none;
+}

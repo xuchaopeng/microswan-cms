@@ -570,3 +570,38 @@ export const getAddress = (item, cb) => {
     // var mapAddress = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
   });
 };
+
+/**
+ * 处理下载的报表
+ * @param {file}  文件对象
+ * @param {name}  需要保存的文件对象名称
+ * 保存的文件格式为：filename-年月日.xlsx
+ */
+export function operateFile(file, name) {
+  let cu = new Date();
+  let fileName = `${cu.getFullYear()}${cu.getMonth() +
+    1}${cu.getDate()}-v${name}.xlsx`;
+  let blobObject = new Blob([file], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
+  //是IE浏览器
+  if (!!window.ActiveXObject || "ActiveXObject" in window) {
+    window.navigator.msSaveOrOpenBlob(blobObject, fileName);
+  } else {
+    //火狐谷歌都兼容
+    //模板中要有一个预定义好的a标签
+    let link = document.getElementById("0421download");
+    link.href = URL.createObjectURL(blobObject);
+    link.download = fileName;
+    link.click();
+  }
+}
+
+export function ranFileName() {
+  let n =
+    +new Date() +
+    Math.random()
+      .toString(10)
+      .substring(2, 6);
+  return n;
+}
