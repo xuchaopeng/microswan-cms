@@ -30,3 +30,7 @@
   background-color: #5cb85c;
   border: none;
 }
+.statistical .ivu-table-border th,
+.statistical .ivu-table-border td {
+  text-align: center;
+}

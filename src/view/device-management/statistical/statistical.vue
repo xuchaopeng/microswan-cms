@@ -16,14 +16,13 @@
       <Col span="18">
         <div class="list">
           <div class="download">
-            <a id="0421download">
-              <Button
-                size="large"
-                icon="ios-download-outline"
-                type="primary"
-                @click="downloadTable"
-              >下载统计表</Button>
-            </a>
+            <a id="0421download"></a>
+            <Button
+              size="large"
+              icon="ios-download-outline"
+              type="primary"
+              @click="downloadTable"
+            >下载统计表</Button>
           </div>
           <Table
             :loading="loading"
@@ -189,6 +188,7 @@ export default {
         });
         return;
       }
+      console.log('被点击了--好了东西！')
       deviceDownload(this.currentDm.id).then(res => {
         if(res) operateFile(res,ranFileName());
       }).catch(err => {})
