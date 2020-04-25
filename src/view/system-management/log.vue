@@ -2,52 +2,32 @@
   <div class="log">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss bmlist">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tables">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss bmlist">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tables">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <div class="search">
-            <Select
-              v-model="selectOperation"
-              style="width:200px;"
-              placeholder="请选择操作"
-            >
-              <Option v-for="item in operation" :value="item">
-                {{ item }}
-              </Option>
-            </Select>
-            <Button
-              class="ml10"
-              type="primary"
-              icon="ios-search"
-              @click="searchLog"
-              >搜索</Button
-            >
-          </div>
-          <Table
-            :columns="column"
-            :data="tabdata"
-            class="comcss"
-            no-data-text="暂无数据"
-          ></Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page
-              :total="totalCount"
-              show-elevator
-              show-total
-              @on-change="changePage"
-            />
-          </div>
+      <div class="dmcons comcss">
+        <div class="search">
+          <Select v-model="selectOperation" style="width:200px;" placeholder="请选择操作">
+            <Option v-for="item in operation" :value="item">
+              {{ item }}
+            </Option>
+          </Select>
+          <Button class="ml10" type="primary" icon="ios-search" @click="searchLog">搜索</Button>
         </div>
+        <Table :loading="loading" :columns="column" :data="tabdata" class="comcss" no-data-text="暂无数据"></Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
+        </div>
+      </div>
       </Col>
     </Row>
   </div>
@@ -59,6 +39,7 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      loading: false,
       //当前选中部门
       currentDm: {
         name: "",
@@ -147,13 +128,15 @@ export default {
             this.setDepartmentList(list);
           }
         })
-        .catch(res => {});
+        .catch(res => { });
     },
     //当前部门被选择
     selectDepartment(item) {
       if (!item || !item[0]) return;
+      if (item[0].id == this.currentDm.id) return;
       this.currentDm.id = item[0].id;
       this.currentDm.name = item[0].title;
+      this.searchLog();
     },
     //翻页
     changePage(pageNo) {
@@ -189,31 +172,37 @@ export default {
             this.operation = res.data.data;
           }
         })
-        .catch(err => {});
+        .catch(err => { });
     },
     //获取日志数据
     getLogData() {
       let param = {
-        departmentId: this.departmentId,
+        departmentId: this.currentDm.id ? this.currentDm.id : this.departmentId,
         operation: this.selectOperation,
         pageNo: this.pageNo
       };
+      this.loading = true;
       getLogList(param)
         .then(res => {
           const r = res.data;
           if (r.code == 200 && r.data) {
             const page = r.data.pageContent;
             const len = this.tabdata.length;
+            this.tabdata.splice(0, len);
             if (page && page.length) {
-              this.tabdata.splice(0, len);
               page.forEach(em => {
                 this.tabdata.push(em);
               });
               this.totalCount = r.data.totalCount;
+            } else {
+              this.totalCount = 0;
             }
           }
+          this.loading = false;
         })
-        .catch(err => {});
+        .catch(err => {
+          this.loading = false;
+        });
     }
   }
 };

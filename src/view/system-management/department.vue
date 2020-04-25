@@ -2,33 +2,28 @@
   <div class="department">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-            <span class="fr" v-if="viewaccesswrite">
-              <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
-              <Icon
-                class="p5"
-                custom="icon iconfont icon-icon_huabanfuben"
-                @click="deleteDm"
-                size="24"
-              />
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+          <span class="fr" v-if="viewaccesswrite">
+            <Icon class="p5" custom="icon iconfont icon-xinzengliebiao" @click="addDm" size="24" />
+            <Icon class="p5" custom="icon iconfont icon-icon_huabanfuben" @click="deleteDm" size="24" />
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <Table :loading="loading" :columns="column" :data="tabdata" no-data-text="该部门下暂无数据"></Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -75,6 +70,7 @@ import { hasOneOf } from "@/libs/tools";
 export default {
   data() {
     return {
+      loading: false,
       //弹框显示、关闭
       tk: {
         sv: "",
@@ -243,6 +239,7 @@ export default {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
       };
+      this.loading = true;
       getDepartmentList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -256,7 +253,8 @@ export default {
             this.totalCount = r.data.totalCount;
           }
         }
-      });
+        this.loading = false;
+      }).catch(err => { this.loading = false; })
     },
     //当前部门被选择
     selectDepartment(item) {
@@ -277,7 +275,7 @@ export default {
         });
         return;
       }
-      for(var k in this.from) {
+      for (var k in this.from) {
         this.from[k] = '';
       }
       this.tk.sv = true;

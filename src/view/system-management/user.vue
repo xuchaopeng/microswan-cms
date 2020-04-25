@@ -2,43 +2,32 @@
   <div class="user">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <p class="addbtn">
-            <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
-          </p>
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无用户">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorUser(row)"
-                :disabled="!viewaccesswrite"
-              >更新</Button>
-              <Button
-                type="error"
-                size="small"
-                @click="removeRole(row)"
-                :disabled="!viewaccesswrite"
-              >删除</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewUser">+添加新用户</Button>
+        </p>
+        <Table :loading="loading" :columns="column" :data="tabdata" no-data-text="该部门下暂无用户">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorUser(row)" :disabled="!viewaccesswrite">更新</Button>
+            <Button type="error" size="small" @click="removeRole(row)" :disabled="!viewaccesswrite">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -61,11 +50,7 @@
             </FormItem>
             <FormItem prop="roleId" label="角色" v-if="roleListOptions.length">
               <Select v-model="from.roleId" style="width:200px" placeholder="请设置角色">
-                <Option
-                  v-for="item in roleListOptions"
-                  :value="item.id"
-                  :key="item.id"
-                >{{ item.name }}</Option>
+                <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </FormItem>
             <FormItem>
@@ -98,11 +83,7 @@
             <div class="clearfix mrb20">
               <span class="fl mr5">角色：</span>
               <Select v-model="from.roleId" style="width:200px;float:left;">
-                <Option
-                  v-for="item in roleListOptions"
-                  :value="item.id"
-                  :key="item.id"
-                >{{ item.name }}</Option>
+                <Option v-for="item in roleListOptions" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </div>
             <p class="savepms">
@@ -179,6 +160,7 @@ export default {
       }
     };
     return {
+      loading: false,
       //弹框显示、关闭
       tk: {
         sv: "",
@@ -336,6 +318,7 @@ export default {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
       };
+      this.loading = true;
       getUserList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -349,7 +332,8 @@ export default {
             this.totalCount = r.data.totalCount;
           }
         }
-      });
+        this.loading = false;
+      }).catch(err => { this.loading = false })
     },
     //当前部门被选择
     selectDepartment(item) {
@@ -442,7 +426,7 @@ export default {
         });
         return;
       }
-      for(var k in this.from) {
+      for (var k in this.from) {
         this.from[k] = '';
       }
       //弹框提示操作

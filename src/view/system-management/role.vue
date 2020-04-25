@@ -2,50 +2,33 @@
   <div class="role">
     <Row :gutter="15">
       <Col span="6">
-        <Card class="comcss">
-          <div class="actions">
-            <span class="fl">
-              <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
-            </span>
-          </div>
-          <div class="tbs">
-            <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
-          </div>
-        </Card>
+      <Card class="comcss">
+        <div class="actions">
+          <span class="fl">
+            <Icon custom="icon iconfont icon-bumen" size="24" />部门列表
+          </span>
+        </div>
+        <div class="tbs">
+          <Tree :data="dmlist" @on-select-change="selectDepartment"></Tree>
+        </div>
+      </Card>
       </Col>
       <Col span="18">
-        <div class="dmcons comcss">
-          <p class="addbtn">
-            <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
-          </p>
-          <Table :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
-            <template slot-scope="{ row, index }" slot="action">
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorDis(row)"
-                :disabled="!viewaccesswrite"
-              >编辑描述</Button>
-              <Button
-                class="mr10"
-                type="primary"
-                size="small"
-                @click="editorRole(row)"
-                :disabled="!viewaccesswrite"
-              >修改权限</Button>
-              <Button
-                type="error"
-                size="small"
-                @click="removeRole(row)"
-                :disabled="!viewaccesswrite"
-              >删除</Button>
-            </template>
-          </Table>
-          <div class="pages" v-if="totalCount > 10">
-            <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
-          </div>
+      <div class="dmcons comcss">
+        <p class="addbtn">
+          <Button type="success" size="large" @click="addNewRole">+添加新角色</Button>
+        </p>
+        <Table :loading="loading" :columns="column" :data="tabdata" no-data-text="该部门下暂无角色">
+          <template slot-scope="{ row, index }" slot="action">
+            <Button class="mr10" type="primary" size="small" @click="editorDis(row)" :disabled="!viewaccesswrite">编辑描述</Button>
+            <Button class="mr10" type="primary" size="small" @click="editorRole(row)" :disabled="!viewaccesswrite">修改权限</Button>
+            <Button type="error" size="small" @click="removeRole(row)" :disabled="!viewaccesswrite">删除</Button>
+          </template>
+        </Table>
+        <div class="pages" v-if="totalCount > 10">
+          <Page :total="totalCount" show-elevator show-total @on-change="changePage" />
         </div>
+      </div>
       </Col>
     </Row>
     <Layer v-if="tk.sv">
@@ -78,12 +61,7 @@
         </div>
         <div class="discnt" v-show="tk.dis">
           <p class="subtitle">编辑描述</p>
-          <Form
-            ref="editorFrom"
-            :model="editorFrom"
-            :rules="editorRule"
-            @keydown.enter.native="editorSubmit"
-          >
+          <Form ref="editorFrom" :model="editorFrom" :rules="editorRule" @keydown.enter.native="editorSubmit">
             <div class="clearfix mrb20">
               <span class="fl mr5">名称：</span>
               <span class="fl">{{ currentRole.name }}</span>
@@ -108,12 +86,7 @@
           <div class="clearfix pd10">
             <span class="fl">权限：</span>
             <div class="pmist fl">
-              <Tree
-                class="fl"
-                :data="permissionsList"
-                @on-check-change="checkPermission"
-                show-checkbox
-              ></Tree>
+              <Tree class="fl" :data="permissionsList" @on-check-change="checkPermission" show-checkbox></Tree>
             </div>
           </div>
           <p class="savepms">
@@ -145,6 +118,7 @@ import { hasOneOf } from "@/libs/tools";
 export default {
   data() {
     return {
+      loading: false,
       //弹框显示、关闭
       tk: {
         sv: "",
@@ -316,6 +290,7 @@ export default {
         departmentId: this.currentDm.id,
         pageNo: this.pageNo
       };
+      this.loading = true;
       getRoleList(param).then(res => {
         let r = res.data;
         if (r.code == 200) {
@@ -329,7 +304,8 @@ export default {
             this.totalCount = r.data.totalCount;
           }
         }
-      });
+        this.loading = false;
+      }).catch(err => { this.loading = false; })
     },
     //当前部门被选择
     selectDepartment(item) {
@@ -455,7 +431,7 @@ export default {
         });
         return;
       }
-      for(var k in this.from) {
+      for (var k in this.from) {
         this.from[k] = '';
       }
       //弹框提示操作
