@@ -85,7 +85,8 @@
 import "./index.less";
 import FaceTracks from "_c/face-tracks";
 import { hitInfoAck, getFaceDetails } from "@/api/hitinfo";
-const Imgbase = "https://118.24.53.165/";
+import config from "@/config/index.js";
+const Imgbase = config.resourceBaseUrl;
 export default {
   name: "HitDetails",
   props: {

@@ -41,7 +41,8 @@
 import "./index.less";
 import { creatScore, getAddress } from "@/libs/util";
 import { getFaceTrack } from "@/api/hitinfo";
-const Imgbase = "https://118.24.53.165/";
+import config from "@/config/index.js";
+const Imgbase = config.resourceBaseUrl;
 export default {
   props: {
     itemData: {
@@ -128,7 +129,7 @@ export default {
       this.renderList();
     }
   },
-  mounted() { },
+  mounted() {},
   watch: {
     viewTrack(view) {
       if (view) this.renderList();

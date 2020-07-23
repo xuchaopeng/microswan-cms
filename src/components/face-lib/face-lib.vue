@@ -120,7 +120,8 @@
 import "./index.less";
 import Loading from "_c/loading";
 import { getFaceList, addFace, delFace } from "@/api/resources";
-const Imgbase = "https://118.24.53.165/";
+import config from "@/config/index.js";
+const Imgbase = config.resourceBaseUrl;
 export default {
   name: "Facelibitem",
   props: {
@@ -252,8 +253,8 @@ export default {
     },
     addNewFace() {
       this.closesub = false;
-      for(var k in this.from) {
-        this.from[k] = '';
+      for (var k in this.from) {
+        this.from[k] = "";
       }
       this.type = 1;
     },

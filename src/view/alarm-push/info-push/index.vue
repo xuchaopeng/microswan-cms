@@ -73,7 +73,8 @@ import { creatScore, getAddress } from "@/libs/util";
 import { getDepartmentTree } from "@/api/system";
 import { getListHitInfo } from "@/api/hitinfo";
 import { mapMutations, mapGetters } from "vuex";
-const Imgbase = "https://118.24.53.165/";
+import config from "@/config/index.js";
+const Imgbase = config.resourceBaseUrl;
 export default {
   data() {
     return {

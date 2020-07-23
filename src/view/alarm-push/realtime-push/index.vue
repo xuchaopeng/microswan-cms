@@ -87,7 +87,8 @@ import SockJs from "sockjs-client";
 import Stomp from "stompjs";
 import { creatScore, getAddress } from "@/libs/util";
 import { getNewestHitInfo, getListHitInfo } from "@/api/hitinfo";
-const Imgbase = "https://118.24.53.165/";
+import config from "@/config/index.js";
+const Imgbase = config.resourceBaseUrl;
 export default {
   data() {
     return {
@@ -122,7 +123,7 @@ export default {
     //连接长链
     connection() {
       var scope = this;
-      this.socket = new SockJs("https://118.24.53.165/ws");
+      this.socket = new SockJs(`${config.resourceBaseUrl}/ws`);
       this.stompclient = Stomp.over(this.socket);
       this.stompclient.connect(
         {},
