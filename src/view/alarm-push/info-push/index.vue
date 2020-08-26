@@ -74,7 +74,7 @@ import { getDepartmentTree } from "@/api/system";
 import { getListHitInfo } from "@/api/hitinfo";
 import { mapMutations, mapGetters } from "vuex";
 import config from "@/config/index.js";
-const Imgbase = config.resourceBaseUrl;
+const Imgbase = config.imageBaseUrl;
 export default {
   data() {
     return {

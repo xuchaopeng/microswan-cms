@@ -121,7 +121,7 @@ import "./index.less";
 import Loading from "_c/loading";
 import { getFaceList, addFace, delFace } from "@/api/resources";
 import config from "@/config/index.js";
-const Imgbase = config.resourceBaseUrl;
+const Imgbase = config.imageBaseUrl;
 export default {
   name: "Facelibitem",
   props: {

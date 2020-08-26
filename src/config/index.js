@@ -20,8 +20,10 @@ export default {
     dev: "", //http://xcpeng.cn https://118.24.53.165
     pro: "http://192.168.1.48"
   },
-  // 图片资源 推送长链基础路径
+  // 推送长链基础路径
   resourceBaseUrl: 'http://192.168.1.48',
+  // 图片资源地址
+  imageBaseUrl:'https://192.168.1.86',
   /**
    * @description 默认打开的首页的路由name值，默认为home
    */

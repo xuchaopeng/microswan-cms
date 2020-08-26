@@ -42,7 +42,7 @@ import "./index.less";
 import { creatScore, getAddress } from "@/libs/util";
 import { getFaceTrack } from "@/api/hitinfo";
 import config from "@/config/index.js";
-const Imgbase = config.resourceBaseUrl;
+const Imgbase = config.imageBaseUrl;
 export default {
   props: {
     itemData: {
